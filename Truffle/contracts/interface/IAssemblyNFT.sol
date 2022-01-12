@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-interface AssemblyNFTInterface {
+interface IAssemblyNFT {
     event AssemblyAsset(
         address indexed firstHolder,
         uint256 indexed tokenId,
@@ -21,6 +21,7 @@ interface AssemblyNFTInterface {
         uint256[] memory _numbers
     ) external pure returns (uint256 tokenId);
 
+
     /// @dev to assemble lossless assets
     /// @param _to the receiver of the assembly token
     function mint(
@@ -29,12 +30,14 @@ interface AssemblyNFTInterface {
         uint256[] memory _numbers
     ) external payable returns (uint256 tokenId);
 
+
     /// @dev mint with additional logic that calculates the actual received value for tokens.
     function safeMint(
         address _to,
         address[] memory _addresses,
         uint256[] memory _numbers
     ) external payable returns (uint256 tokenId);
+
 
     /// @dev burn this token and releases assembled assets
     /// @param _to to which address the assets is released

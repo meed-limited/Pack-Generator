@@ -1,20 +1,54 @@
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const fs = require("fs");
+require('dotenv').config()
+const mnemonic = fs.readFileSync("../.secret").toString().trim();
+const API_KEY = process.env.MORALIS_SPEEDY_NODES_KEY;
+
+
 module.exports = {
-  // Uncommenting the defaults below
-  // provides for an easier quick-start with Ganache.
-  // You can also follow this format for other networks;
-  // see <http://truffleframework.com/docs/advanced/configuration>
-  // for more details on how to specify configuration options!
-  //
+  plugins: ['truffle-plugin-verify'],
+  api_keys: {
+    etherscan: process.env.ETHERSCAN_API_KEY,
+    polygonscan: process.env.POLYGONSCAN_API_KEY,
+    bscscan: process.env.BSCSCAN_API_KEY,
+    ftmscan: process.env.FTMSCAN_API_KEY,
+    snowtrace: process.env.SNOWTRACE_API_KEY,
+  },
   networks: {
-    develop: {
-      host: "127.0.0.1",
-      port: 7545,
-      chainId: 1337,
-      network_id: 1337,
+    // development: {
+    //   host: "127.0.0.1",
+    //   port: 7545,
+    //   chainId: 1337,
+    //   network_id: 1337,
+    // },
+    polygon_mumbai: {
+      provider: () =>
+        new HDWalletProvider(
+          mnemonic,
+          `https://speedy-nodes-nyc.moralis.io/10779dfa6be84b2347366672/polygon/mumbai/archive`
+          // `https://speedy-nodes-nyc.moralis.io/${API_KEY}/polygon/mumbai${process.env.ARCHIVE === true ? "/archive" : ""}`
+        ),
+      network_id: 80001,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true,
     },
+    // polygon_mainnet: {
+    //   provider: () =>
+    //     new HDWalletProvider(
+    //       mnemonic,
+    //       `https://speedy-nodes-nyc.moralis.io/${
+    //         process.env.MORALIS_SPEEDY_NODES_KEY
+    //       }/polygon/mainnet${process.env.ARCHIVE === true ? "/archive" : ""}`
+    //     ),
+    //   network_id: 137,
+    //   confirmations: 3,
+    //   timeoutBlocks: 200,
+    //   skipDryRun: true,
+    // }
   },
 
-  
+
   // Configure your compilers
   compilers: {
     solc: {
@@ -30,7 +64,7 @@ module.exports = {
     }
   },
 
-  
+
   //
   // Truffle DB is currently disabled by default; to enable it, change enabled:
   // false to enabled: true. The default storage location can also be

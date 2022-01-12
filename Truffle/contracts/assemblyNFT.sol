@@ -7,13 +7,13 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-import "./abstract/assemblyNFTInterface.sol";
+import "./interface/IAssemblyNFT.sol";
 
-abstract contract AssemblyNFT is
+contract AssemblyNFT is
     ERC721,
     ERC721Holder,
     ERC1155Holder,
-    AssemblyNFTInterface
+    IAssemblyNFT
 {
     using SafeERC20 for IERC20;
 
@@ -30,6 +30,8 @@ abstract contract AssemblyNFT is
     }
 
     uint256 nonce;
+
+    constructor() ERC721("L3P_Bundles", "L3PB") {    }
 
     /**
      * layout of _addresses:
