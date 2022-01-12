@@ -3,12 +3,12 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { getCollectionsByChain } from "helpers/collections";
 
 
-function SearchCollections({setInputValue}){
+function SearchCollections({ setInputValue }) {
     const { Option } = Select;
     const { chainId } = useMoralisDapp();
     const NFTCollections = getCollectionsByChain(chainId);
-    
-    
+
+
 
     function onChange(value) {
         setInputValue(value);
@@ -16,21 +16,23 @@ function SearchCollections({setInputValue}){
 
     return (
         <>
-        <Select
-            showSearch
-            style={{width: "1000px",
-                    marginLeft: "20px" }}
-            placeholder="Find a Collection"
-            optionFilterProp="children"
-            onChange={onChange}
-        >   
-        {NFTCollections && 
-            NFTCollections.map((collection, i) => 
-            <Option value={collection.addrs} key= {i}>{collection.name}</Option>
-            )
-            }   
-        </Select>
-            
+            <Select
+                showSearch
+                style={{
+                    width: "700px",
+                    marginLeft: "20px"
+                }}
+                placeholder="Find a Collection"
+                optionFilterProp="children"
+                onChange={onChange}
+            >
+                {NFTCollections &&
+                    NFTCollections.map((collection, i) =>
+                        <Option value={collection.addrs} key={i}>{collection.name}</Option>
+                    )
+                }
+            </Select>
+
         </>
     )
 }

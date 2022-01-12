@@ -1,5 +1,5 @@
 {
-  "name": "ethereum-boilerplate",
+  "name": "nfts-bundles_minter",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -48,5 +48,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^2.0.0",
+    "dotenv": "^11.0.0",
+    "truffle-plugin-verify": "^0.5.20"
   }
 }
