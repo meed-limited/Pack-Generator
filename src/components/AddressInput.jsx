@@ -8,10 +8,17 @@ function AddressInput(props) {
   const [address, setAddress] = useState("");
   const [validatedAddress, setValidatedAddress] = useState("");
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  //eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (validatedAddress) props.onChange(address);
   }, [address]);
+
+  // useEffect(() => {
+  //   function fetchBusinesses() {
+  //     if (validatedAddress) props.onChange(address);
+  //   }
+  //   fetchBusinesses()
+  // }, [address, validatedAddress, props]);
 
   const updateAddress = useCallback((address) => {
     if (address.length === 42) setValidatedAddress(getEllipsisTxt(address, 10));

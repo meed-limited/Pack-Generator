@@ -1,15 +1,15 @@
-import { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { useMoralis } from "react-moralis";
-import { Card, Image, Tooltip, Modal, Input, Alert, Spin, Button } from "antd";
-import { useNFTBalance } from "hooks/useNFTBalance";
-import { FileSearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { useMoralis, useMoralisQuery } from "react-moralis";
+import { Card, Button, Input } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { getExplorer } from "helpers/networks";
 import { useWeb3ExecuteFunction } from "react-moralis";
-import AssetModal from "./Wallet/components/AssetModal"
+import { getNativeByChain } from "helpers/networks";
+import AssetModal from "./Minter/AssetModal"
+import ERC20Modal from "./Minter/ERC20Modal";
+import cloneDeep from 'lodash/cloneDeep';
 
-
+import { getExplorer } from "helpers/networks";
+//import Moralis from "moralis/types";
 const { Meta } = Card;
 
 const styles = {
@@ -69,99 +69,333 @@ const styles = {
         borderRadius: "8px",
         cursor: "pointer",
     },
-    container:{
-        width: "800px",
-        height: "200px",
+    container: {
+        width: "750px",
         opacity: "0.8",
         borderRadius: "8px",
         backgroundColor: "black",
         textAlign: "center",
         paddingTop: "50px",
+        paddingBottom: "50px",
         fontSize: "25px",
         color: "white",
+    },
+    modalTitle: {
+        padding: "10px",
+        textAlign: "center",
+        fontSize: "25px",
     },
 };
 
 
 const PackMinter = () => {
+    const { walletAddress, chainId, assemblyAddress, assemblyABI } = useMoralisDapp();
+    const { Moralis } = useMoralis();
+    const nativeName = getNativeByChain(chainId);
+
     const [bundleName, setBundleName] = useState('');
     const [bundleDescription, setBundleDescription] = useState('');
-    const [properties, setProperties] = useState({attribut: "", value: ""});
-    const [url, setURL] = useState('');
-    const history = useHistory();
+    const [properties, setProperties] = useState({ attribut: "", value: "" });
 
-    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
+    const [isAssetModalVisible, setIsAssetModalVisible] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
-    //const [modalText, setModalText] = useState('Content of the modal');
 
-    const showModal = () => {
-        setIsModalVisible(true);
-        //setModalText( { textToDisplay } );
+    const [NFTsArr, setNFTsArr] = useState([]);
+    const [ethAmount, setETHAmount] = useState();
+    const [selectedTokens, setSelectedTokens] = useState([]);
 
+    const contractProcessor = useWeb3ExecuteFunction();
+    const mintFuntion = "mint";
+    const contractABIJson = JSON.parse(assemblyABI);
+
+    const queryMintedBundles = useMoralisQuery("CreatedBundle");
+    const fetchMintedBundle = JSON.parse(
+        JSON.stringify(queryMintedBundles.data, [
+            "firstHolder",
+            "tokenId",
+            "salt",
+            "addresses",
+            "numbers",
+        ])
+    );
+
+    /*Sorting arrays before feeding contract*/
+    const [addArr, setaddArr] = useState([]);
+    const [numArr, setnumArr] = useState([]); // ERC20AddLength, ERC721AddLength
+
+    const [ERC20AddLength, setERC20AddLength] = useState(); // numArr Arg:1
+    const [ERC721AddLength, setERC721AddLength] = useState(); // numArr Arg:2
+    const [ERC1155AddLength, setERC1155AddLength] = useState(); // numArr Arg:3
+
+
+    const sortedAddArr = () => {
+        setaddArr([]);
+        setnumArr([]);
+        var addr = [];
+        var ERC20Addr = [];
+        var ERC721Addr = [];
+        var ERC1155Addr = [];
+
+        let eth = (ethAmount * ("1e" + 18)).toString();
+        //let eth = ethAmount.toString();
+        numArr.push(eth);
+
+        // ERC20 addresses
+        for (let i = 0; i < selectedTokens.length; i++) {
+            let tmp = selectedTokens[i].currentToken;
+            ERC20Addr.push(tmp.token_address);
+        }
+        setERC20AddLength(ERC20Addr.length);
+
+        numArr.push(ERC20AddLength);
+
+        // ERC721 addresses
+        for (let i = 0; i < NFTsArr.length; i++) {
+            if (NFTsArr[i].contract_type === "ERC721") {
+                ERC721Addr.push(NFTsArr[i].token_address);
+            }
+        }
+        setERC721AddLength(ERC721Addr.length);
+        numArr.push(ERC721AddLength);
+
+        // ERC1155 addresses
+        for (let i = 0; i < NFTsArr.length; i++) {
+            if (NFTsArr[i].contract_type === "ERC1155") {
+                ERC1155Addr.push(NFTsArr[i].token_address);
+            }
+        }
+        setERC1155AddLength(ERC1155Addr.length);
+        numArr.push(ERC1155AddLength);
+        setaddArr(addr.concat(ERC20Addr, ERC721Addr, ERC1155Addr));
+
+        for (let i = 0; i < selectedTokens.length; i++) {
+            let tmp = (selectedTokens[i].value * ("1e" + 18)).toString();
+            numArr.push(tmp);
+        }
+        for (let i = 0; i < NFTsArr.length; i++) {
+            if (NFTsArr[i].contract_type === "ERC721") {
+                let tmp = NFTsArr[i].token_id;
+                numArr.push(tmp);
+            }
+        }
+        for (let i = 0; i < NFTsArr.length; i++) {
+            if (NFTsArr[i].contract_type === "ERC1155") {
+                let tmpID = NFTsArr[i].token_id;
+                let tmpAmount = NFTsArr[i].amount;
+                numArr.push(tmpID, tmpAmount);
+            }
+        }
+    }
+
+    const handleMint = () => {
+        sortedAddArr();
+        mintBundle(walletAddress, addArr, numArr);
+    }
+
+    async function approveAllAssets(address, numbers) {
+        //setLoading(true);
+        var ERC20add = [];
+        
+        ERC20add = address.splice(0, numbers[1]);
+
+        for (let i = 0; i < ERC20add.length; i++) {
+            let count = 5;
+            let allowance = numbers[count];
+            const ops = {
+                contractAddress: ERC20add[i],
+                functionName: "approve",
+                //abi: [{ "inputs": [{ "internalType": "address", "name": "spender", "type": "address" }, { "internalType": "uint256", "name": "value", "type": "uint256" }], "name": "approve", "outputs": [], "stateMutability": "nonpayable", "type": "function" }],
+                abi: [{ "constant": false, "inputs": [{ "name": "spender", "type": "address" }, { "name": "amount", "type": "uint256" }], "name": "approve", "outputs": [{ "name": "", "type": "bool"}], "payable": false, "stateMutability": "nonpayable", "type": "function"}],
+                params: {
+                    spender: assemblyAddress,
+                    amount: allowance,
+                },
+            };
+            count++;
+    
+            await contractProcessor.fetch({
+                params: ops,
+                onSuccess: () => {
+                    console.log("ERC20 Approval Received");
+                    //setLoading(false);
+                    //setVisibility(false);
+                    //succApprove();
+                },
+                onError: (error) => {
+                    console.log(error);
+                    //setLoading(false);
+                    //failApprove();
+                },
+            }); 
+        }
+        
+        for (let i = 0; i < address.length; i++) {
+            const ops = {
+                contractAddress: address[i],
+                functionName: "setApprovalForAll",
+                abi: [{ "inputs": [{ "internalType": "address", "name": "operator", "type": "address" }, { "internalType": "bool", "name": "approved", "type": "bool" }], "name": "setApprovalForAll", "outputs": [], "stateMutability": "nonpayable", "type": "function" }],
+                params: {
+                    operator: assemblyAddress,
+                    approved: true
+                },
+            };
+
+            await contractProcessor.fetch({
+                params: ops,
+                onSuccess: () => {
+                    console.log("NFT Approval Received");
+                    //setLoading(false);
+                    //setVisibility(false);
+                    //succApprove();
+                },
+                onError: (error) => {
+                    console.log(error);
+                    //setLoading(false);
+                    //failApprove();
+                },
+            });
+        }
+    }
+
+    async function mintBundle(recipient, assetContracts, assetNumbers) {
+        const addressArr = cloneDeep(assetContracts);
+
+        await approveAllAssets(assetContracts, assetNumbers);
+
+        const ops = {
+            contractAddress: assemblyAddress,
+            functionName: mintFuntion,
+            abi: contractABIJson,
+            params: {
+                _to: recipient,
+                _addresses: addressArr,
+                _numbers: assetNumbers,
+            }
+        };
+
+        await contractProcessor.fetch({
+            params: ops,
+            onSuccess: () => {
+                alert("Bundle minted!")
+            },
+            onError: (error) => {
+                alert("Oops, something went wrong!");
+                console.log(error);
+            }
+        })
+    }
+
+
+    const showNFTModal = () => {
+        setIsNFTModalVisible(true);
+    };
+    const showAssetModal = () => {
+        setIsAssetModalVisible(true);
     };
 
-    const handleOk = () => {
-        //setModalText('The modal will be closed after two seconds');
+    const handleNFTOk = (selectedItems) => {
+        setNFTsArr(selectedItems)
         setConfirmLoading(true);
-        setTimeout(() => {
-            setIsModalVisible(false);
-            setConfirmLoading(false);
-        }, 2000);
+        setIsNFTModalVisible(false);
+        setConfirmLoading(false);
+    };
+    const handleAssetOk = (eth, selectedItems) => {
+        setETHAmount(eth)
+        setSelectedTokens(selectedItems)
+        setConfirmLoading(true);
+        setIsAssetModalVisible(false);
+        setConfirmLoading(false);
     };
 
-    const handleCancel = () => {
-        console.log('Clicked cancel button');
-        setIsModalVisible(false);
+    const handleNFTCancel = () => {
+        setIsNFTModalVisible(false);
+    };
+    const handleAssetCancel = () => {
+        setIsAssetModalVisible(false);
     };
 
     const handleChange = (field) => {
         return (e) => setProperties((properties) => ({ ...properties, [field]: e.target.value }));
-      };
+    };
 
-    const handleSubmit = (e) => {
-        //   e.preventDefault();
-        //   const nft = { url, title, body, author };
+    const onClickReset = () => {
+        setNFTsArr([]);
+        setETHAmount();
+        setSelectedTokens([]);
+        setaddArr([]);
+        setnumArr([]);
+        setERC20AddLength();
+        setERC721AddLength();
+        setERC1155AddLength();
+    }
 
-        //   fetch('http://localhost:8000/nfts/', {
-        //     method: 'POST',
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify(nft)
-        //   }).then(() => {
-        //     history.push('/');
-        //   })
+    const forDev = () => {
+        sortedAddArr();
+        console.log(addArr);
+        console.log(numArr);
     }
 
     return (
         <div style={styles.bundleMinter}>
             <h2 style={styles.h2}>Prepare your NFTs bundles:</h2>
-            <form onSubmit={handleSubmit}>
-
+            <div>
                 <div style={styles.container}>
-                    <label>Select some assets to bundle</label>
+                    <label>Select assets for your bundle</label>
                     <div>
-                        <Button type="primary" onClick={showModal}>Pick some NFTs</Button>
-                        <Modal
-                            title="Select the NFTs to pack"
-                            visible={isModalVisible}
-                            onOk={handleOk}
+                        <Button type="primary" style={{ margin: "30px" }} onClick={showNFTModal}>Pick Some NFTs</Button>
+                        <AssetModal
+                            handleNFTCancel={handleNFTCancel}
+                            isNFTModalVisible={isNFTModalVisible}
+                            handleNFTOk={handleNFTOk}
                             confirmLoading={confirmLoading}
-                            onCancel={handleCancel}
-                        >
-                            {/* <p>{modalText}</p> */}
-                            <AssetModal />
-                        </Modal>
+                        />
+                        <Button type="primary" style={{ margin: "30px" }} onClick={showAssetModal}>Pick Some Assets</Button>
+                        <ERC20Modal
+                            isAssetModalVisible={isAssetModalVisible}
+                            handleAssetOk={handleAssetOk}
+                            confirmLoading={confirmLoading}
+                            handleAssetCancel={handleAssetCancel}
+                        />
+                    </div>
+                    <div style={{ display: 'grid', gridTemplateColumns: "auto auto", color: 'white', fontSize: '16px' }}>
+                        <div>
+                            <p>NFTs to Bundle:</p>
+                            {NFTsArr && NFTsArr.length > 0 && NFTsArr.map((nftItem, key) => (
+                                <div style={{ margin: "15px", borderRadius: "8px", backgroundColor: "white", color: "black", opacity: "0.8" }}>
+                                    <p key={`${nftItem.token_id} - ${nftItem.contract_type}`}>{`NFT: ${nftItem.token_id} - ${nftItem.contract_type}`}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <div>
+                            <p>ETH to Bundle: </p>
+                            <p key={`${ethAmount}`} style={{ margin: "15px", borderRadius: "8px", backgroundColor: "white", color: "black", opacity: "0.8" }}>{ethAmount} {nativeName}</p>
+                            <div>
+                                <p style={{ marginTop: "30px" }}>Tokens to bundle:</p>
+                                {selectedTokens && selectedTokens.length > 0 && (
+                                    selectedTokens.map((selectedToken, key) => (
+                                        <div style={{ margin: "15px", borderRadius: "8px", backgroundColor: "white", color: "black", opacity: "0.8" }}>
+                                            <p key={`${selectedToken.currentToken.symbol} - ${selectedToken.value}`}>{`${selectedToken.currentToken.symbol}: ${selectedToken.value}`}</p>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div style={{ width: '100', display: 'flex', justifyContent: 'flex-end' }}>
+                        <Button type="primary" style={{ margin: "50px 30px 0px" }} onClick={onClickReset} danger>Reset</Button>
+                        <Button type="primary" style={{ margin: "50px 30px 0px" }} onClick={forDev} danger>console.log</Button>
                     </div>
                 </div>
 
                 <label style={styles.label}>Name</label>
-                <input
+                <Input
                     style={styles.input}
                     type="text"
                     required
                     value={bundleName}
                     onChange={(e) => setBundleName(e.target.value)}
                 />
-
                 <label style={styles.label}>Description</label>
                 <textarea
                     style={styles.textarea}
@@ -169,32 +403,23 @@ const PackMinter = () => {
                     value={bundleDescription}
                     onChange={(e) => setBundleDescription(e.target.value)}
                 ></textarea>
-
                 <label style={styles.label}>Properties</label>
-                <input
+                <Input
                     style={styles.input}
                     type="text"
                     value={properties.attribut}
                     onChange={handleChange("attribut")}
                 />
-                <input
+                <Input
                     style={styles.input}
                     type="text"
                     value={properties.value}
                     onChange={handleChange("value")}
                 />
-                {/* <label style={styles.label}>NFT author:</label>
-                <select
-                    style={styles.select}
-                    value={author}
-                    onChange={(e) => setAuthor(e.target.value)}
-                >
-                    <option value="ETH-Address">ETH Address</option>
-                    <option value="collection-name">Collection Name</option>
-                </select> */}
-                <button style={styles.mintButton}>Bundle All</button>
+                <button style={styles.mintButton} onClick={handleMint}>Bundle All</button>
                 <div> {bundleName} {bundleDescription} {properties.attribut} {properties.value} </div>
-            </form>
+
+            </div>
         </div>
     );
 }

@@ -33,7 +33,7 @@ function MoralisDappProvider({ children }) {
   );
 
   return (
-    <MoralisDappContext.Provider value={{ walletAddress, chainId, marketAddress, setMarketAddress, contractABI, setContractABI }}>
+    <MoralisDappContext.Provider value={{ walletAddress, chainId, assemblyAddress, setAssemblyAddress, marketAddress, setMarketAddress, assemblyABI, setAssemblyABI, contractABI, setContractABI }}>
       {children}
     </MoralisDappContext.Provider>
   );

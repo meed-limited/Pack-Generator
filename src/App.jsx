@@ -121,7 +121,7 @@ const App = ({ isServerInfo }) => {
           <Redirect to="/NFTMarketPlace" />
         </div>
       </Router>
-      <Footer style={{ textAlign: "center" }}>
+      {/* <Footer style={{ textAlign: "center" }}>
         <Text style={{ display: "block" }}>
           Lepricon Website | {" "}
           <a
@@ -132,7 +132,7 @@ const App = ({ isServerInfo }) => {
             Lepricon.io
           </a>
         </Text>
-      </Footer>
+      </Footer> */}
     </Layout>
   );
 };
@@ -140,11 +140,11 @@ const App = ({ isServerInfo }) => {
 export const Logo = () => (
   <div style={{ display: "flex" }}>
 
-    <svg xmlns="http://www.w3.org/2000/svg"
+    {/* <svg xmlns="http://www.w3.org/2000/svg"
       width="2in" height="1in"
       viewBox="0 0 1750 984">
       <path id="Chemin importé"
-        fill="none" stroke="black" stroke-width="1"
+        fill="black" stroke="black" strokeWidth="1"
         d="M 858.75,513.88
            C 858.75,513.88 858.75,592.65 858.75,592.65
              858.75,592.65 880.00,592.65 880.00,592.65
@@ -353,9 +353,8 @@ export const Logo = () => (
              1471.62,330.83 1469.50,326.08 1461.25,318.33
              1455.38,313.08 1452.50,311.33 1447.50,310.20
              1440.88,308.83 1439.88,308.70 1435.62,309.70 Z"
-        fill="black"
       />
-    </svg>
+    </svg> */}
 
   </div>
 );

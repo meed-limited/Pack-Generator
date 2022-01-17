@@ -229,6 +229,7 @@ function NFTBalance() {
         <Spin spinning={loading}>
           <img
             src={`${nftToSend?.image}`}
+            alt=""
             style={{
               width: "250px",
               margin: "auto",

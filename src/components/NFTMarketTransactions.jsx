@@ -75,7 +75,7 @@ function NFTMarketTransactions() {
       key: "item",
       render: (text, record) => (
         <Space size="middle">
-          <img src={getImage(record.collection, record.item)} style={{ width: "40px", borderRadius:"4px"}} />
+          <img src={getImage(record.collection, record.item)} alt="" style={{ width: "40px", borderRadius:"4px"}} />
           <span>#{record.item}</span>
         </Space>
       ),
@@ -151,29 +151,29 @@ function NFTMarketTransactions() {
 }
 
 export default NFTMarketTransactions;
-const columns = [
-  {
-    title: "Date",
-    dataIndex: "date",
-    key: "date",
-  },
-  {
-    title: "Item",
-    key: "item",
+// const columns = [
+//   {
+//     title: "Date",
+//     dataIndex: "date",
+//     key: "date",
+//   },
+//   {
+//     title: "Item",
+//     key: "item",
 
-  },
-  {
-    title: "Collection",
-    key: "collection",
-  },
-  {
-    title: "Transaction Status",
-    key: "tags",
-    dataIndex: "tags",
-  },
-  {
-    title: "Price",
-    key: "price",
-    dataIndex: "price",
-  }
-];
+//   },
+//   {
+//     title: "Collection",
+//     key: "collection",
+//   },
+//   {
+//     title: "Transaction Status",
+//     key: "tags",
+//     dataIndex: "tags",
+//   },
+//   {
+//     title: "Price",
+//     key: "price",
+//     dataIndex: "price",
+//   }
+// ];

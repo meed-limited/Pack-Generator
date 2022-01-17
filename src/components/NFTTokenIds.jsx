@@ -306,6 +306,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                 >
                   <img
                     src={nftToBuy?.image}
+                    alt=""
                     style={{
                       width: "250px",
                       borderRadius: "10px",
@@ -325,6 +326,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
           >
             <img
               src={nftToBuy?.image}
+              alt=""
               style={{
                 width: "250px",
                 margin: "auto",
