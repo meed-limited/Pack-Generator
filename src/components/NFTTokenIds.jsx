@@ -1,18 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { getNativeByChain } from "helpers/networks";
 import { getCollectionsByChain } from "helpers/collections";
-import {
-  useMoralis,
-  useMoralisQuery,
-  useNewMoralisObject,
-} from "react-moralis";
+import { useMoralis, useMoralisQuery, useNewMoralisObject } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Badge, Alert, Spin } from "antd";
 import { useNFTTokenIds } from "hooks/useNFTTokenIds";
-import {
-  FileSearchOutlined,
-  RightCircleOutlined,
-  ShoppingCartOutlined,
-} from "@ant-design/icons";
+import { FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { getExplorer } from "helpers/networks";
 import { useWeb3ExecuteFunction } from "react-moralis";
@@ -26,7 +18,7 @@ const styles = {
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "1000px",
-    gap: "10px",
+    gap: "10px"
   },
   banner: {
     display: "flex",
@@ -38,7 +30,7 @@ const styles = {
     height: "150px",
     marginBottom: "40px",
     paddingBottom: "20px",
-    borderBottom: "solid 1px #e3e3e3",
+    borderBottom: "solid 1px #e3e3e3"
   },
   logo: {
     height: "115px",
@@ -46,13 +38,13 @@ const styles = {
     borderRadius: "50%",
     // positon: "relative",
     // marginTop: "-80px",
-    border: "solid 4px white",
+    border: "solid 4px white"
   },
   text: {
     color: "#041836",
     fontSize: "27px",
-    fontWeight: "bold",
-  },
+    fontWeight: "bold"
+  }
 };
 
 function NFTTokenIds({ inputValue, setInputValue }) {
@@ -63,8 +55,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
   const [nftToBuy, setNftToBuy] = useState(null);
   const [loading, setLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
-  const { chainId, marketAddress, contractABI, walletAddress } =
-    useMoralisDapp();
+  const { chainId, marketAddress, contractABI, walletAddress } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
   const contractABIJson = JSON.parse(contractABI);
   const { Moralis } = useMoralis();
@@ -80,7 +71,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
       "tokenId",
       "seller",
       "owner",
-      "confirmed",
+      "confirmed"
     ])
   );
   const purchaseItemFunction = "createMarketSale";
@@ -97,9 +88,9 @@ function NFTTokenIds({ inputValue, setInputValue }) {
       abi: contractABIJson,
       params: {
         nftContract: nftToBuy.token_address,
-        itemId: itemID,
+        itemId: itemID
       },
-      msgValue: tokenPrice,
+      msgValue: tokenPrice
     };
 
     await contractProcessor.fetch({
@@ -114,7 +105,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
       onError: (error) => {
         setLoading(false);
         failPurchase();
-      },
+      }
     });
   }
 
@@ -128,7 +119,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
     let secondsToGo = 5;
     const modal = Modal.success({
       title: "Success!",
-      content: `You have purchased this NFT`,
+      content: `You have purchased this NFT`
     });
     setTimeout(() => {
       modal.destroy();
@@ -139,7 +130,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
     let secondsToGo = 5;
     const modal = Modal.error({
       title: "Error!",
-      content: `There was a problem when purchasing this NFT`,
+      content: `There was a problem when purchasing this NFT`
     });
     setTimeout(() => {
       modal.destroy();
@@ -160,10 +151,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
   const getMarketItem = (nft) => {
     const result = fetchMarketItems?.find(
       (e) =>
-        e.nftContract === nft?.token_address &&
-        e.tokenId === nft?.token_id &&
-        e.sold === false &&
-        e.confirmed === true
+        e.nftContract === nft?.token_address && e.tokenId === nft?.token_id && e.sold === false && e.confirmed === true
     );
     return result;
   };
@@ -174,8 +162,8 @@ function NFTTokenIds({ inputValue, setInputValue }) {
         {contractABIJson.noContractDeployed && (
           <>
             <Alert
-              message="No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file"
-              type="error"
+              message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'
+              type='error'
             />
             <div style={{ marginBottom: "10px" }}></div>
           </>
@@ -185,8 +173,8 @@ function NFTTokenIds({ inputValue, setInputValue }) {
             {!fetchSuccess && (
               <>
                 <Alert
-                  message="Unable to fetch all NFT metadata... We are searching for a solution, please try again later!"
-                  type="warning"
+                  message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
+                  type='warning'
                 />
                 <div style={{ marginBottom: "10px" }}></div>
               </>
@@ -196,7 +184,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                 preview={false}
                 src={NFTTokenIds[0]?.image || "error"}
                 fallback={fallbackImg}
-                alt=""
+                alt=''
                 style={styles.logo}
               />
               <div style={styles.text}>
@@ -206,7 +194,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                     style={{
                       fontSize: "15px",
                       color: "#9c9c9c",
-                      fontWeight: "normal",
+                      fontWeight: "normal"
                     }}
                   >
                     Collection Size: {`${totalNFTs}`}
@@ -223,11 +211,9 @@ function NFTTokenIds({ inputValue, setInputValue }) {
               <Card
                 hoverable
                 actions={[
-                  <Tooltip title="View Collection">
-                    <RightCircleOutlined
-                      onClick={() => setInputValue(nft?.addrs)}
-                    />
-                  </Tooltip>,
+                  <Tooltip title='View Collection'>
+                    <RightCircleOutlined onClick={() => setInputValue(nft?.addrs)} />
+                  </Tooltip>
                 ]}
                 style={{ width: 240, border: "2px solid #e7eaf3" }}
                 cover={
@@ -235,7 +221,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                     preview={false}
                     src={nft?.image || "error"}
                     fallback={fallbackImg}
-                    alt=""
+                    alt=''
                     style={{ height: "240px" }}
                   />
                 }
@@ -250,19 +236,14 @@ function NFTTokenIds({ inputValue, setInputValue }) {
               <Card
                 hoverable
                 actions={[
-                  <Tooltip title="View On Blockexplorer">
+                  <Tooltip title='View On Blockexplorer'>
                     <FileSearchOutlined
-                      onClick={() =>
-                        window.open(
-                          `${getExplorer(chainId)}address/${nft.token_address}`,
-                          "_blank"
-                        )
-                      }
+                      onClick={() => window.open(`${getExplorer(chainId)}address/${nft.token_address}`, "_blank")}
                     />
                   </Tooltip>,
-                  <Tooltip title="Buy NFT">
+                  <Tooltip title='Buy NFT'>
                     <ShoppingCartOutlined onClick={() => handleBuyClick(nft)} />
-                  </Tooltip>,
+                  </Tooltip>
                 ]}
                 style={{ width: 240, border: "2px solid #e7eaf3" }}
                 cover={
@@ -270,15 +251,13 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                     preview={false}
                     src={nft.image || "error"}
                     fallback={fallbackImg}
-                    alt=""
+                    alt=''
                     style={{ height: "240px" }}
                   />
                 }
                 key={index}
               >
-                {getMarketItem(nft) && (
-                  <Badge.Ribbon text="Buy Now" color="green"></Badge.Ribbon>
-                )}
+                {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
                 <Meta title={nft.name} description={`#${nft.token_id}`} />
               </Card>
             ))}
@@ -289,28 +268,23 @@ function NFTTokenIds({ inputValue, setInputValue }) {
             visible={visible}
             onCancel={() => setVisibility(false)}
             onOk={() => purchase()}
-            okText="Buy"
+            okText='Buy'
           >
             <Spin spinning={loading}>
               <div
                 style={{
                   width: "250px",
-                  margin: "auto",
+                  margin: "auto"
                 }}
               >
-                <Badge.Ribbon
-                  color="green"
-                  text={`${
-                    getMarketItem(nftToBuy).price / ("1e" + 18)
-                  } ${nativeName}`}
-                >
+                <Badge.Ribbon color='green' text={`${getMarketItem(nftToBuy).price / ("1e" + 18)} ${nativeName}`}>
                   <img
                     src={nftToBuy?.image}
-                    alt=""
+                    alt=''
                     style={{
                       width: "250px",
                       borderRadius: "10px",
-                      marginBottom: "15px",
+                      marginBottom: "15px"
                     }}
                   />
                 </Badge.Ribbon>
@@ -326,18 +300,15 @@ function NFTTokenIds({ inputValue, setInputValue }) {
           >
             <img
               src={nftToBuy?.image}
-              alt=""
+              alt=''
               style={{
                 width: "250px",
                 margin: "auto",
                 borderRadius: "10px",
-                marginBottom: "15px",
+                marginBottom: "15px"
               }}
             />
-            <Alert
-              message="This NFT is currently not for sale"
-              type="warning"
-            />
+            <Alert message='This NFT is currently not for sale' type='warning' />
           </Modal>
         )}
       </div>
