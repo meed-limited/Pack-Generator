@@ -5,6 +5,7 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { useWeb3ExecuteFunction } from "react-moralis";
 import AssetModal from "./AssetModal";
 import { getEllipsisTxt } from "helpers/formatters";
+import { openNotification } from "../Notification";
 
 const styles = {
   h2: {
@@ -64,7 +65,13 @@ const Claim = () => {
   };
   const handleNFTOk = (bundle) => {
     setSelectedBundle(bundle);
-    setBundleId(bundle[0].token_id);
+
+    if (bundle && bundle.length > 0) {
+      setBundleId(bundle[0].token_id);
+    } else {
+      setBundleId("");
+    }
+    console.log(selectedBundle);
     setIsNFTModalVisible(false);
     setConfirmLoading(false);
   };
@@ -74,6 +81,7 @@ const Claim = () => {
   };
 
   async function claimBundle() {
+    console.log(bundleId);
     const data = await getBundle(bundleId);
     console.log(data);
 
@@ -93,10 +101,14 @@ const Claim = () => {
     await contractProcessor.fetch({
       params: ops,
       onSuccess: () => {
-        alert("Bundle unpacked!");
+        let title = "Bundle unpacked!";
+        let msg = "Your bundle has been succesfully unpacked!";
+        openNotification("success", title, msg);
       },
       onError: (error) => {
-        alert("Oops, something went wrong!");
+        let title = "Unexpecte error";
+        let msg = "Oops, something went wrong while unpacking your bundle!";
+        openNotification("error", title, msg);
         console.log(error);
       }
     });
@@ -107,15 +119,15 @@ const Claim = () => {
       style={{
         margin: "auto",
         textAlign: "center",
-        width: "60%"
+        width: "80%"
       }}
     >
       <Divider />
       <h2 style={styles.h2}>Unpack Your Bundle</h2>
       <div style={styles.container}>
         <label>Select the bundle to unpack:</label>
-        <div style={{ display: "grid" }}>
-          <Button type='primary' style={{ margin: "30px" }} onClick={showNFTModal}>
+        <div style={{ display: "grid", margin: "auto", width: "70%", marginTop: "30px" }}>
+          <Button type='primary' style={{ margin: "auto", width: "90%" }} onClick={showNFTModal}>
             Pick an NFT
           </Button>
           <AssetModal
@@ -124,42 +136,34 @@ const Claim = () => {
             handleNFTOk={handleNFTOk}
             confirmLoading={confirmLoading}
           />
-          <div
-            style={{
-              margin: "auto",
-              marginBottom: "30px",
-              borderRadius: "8px",
-              backgroundColor: "white",
-              color: "black",
-              opacity: "0.8",
-              fontSize: "16px",
-              width: "40%"
-            }}
-          >
-            {selectedBundle && bundleId && `Bundles Id: ${getEllipsisTxt(bundleId, 5)}`}
-            {/* <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                textAlign: "right",
-              }}
-            >
-              <Button
-                type="primary"
-                icon={<CloseOutlined />}
-                size="large"
-                danger
-              />
-            </div> */}
-          </div>
 
-          <span style={{ marginBottom: "30px" }}>or</span>
+          <span style={{ marginBottom: "10px" }}>or</span>
           <Input
-            style={{ textAlign: "center", width: "92%", margin: "auto" }}
+            style={{ textAlign: "center", width: "90%", margin: "auto" }}
             placeholder='Enter bundle Id'
             type='number'
+            value={bundleId}
             onChange={(e) => setBundleId(e.target.value)}
           />
+
+          {/* {selectedBundle && selectedBundle[0] != undefined && ( */}
+          {selectedBundle && selectedBundle.length > 0 && (
+            <div
+              style={{
+                margin: "auto",
+                marginTop: "50px",
+
+                borderRadius: "8px",
+                backgroundColor: "white",
+                color: "black",
+                opacity: "0.8",
+                fontSize: "16px",
+                width: "40%"
+              }}
+            >
+              {`Bundles Id: ${getEllipsisTxt(bundleId, 5)}`}
+            </div>
+          )}
         </div>
       </div>
       <Button style={styles.claimButton} onClick={handleClaim}>

@@ -18,7 +18,8 @@ import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
 import NFTMarketTransactions from "components/NFTMarketTransactions";
-import PackMinter from "components/packMinter";
+import PackMinter from "components/PackMinter";
+import BatchMinter from "components/BatchMinter";
 const { Header, Footer } = Layout;
 
 const styles = {
@@ -82,6 +83,9 @@ const App = ({ isServerInfo }) => {
             }}
             defaultSelectedKeys={["nftMarket"]}
           >
+            <Menu.Item key="batchMinter">
+              <NavLink to="/batchMinter">Batch Minter</NavLink>
+            </Menu.Item>
             <Menu.Item key="packMinter">
               <NavLink to="/packMinter">Bundles Minter</NavLink>
             </Menu.Item>
@@ -105,6 +109,9 @@ const App = ({ isServerInfo }) => {
         </Header>
         <div style={styles.content}>
           <Switch>
+          <Route path="/batchMinter">
+              <BatchMinter />
+            </Route>
             <Route path="/packMinter">
               <PackMinter />
             </Route>
@@ -121,7 +128,7 @@ const App = ({ isServerInfo }) => {
           <Redirect to="/NFTMarketPlace" />
         </div>
       </Router>
-      {/* <Footer style={{ textAlign: "center" }}>
+      <Footer style={{ textAlign: "center" }}>
         <Text style={{ display: "block" }}>
           Lepricon Website | {" "}
           <a
@@ -132,7 +139,7 @@ const App = ({ isServerInfo }) => {
             Lepricon.io
           </a>
         </Text>
-      </Footer> */}
+      </Footer>
     </Layout>
   );
 };
@@ -140,7 +147,7 @@ const App = ({ isServerInfo }) => {
 export const Logo = () => (
   <div style={{ display: "flex" }}>
 
-    {/* <svg xmlns="http://www.w3.org/2000/svg"
+    <svg xmlns="http://www.w3.org/2000/svg"
       width="2in" height="1in"
       viewBox="0 0 1750 984">
       <path id="Chemin importé"
@@ -354,7 +361,7 @@ export const Logo = () => (
              1455.38,313.08 1452.50,311.33 1447.50,310.20
              1440.88,308.83 1439.88,308.70 1435.62,309.70 Z"
       />
-    </svg> */}
+    </svg>
 
   </div>
 );

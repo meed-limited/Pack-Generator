@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+/* eslint-disable no-unused-vars */
 import { useMoralis, useMoralisQuery } from "react-moralis";
 import { Card, Button, Input, Tabs, Divider } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
@@ -9,6 +10,7 @@ import ERC20Modal from "./Minter/ERC20Modal";
 import cloneDeep from "lodash/cloneDeep";
 import { getExplorer } from "helpers/networks";
 import Claim from "./Minter/Claim";
+import { openNotification } from "./Notification";
 
 const { TabPane } = Tabs;
 
@@ -61,6 +63,7 @@ const styles = {
     display: "block"
   },
   mintButton: {
+    marginTop: "30px",
     background: "#f1356d",
     color: "#fff",
     border: "0",
@@ -92,9 +95,7 @@ const PackMinter = () => {
   const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
   const [isAssetModalVisible, setIsAssetModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [bundleName, setBundleName] = useState("");
-  const [bundleDescription, setBundleDescription] = useState("");
-  const [properties, setProperties] = useState({ attribut: "", value: "" });
+
   const [NFTsArr, setNFTsArr] = useState([]);
   const [ethAmount, setETHAmount] = useState();
   const [selectedTokens, setSelectedTokens] = useState([]);
@@ -126,7 +127,7 @@ const PackMinter = () => {
 
     // ERC20 addresses
     for (let i = 0; i < selectedTokens.length; i++) {
-      let tmp = selectedTokens[i].currentToken;
+      let tmp = selectedTokens[i].data;
       ERC20Addr.push(tmp.token_address);
     }
     setERC20AddLength(ERC20Addr.length);
@@ -209,13 +210,16 @@ const PackMinter = () => {
       await contractProcessor.fetch({
         params: ops,
         onSuccess: () => {
+          let title = "ERC20 Approval Set";
+          let msg = "The allowance for your ERC20 token has been set.";
+          openNotification("success", title, msg);
           console.log("ERC20 Approval Received");
-          //setVisibility(false);
-          //succApprove();
         },
         onError: (error) => {
+          let title = "ERC20 Approval denied";
+          let msg = "Something went wrong, the allowance hasn't been set.";
+          openNotification("error", title, msg);
           console.log(error);
-          //failApprove();
         }
       });
     }
@@ -245,13 +249,16 @@ const PackMinter = () => {
       await contractProcessor.fetch({
         params: ops,
         onSuccess: () => {
-          console.log("NFT Approval Received");
-          //setVisibility(false);
-          //succApprove();
+          let title = "NFT Approval Set";
+          let msg = "The allowance for your NFTs collection has been set.";
+          openNotification("success", title, msg);
+          console.log("NFTs Approval set");
         },
         onError: (error) => {
+          let title = "NFTs Approval denied";
+          let msg = "Something went wrong, the allowance hasn't been set.";
+          openNotification("error", title, msg);
           console.log(error);
-          //failApprove();
         }
       });
     }
@@ -275,7 +282,9 @@ const PackMinter = () => {
     await contractProcessor.fetch({
       params: ops,
       onSuccess: () => {
-        alert("Bundle minted!");
+        let title = "Bundle created!";
+        let msg = "Your bundle has been succesfully created!<br/>Open in the explorer";
+        openNotification("success", title, msg);
       },
       onError: (error) => {
         alert("Oops, something went wrong!");
@@ -292,6 +301,7 @@ const PackMinter = () => {
   };
 
   const handleNFTOk = (selectedItems) => {
+    console.log(selectedItems);
     setNFTsArr(selectedItems);
     setConfirmLoading(true);
     setIsNFTModalVisible(false);
@@ -312,14 +322,6 @@ const PackMinter = () => {
     setIsAssetModalVisible(false);
   };
 
-  const handleChange = (field) => {
-    return (e) =>
-      setProperties((properties) => ({
-        ...properties,
-        [field]: e.target.value
-      }));
-  };
-
   const onClickReset = () => {
     setNFTsArr([]);
     setETHAmount();
@@ -338,7 +340,14 @@ const PackMinter = () => {
   };
 
   return (
-    <div className='card-container' style={{ width: "-webkit-fill-available" }}>
+    // <div className='card-container' style={{ width: "-webkit-fill-available" }}>
+    <div
+      style={{
+        margin: "auto",
+        textAlign: "center",
+        width: "80%"
+      }}
+    >
       <Tabs centered type='card'>
         <TabPane tab='Bundle Minter' key='1'>
           <Divider />
@@ -388,10 +397,9 @@ const PackMinter = () => {
                             color: "black",
                             opacity: "0.8"
                           }}
+                          key={`${nftItem.token_id} - ${nftItem.contract_type}`}
                         >
-                          <p
-                            key={`${nftItem.token_id} - ${nftItem.contract_type}`}
-                          >{`NFT: ${nftItem.token_id} - ${nftItem.contract_type}`}</p>
+                          <p>{`NFT: ${nftItem.token_id} - ${nftItem.contract_type}`}</p>
                         </div>
                       ))}
                   </div>
@@ -425,10 +433,9 @@ const PackMinter = () => {
                               color: "black",
                               opacity: "0.8"
                             }}
+                            key={`${selectedToken.data.symbol} - ${selectedToken.value}`}
                           >
-                            <p
-                              key={`${selectedToken.currentToken.symbol} - ${selectedToken.value}`}
-                            >{`${selectedToken.currentToken.symbol}: ${selectedToken.value}`}</p>
+                            <p>{`${selectedToken.data.symbol}: ${selectedToken.value}`}</p>
                           </div>
                         ))}
                     </div>
@@ -450,31 +457,9 @@ const PackMinter = () => {
                 </div>
               </div>
 
-              <label style={styles.label}>Name</label>
-              <Input
-                style={styles.input}
-                type='text'
-                required
-                value={bundleName}
-                onChange={(e) => setBundleName(e.target.value)}
-              />
-              <label style={styles.label}>Description</label>
-              <textarea
-                style={styles.textarea}
-                required
-                value={bundleDescription}
-                onChange={(e) => setBundleDescription(e.target.value)}
-              ></textarea>
-              <label style={styles.label}>Properties</label>
-              <Input style={styles.input} type='text' value={properties.attribut} onChange={handleChange("attribut")} />
-              <Input style={styles.input} type='text' value={properties.value} onChange={handleChange("value")} />
               <button style={styles.mintButton} onClick={handleMint}>
                 Bundle All
               </button>
-              <div>
-                {" "}
-                {bundleName} {bundleDescription} {properties.attribut} {properties.value}{" "}
-              </div>
             </div>
           </div>
         </TabPane>

@@ -12,29 +12,23 @@ export default function AssetSelector({ getAsset, style }) {
   }
 
   return (
-    <Select size="large" style={style} onChange={handleChange}>
+    <Select size='large' style={style} onChange={handleChange}>
       {assets &&
         assets.map((item, key) => (
-          <Select.Option
-            value={item["token_address"]}
-            key={item["token_address"]}
-          >
+          <Select.Option value={item["token_address"]} key={item["token_address"]}>
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 width: "100%",
-                gap: "8px",
+                gap: "8px"
               }}
             >
               <Image
-                src={
-                  item.logo ||
-                  "https://etherscan.io/images/main/empty-token.png"
-                }
-                alt="nologo"
-                width="24px"
-                height="24px"
+                src={item.logo || "https://etherscan.io/images/main/empty-token.png"}
+                alt='nologo'
+                width='24px'
+                height='24px'
                 preview={false}
                 style={{ borderRadius: "15px" }}
               />
@@ -42,18 +36,12 @@ export default function AssetSelector({ getAsset, style }) {
                 style={{
                   display: "flex",
                   justifyContent: "space-between",
-                  width: "90%",
+                  width: "90%"
                 }}
               >
                 <p>{item.symbol}</p>
                 <p style={{ alignSelf: "right" }}>
-                  (
-                  {parseFloat(
-                    Moralis.Units.FromWei(item.balance, item.decimals).toFixed(
-                      6
-                    )
-                  )}
-                  )
+                  ({parseFloat(Moralis.Units.FromWei(item.balance, item.decimals).toFixed(6))})
                 </p>
               </div>
             </div>

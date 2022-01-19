@@ -26,7 +26,7 @@ module.exports = {
         new HDWalletProvider(
           mnemonic,
           `https://speedy-nodes-nyc.moralis.io/10779dfa6be84b2347366672/polygon/mumbai/archive`
-          // `https://speedy-nodes-nyc.moralis.io/${API_KEY}/polygon/mumbai${process.env.ARCHIVE === true ? "/archive" : ""}`
+          //`https://speedy-nodes-nyc.moralis.io/${API_KEY}/polygon/mumbai/archive`
         ),
       network_id: 80001,
       confirmations: 2,
