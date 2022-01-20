@@ -108,30 +108,28 @@ const PackMinter = () => {
   );
 
   /*Sorting arrays before feeding contract*/
-  const [addArr, setaddArr] = useState([]);
-  const [numArr, setnumArr] = useState([]);
-  const [ERC20AddLength, setERC20AddLength] = useState();
-  const [ERC721AddLength, setERC721AddLength] = useState();
-  const [ERC1155AddLength, setERC1155AddLength] = useState();
+  const [addArr, setAddArr] = useState([]);
+  const [numArr, setNumArr] = useState([]);
 
   const sortedAddArr = () => {
-    setaddArr([]);
-    setnumArr([]);
+    setAddArr([]);
+    setNumArr([]);
     var addr = [];
+    var num = [];
     var ERC20Addr = [];
     var ERC721Addr = [];
     var ERC1155Addr = [];
 
     let eth = (ethAmount * ("1e" + 18)).toString();
-    numArr.push(eth);
+    num.push(eth);
+    //setNumArr(num.push(eth));
 
     // ERC20 addresses
     for (let i = 0; i < selectedTokens.length; i++) {
       let tmp = selectedTokens[i].data;
       ERC20Addr.push(tmp.token_address);
     }
-    setERC20AddLength(ERC20Addr.length);
-    numArr.push(ERC20AddLength);
+    num.push(ERC20Addr.length);
 
     // ERC721 addresses
     for (let i = 0; i < NFTsArr.length; i++) {
@@ -139,8 +137,7 @@ const PackMinter = () => {
         ERC721Addr.push(NFTsArr[i].token_address);
       }
     }
-    setERC721AddLength(ERC721Addr.length);
-    numArr.push(ERC721AddLength);
+    num.push(ERC721Addr.length);
 
     // ERC1155 addresses
     for (let i = 0; i < NFTsArr.length; i++) {
@@ -148,27 +145,27 @@ const PackMinter = () => {
         ERC1155Addr.push(NFTsArr[i].token_address);
       }
     }
-    setERC1155AddLength(ERC1155Addr.length);
-    numArr.push(ERC1155AddLength);
-    setaddArr(addr.concat(ERC20Addr, ERC721Addr, ERC1155Addr));
+    num.push(ERC1155Addr.length);
+    setAddArr(addr.concat(ERC20Addr, ERC721Addr, ERC1155Addr));
 
     for (let i = 0; i < selectedTokens.length; i++) {
       let tmp = (selectedTokens[i].value * ("1e" + 18)).toString();
-      numArr.push(tmp);
+      num.push(tmp);
     }
     for (let i = 0; i < NFTsArr.length; i++) {
       if (NFTsArr[i].contract_type === "ERC721") {
         let tmp = NFTsArr[i].token_id;
-        numArr.push(tmp);
+        num.push(tmp);
       }
     }
     for (let i = 0; i < NFTsArr.length; i++) {
       if (NFTsArr[i].contract_type === "ERC1155") {
         let tmpID = NFTsArr[i].token_id;
         let tmpAmount = NFTsArr[i].amount;
-        numArr.push(tmpID, tmpAmount);
+        num.push(tmpID, tmpAmount);
       }
     }
+    setNumArr(num);
   };
 
   const handleMint = () => {
@@ -176,13 +173,15 @@ const PackMinter = () => {
     mintBundle(addArr, numArr);
   };
 
-  async function approveAllAssets(address, numbers) {
+  function approveAllAssets(address, numbers) {
     var ERC20add = [];
+    var count = 4;
     ERC20add = address.splice(0, numbers[1]);
 
     for (let i = 0; i < ERC20add.length; i++) {
-      let count = 5;
       let allowance = numbers[count];
+      // let currentAllowance = await checkERC20Approval(ERC20add[i]); //Added to check approval
+      // if (currentAllowance < neededAllowance) {
       const ops = {
         contractAddress: ERC20add[i],
         functionName: "approve",
@@ -205,13 +204,12 @@ const PackMinter = () => {
           amount: allowance
         }
       };
-      count++;
 
-      await contractProcessor.fetch({
+      contractProcessor.fetch({
         params: ops,
         onSuccess: () => {
           let title = "ERC20 Approval Set";
-          let msg = "The allowance for your ERC20 token has been set.";
+          let msg = `The allowance of your ERC20 token has been set.`;
           openNotification("success", title, msg);
           console.log("ERC20 Approval Received");
         },
@@ -222,17 +220,30 @@ const PackMinter = () => {
           console.log(error);
         }
       });
+      count++;
+
+      // }
     }
 
     for (let i = 0; i < address.length; i++) {
+      // let isNFTApproved = checkNFTApproval(address[i]);
+      // if (!isNFTApproved) {
       const ops = {
         contractAddress: address[i],
         functionName: "setApprovalForAll",
         abi: [
           {
             inputs: [
-              { internalType: "address", name: "operator", type: "address" },
-              { internalType: "bool", name: "approved", type: "bool" }
+              {
+                internalType: "address",
+                name: "operator",
+                type: "address"
+              },
+              {
+                internalType: "bool",
+                name: "_approved",
+                type: "bool"
+              }
             ],
             name: "setApprovalForAll",
             outputs: [],
@@ -242,11 +253,11 @@ const PackMinter = () => {
         ],
         params: {
           operator: assemblyAddress,
-          approved: true
+          _approved: true
         }
       };
 
-      await contractProcessor.fetch({
+      contractProcessor.fetch({
         params: ops,
         onSuccess: () => {
           let title = "NFT Approval Set";
@@ -261,8 +272,102 @@ const PackMinter = () => {
           console.log(error);
         }
       });
+      // }
     }
   }
+
+  // async function checkERC20Approval(ERC20) {
+  //   const ops = {
+  //     contractAddress: ERC20,
+  //     functionName: "allowance",
+  //     abi: [
+  //       {
+  //         inputs: [
+  //           {
+  //             internalType: "address",
+  //             name: "owner",
+  //             type: "address"
+  //           },
+  //           {
+  //             internalType: "address",
+  //             name: "spender",
+  //             type: "address"
+  //           }
+  //         ],
+  //         name: "allowance",
+  //         outputs: [
+  //           {
+  //             internalType: "uint256",
+  //             name: "",
+  //             type: "uint256"
+  //           }
+  //         ],
+  //         stateMutability: "view",
+  //         type: "function"
+  //       }
+  //     ],
+  //     params: {
+  //       owner: walletAddress,
+  //       spender: assemblyAddress
+  //     }
+  //   };
+
+  //   await contractProcessor.fetch({
+  //     params: ops,
+  //     onSuccess: () => {},
+  //     onError: (error) => {
+  //       console.log(error);
+  //     }
+  //   });
+  // }
+
+  // async function checkNFTApproval(NFTaddress) {
+  //   const ops = {
+  //     contractAddress: NFTaddress,
+  //     functionName: "isApprovedForAll",
+  //     abi: [
+  //       {
+  //         inputs: [
+  //           {
+  //             internalType: "address",
+  //             name: "owner",
+  //             type: "address"
+  //           },
+  //           {
+  //             internalType: "address",
+  //             name: "operator",
+  //             type: "address"
+  //           }
+  //         ],
+  //         name: "isApprovedForAll",
+  //         outputs: [
+  //           {
+  //             internalType: "bool",
+  //             name: "",
+  //             type: "bool"
+  //           }
+  //         ],
+  //         stateMutability: "view",
+  //         type: "function"
+  //       }
+  //     ],
+  //     params: {
+  //       owner: walletAddress,
+  //       operator: assemblyAddress
+  //     }
+  //   };
+
+  //   await contractProcessor.fetch({
+  //     params: ops,
+  //     onSuccess: () => {
+  //       return true;
+  //     },
+  //     onError: (error) => {
+  //       console.log(error);
+  //       return false;
+  //     }
+  //   });
+  // }
 
   async function mintBundle(assetContracts, assetNumbers) {
     const addressArr = cloneDeep(assetContracts);
@@ -287,7 +392,9 @@ const PackMinter = () => {
         openNotification("success", title, msg);
       },
       onError: (error) => {
-        alert("Oops, something went wrong!");
+        let title = "Unexpected error";
+        let msg = "Oops, something went wrong while creating your bundle!";
+        openNotification("error", title, msg);
         console.log(error);
       }
     });
@@ -326,11 +433,8 @@ const PackMinter = () => {
     setNFTsArr([]);
     setETHAmount();
     setSelectedTokens([]);
-    setaddArr([]);
-    setnumArr([]);
-    setERC20AddLength();
-    setERC721AddLength();
-    setERC1155AddLength();
+    setAddArr([]);
+    setNumArr([]);
   };
 
   const forDev = () => {
@@ -340,7 +444,6 @@ const PackMinter = () => {
   };
 
   return (
-    // <div className='card-container' style={{ width: "-webkit-fill-available" }}>
     <div
       style={{
         margin: "auto",
@@ -356,7 +459,7 @@ const PackMinter = () => {
             <div>
               <div style={styles.container}>
                 <label>Select all the assets to bundle:</label>
-                <div>
+                <div style={{ display: "grid", gridTemplateColumns: "auto auto" }}>
                   <Button type='primary' style={{ margin: "30px" }} onClick={showNFTModal}>
                     Pick Some NFTs
                   </Button>
@@ -456,11 +559,11 @@ const PackMinter = () => {
                   </Button>
                 </div>
               </div>
-
-              <button style={styles.mintButton} onClick={handleMint}>
-                Bundle All
-              </button>
             </div>
+
+            <button style={styles.mintButton} onClick={handleMint}>
+              Bundle All
+            </button>
           </div>
         </TabPane>
         <TabPane tab='Claim Bundle' key='2'>

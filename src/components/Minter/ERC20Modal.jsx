@@ -9,26 +9,31 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
   const [ethAmount, setEthAmount] = useState(0);
   const [ERC20Tokens, setERC20Tokens] = useState([]);
   const [currentToken, setCurrentToken] = useState();
-  const [currentTokenMax, setCurrentTokenMax] = useState();
   const { balance, nativeName } = useNativeBalance();
 
   useEffect(() => {
     if (isAssetModalVisible) {
       setEthAmount(0);
       setERC20Tokens([]);
-      setCurrentToken();
+      setCurrentToken({ ...currentToken, value: 0 });
     }
   }, [isAssetModalVisible]);
-
-  //   // const max = (token.balance / ("1e" + 18)).toString();
-  //   // setCurrentTokenMax(max);
 
   const onChangeToken = (token) => {
     setCurrentToken({ ...currentToken, data: token });
   };
 
+
+  /// Todo: fix bugs in asset selector 
   const onChangeERC20Amount = (value) => {
-    setCurrentToken({ ...currentToken, value });
+    const max = (currentToken.data.balance / ("1e" + 18)).toString();
+    if (value <= 0) {
+      setCurrentToken({ ...currentToken, value: 0 });
+    } else if (value > max) {
+      setCurrentToken({ ...currentToken, value: max });
+    } else {
+      setCurrentToken({ ...currentToken, value });
+    }
   };
 
   const handleAddToken = () => {

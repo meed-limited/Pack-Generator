@@ -106,7 +106,7 @@ const Claim = () => {
         openNotification("success", title, msg);
       },
       onError: (error) => {
-        let title = "Unexpecte error";
+        let title = "Unexpected error";
         let msg = "Oops, something went wrong while unpacking your bundle!";
         openNotification("error", title, msg);
         console.log(error);
