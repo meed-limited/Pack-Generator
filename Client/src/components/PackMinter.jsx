@@ -414,7 +414,6 @@ const PackMinter = () => {
 
       var arrOfArr = [];
       const numOfERC20 = batchNumbers[1];
-      const nextId = parseInt(numOfNft);
       var firstNFTIndex = 4 + parseInt(numOfERC20);
 
       var k = 0;
@@ -436,6 +435,10 @@ const PackMinter = () => {
       }
     }
     console.log(arrOfArr);
+    for (let i = 0; i < bundleNumber; i++) {
+      multipleBundleMint(batchAddress, arrOfArr[i], i);
+    }
+    
   }
 
   const forDev = () => {

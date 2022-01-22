@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { getNativeByChain } from "helpers/networks";
 import { getCollectionsByChain } from "helpers/collections";
-import { useMoralis, useMoralisQuery, useNewMoralisObject } from "react-moralis";
+import { useMoralis, useMoralisQuery } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Badge, Alert, Spin } from "antd";
 import { useNFTTokenIds } from "hooks/useNFTTokenIds";
 import { FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
