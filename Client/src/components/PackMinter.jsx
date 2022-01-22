@@ -99,9 +99,12 @@ const PackMinter = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
   const [NFTsArr, setNFTsArr] = useState([]);
-  const [ethAmount, setETHAmount] = useState();
+  const [ethAmount, setETHAmount] = useState(0);
   const [ERC721Number, setERC721Number] = useState(0);
   const [ERC1155Number, setERC1155Number] = useState(0);
+  const [numOfNft, setNumOfNft] = useState(0);
+  const [fileSubmited, setFileSubmited] = useState(false);
+  const [content, setContent] = useState();
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [batchAddress, setBatchaddress] = useState([]);
   const [batchNumbers, setBatchNumbers] = useState([]);
@@ -304,8 +307,6 @@ const PackMinter = () => {
   }
 
   async function sortBatchArr() {
-    const content = await fetchIpfs();
-    console.log(content);
     var assetsAddresses = [];
     var assetsNumbers = [];
 
@@ -323,7 +324,7 @@ const PackMinter = () => {
     assetsNumbers.push(assetsAddresses.length);
 
     // Add NFT addresses (per bundle)
-    const numOfNft = parseInt(ERC721Number) + parseInt(ERC1155Number);
+    setNumOfNft(parseInt(ERC721Number) + parseInt(ERC1155Number));
 
     if (content.length > 0) {
       if (ERC721Number > 0) {
@@ -375,8 +376,6 @@ const PackMinter = () => {
     }
     setBatchaddress(assetsAddresses);
     setBatchNumbers(assetsNumbers);
-    console.log(assetsAddresses);
-    console.log(assetsNumbers);
   }
 
   async function multipleApproveAll(address, numbers) {
@@ -396,30 +395,47 @@ const PackMinter = () => {
   }
 
   async function batchBundle() {
-    sortBatchArr();
-    //await multipleApproveAll(batchAddress, batchNumbers);
+    if (!content || content.length === 0) {
+      try {
+        const fetchIpfsFile = await fetchIpfs();
+        setContent(fetchIpfsFile);
+        console.log(content);
+      } catch (err) {
+        let title = "No JSON submitted";
+        let msg = "Oops, it seems that you forgot to submit your JSON file!";
+        openNotification("error", title, msg);
+        console.log(err);
+      }
+    } else {
+      await sortBatchArr();
+      console.log(content);
+      console.log(batchNumbers);
+      //await multipleApproveAll(batchAddress, batchNumbers);
 
-    var arrOfArr = new Array();
-    for (let i = 0; i < bundleNumber; i++) {
-      arrOfArr.push(batchNumbers);
+      var arrOfArr = [];
+      const numOfERC20 = batchNumbers[1];
+      const nextId = parseInt(numOfNft);
+      var firstNFTIndex = 4 + parseInt(numOfERC20);
+
+      var k = 0;
+      for (let i = 0; i < bundleNumber; i++) {
+        let arr = cloneDeep(batchNumbers);
+
+        for (let j = firstNFTIndex; j < arr.length; j++) {
+          var value = content[k].token_id;
+          arr[j] = value;
+
+          if (content[k].contract_type === "ERC1155") {
+            var amount = content[k].amount;
+            arr[j + 1] = amount;
+            j++;
+          }
+          k++;
+        }
+        arrOfArr.push(arr);
+      }
     }
     console.log(arrOfArr);
-
-    // handle ERC721 && ERC1155 id increment
-    var numOfERC20 = batchNumbers[1];
-    var id = batchNumbers[4 + numOfERC20];
-    var firstIdIndex = id + batchNumbers[2] + batchNumbers[3];
-
-    for (let i = 0; i < bundleNumber; i++) {
-      console.log(id);
-      console.log(firstIdIndex);
-    }
-
-    // for (let i = 0; i < arrOfArr; i++) {
-    // //   const numList = batchNumbers[i];
-
-    // //   multipleBundleMint(batchAddress, numList, i);
-    // }
   }
 
   const forDev = () => {
@@ -641,9 +657,6 @@ const PackMinter = () => {
                 >
                   <Button type='primary' style={{ margin: "50px 30px 0px" }} onClick={onClickReset} danger>
                     Reset
-                  </Button>
-                  <Button type='primary' style={{ margin: "50px 30px 0px" }} onClick={forDev} danger>
-                    console.log
                   </Button>
                 </div>
               </div>
