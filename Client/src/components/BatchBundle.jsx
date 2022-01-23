@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-/* eslint-disable no-unused-vars */
-import { useMoralis, useMoralisQuery } from "react-moralis";
 import { Button, Input, Tabs, Divider } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
@@ -10,22 +8,13 @@ import ERC20Modal from "./Minter/ERC20Modal";
 import cloneDeep from "lodash/cloneDeep";
 import Claim from "./Minter/Claim";
 import { openNotification } from "./Notification";
+import { sortSingleArrays, sortMultipleArrays } from "./Minter/ArraySorting";
 import Uploader from "./Uploader";
 import { approveNFTcontract } from "./Minter/Approval";
 import { approveERC20contract } from "./Minter/Approval";
-
 const { TabPane } = Tabs;
 
 const styles = {
-  NFTs: {
-    display: "flex",
-    flexWrap: "wrap",
-    WebkitBoxPack: "start",
-    justifyContent: "flex-start",
-    margin: "0 auto",
-    maxWidth: "1000px",
-    gap: "10px"
-  },
   bundleMinter: {
     maxWidth: "80%",
     margin: "0 auto",
@@ -39,30 +28,6 @@ const styles = {
     fontSize: "30px",
     color: "#f1356d",
     marginBottom: "50px"
-  },
-  input: {
-    width: "100%",
-    padding: "6px 10px",
-    margin: "10px 0",
-    border: "1px solid #ddd",
-    boxSizing: "border-box",
-    display: "block"
-  },
-  textarea: {
-    width: "100%",
-    padding: "6px 10px",
-    margin: "10px 0",
-    border: "1px solid #ddd",
-    boxSizing: "border-box",
-    display: "block"
-  },
-  select: {
-    width: "100%",
-    padding: "6px 10px",
-    margin: "10px 0",
-    border: "1px solid #ddd",
-    boxSizing: "border-box",
-    display: "block"
   },
   mintButton: {
     marginTop: "30px",
@@ -83,11 +48,6 @@ const styles = {
     paddingBottom: "50px",
     fontSize: "25px",
     color: "white"
-  },
-  modalTitle: {
-    padding: "10px",
-    textAlign: "center",
-    fontSize: "25px"
   }
 };
 
@@ -98,108 +58,131 @@ const PackMinter = () => {
   const [isAssetModalVisible, setIsAssetModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
-  const [NFTsArr, setNFTsArr] = useState([]);
+  const [fileContent, setFileContent] = useState();
   const [ethAmount, setETHAmount] = useState(0);
+  const [selectedTokens, setSelectedTokens] = useState([]);
+  const [NFTsArr, setNFTsArr] = useState([]);
+  const [contractAdressesArray, setContractAdressesArray] = useState([]);
+  const [singleNumbersArray, setSingleNumbersArray] = useState([]);
+  const [multipleNumbersArrays, setMultipleNumbersArrays] = useState([]);
   const [ERC721Number, setERC721Number] = useState(0);
   const [ERC1155Number, setERC1155Number] = useState(0);
-  const [numOfNft, setNumOfNft] = useState(0);
-  const [fileSubmited, setFileSubmited] = useState(false);
-  const [content, setContent] = useState();
-  const [selectedTokens, setSelectedTokens] = useState([]);
-  const [batchAddress, setBatchaddress] = useState([]);
-  const [batchNumbers, setBatchNumbers] = useState([]);
   const [bundleNumber, setBundleNumber] = useState();
   const contractProcessor = useWeb3ExecuteFunction();
-  const mintFuntion = "mint";
   const contractABIJson = JSON.parse(assemblyABI);
-  const queryMintedBundles = useMoralisQuery("CreatedBundle");
-  const fetchMintedBundle = JSON.parse(
-    JSON.stringify(queryMintedBundles.data, ["firstHolder", "tokenId", "salt", "addresses", "numbers", "confirmed"])
-  );
 
-  /*Sorting arrays before feeding contract*/
-  const [addArr, setAddArr] = useState([]);
-  const [numArr, setNumArr] = useState([]);
-
-  const sortedAddArr = () => {
-    setAddArr([]);
-    setNumArr([]);
-    var addr = [];
-    var num = [];
-    var ERC20Addr = [];
-    var ERC721Addr = [];
-    var ERC1155Addr = [];
-
-    let eth = (ethAmount * ("1e" + 18)).toString();
-    num.push(eth);
-
-    // ERC20 addresses
-    for (let i = 0; i < selectedTokens.length; i++) {
-      let tmp = selectedTokens[i].data;
-      ERC20Addr.push(tmp.token_address);
-    }
-    num.push(ERC20Addr.length);
-
-    // ERC721 addresses
-    for (let i = 0; i < NFTsArr.length; i++) {
-      if (NFTsArr[i].contract_type === "ERC721") {
-        ERC721Addr.push(NFTsArr[i].token_address);
-      }
-    }
-    num.push(ERC721Addr.length);
-
-    // ERC1155 addresses
-    for (let i = 0; i < NFTsArr.length; i++) {
-      if (NFTsArr[i].contract_type === "ERC1155") {
-        ERC1155Addr.push(NFTsArr[i].token_address);
-      }
-    }
-    num.push(ERC1155Addr.length);
-    setAddArr(addr.concat(ERC20Addr, ERC721Addr, ERC1155Addr));
-
-    for (let i = 0; i < selectedTokens.length; i++) {
-      let tmp = (selectedTokens[i].value * ("1e" + 18)).toString();
-      num.push(tmp);
-    }
-    for (let i = 0; i < NFTsArr.length; i++) {
-      if (NFTsArr[i].contract_type === "ERC721") {
-        let tmp = NFTsArr[i].token_id;
-        num.push(tmp);
-      }
-    }
-    for (let i = 0; i < NFTsArr.length; i++) {
-      if (NFTsArr[i].contract_type === "ERC1155") {
-        let tmpID = NFTsArr[i].token_id;
-        let tmpAmount = NFTsArr[i].amount;
-        num.push(tmpID, tmpAmount);
-      }
-    }
-    setNumArr(num);
+  const showNFTModal = () => {
+    setIsNFTModalVisible(true);
   };
+  const showAssetModal = () => {
+    setIsAssetModalVisible(true);
+  };
+
+  const handleNFTOk = (selectedItems) => {
+    setNFTsArr(selectedItems);
+    setConfirmLoading(true);
+    setIsNFTModalVisible(false);
+    setConfirmLoading(false);
+  };
+  const handleAssetOk = (eth, selectedItems) => {
+    setETHAmount(eth);
+    setSelectedTokens(selectedItems);
+    setConfirmLoading(true);
+    setIsAssetModalVisible(false);
+    setConfirmLoading(false);
+  };
+
+  const handleNFTCancel = () => {
+    setIsNFTModalVisible(false);
+  };
+  const handleAssetCancel = () => {
+    setIsAssetModalVisible(false);
+  };
+
+  const getIpfsHash = (hash) => {
+    setIpfsHash(hash);
+  };
+
+  async function fetchIpfs() {
+    const url = `https://ipfs.moralis.io:2053/ipfs/${ipfsHash}`;
+    try {
+      const response = await fetch(url);
+      const file = await response.json();
+      return file;
+    } catch (e) {
+      let title = "Something went wrong";
+      let msg = "Oops, something went wrong while fecthing the JSON file! Did you forget to submit the file?";
+      openNotification("error", title, msg);
+      console.log(e);
+    }
+  }
+
+  async function getSingleBundleArrays() {
+    setContractAdressesArray([]);
+    setSingleNumbersArray([]);
+    let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
+    setContractAdressesArray(data[0]);
+    setSingleNumbersArray(data[1]);
+  }
+
+  async function getMultipleBundleArrays() {
+    setContractAdressesArray([]);
+    setSingleNumbersArray([]);
+    let data = await sortMultipleArrays(ethAmount, selectedTokens, fileContent, ERC721Number, ERC1155Number);
+    setContractAdressesArray(data[0]);
+    setMultipleNumbersArrays(data[1]);
+  }
 
   async function singleApproveAll(address, numbers) {
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
-
-    for (let i = 0; i < ERC20add.length; i++) {
-      let toAllow = numbers[count];
-      await approveERC20contract(ERC20add[i], toAllow, assemblyAddress, contractProcessor);
-      count++;
-    }
-
-    for (let i = 0; i < address.length; i++) {
-      await approveNFTcontract(address[i], assemblyAddress, contractProcessor);
+    try {
+      for (let i = 0; i < ERC20add.length; i++) {
+        let toAllow = numbers[count];
+        await approveERC20contract(ERC20add[i], toAllow, assemblyAddress, contractProcessor);
+        count++;
+      }
+      for (let i = 0; i < address.length; i++) {
+        await approveNFTcontract(address[i], assemblyAddress, contractProcessor);
+      }
+    } catch (error) {
+      let title = "Approval error";
+      let msg = "Oops, something went wrong while approving some of your bundle's assets!";
+      openNotification("error", title, msg);
+      console.log(error);
     }
   }
 
-  async function mintBundle(assetContracts, assetNumbers) {
+  async function multipleApproveAll(address, numbers) {
+    var ERC20add = [];
+    var count = 4;
+    console.log(address);
+    ERC20add = address.splice(0, numbers[1]);
+    try {
+      for (let i = 0; i < ERC20add.length; i++) {
+        let toAllow = (numbers[count] * bundleNumber).toString();
+        await approveERC20contract(ERC20add[i], toAllow, assemblyAddress, contractProcessor);
+        count++;
+      }
+      for (let i = 0; i < address.length; i++) {
+        await approveNFTcontract(address[i], assemblyAddress, contractProcessor);
+      }
+    } catch (error) {
+      let title = "Approval error";
+      let msg = "Oops, something went wrong while approving some of your bundles's assets!";
+      openNotification("error", title, msg);
+      console.log(error);
+    }
+  }
+
+  async function singleBundleMint(assetContracts, assetNumbers) {
     const addressArr = cloneDeep(assetContracts);
     await singleApproveAll(assetContracts, assetNumbers);
 
     const ops = {
       contractAddress: assemblyAddress,
-      functionName: mintFuntion,
+      functionName: "mint",
       abi: contractABIJson,
       params: {
         _to: walletAddress,
@@ -224,16 +207,11 @@ const PackMinter = () => {
     });
   }
 
-  const handleMint = () => {
-    sortedAddArr();
-    mintBundle(addArr, numArr);
-  };
-
   async function multipleBundleMint(assetContracts, assetNumbers, bundleNum) {
     const addressArr = cloneDeep(assetContracts);
     const ops = {
       contractAddress: assemblyAddress,
-      functionName: mintFuntion,
+      functionName: "mint",
       abi: contractABIJson,
       params: {
         _to: walletAddress,
@@ -256,150 +234,16 @@ const PackMinter = () => {
     });
   }
 
-  const showNFTModal = () => {
-    setIsNFTModalVisible(true);
-  };
-  const showAssetModal = () => {
-    setIsAssetModalVisible(true);
-  };
-
-  const handleNFTOk = (selectedItems) => {
-    console.log(selectedItems);
-    setNFTsArr(selectedItems);
-    setConfirmLoading(true);
-    setIsNFTModalVisible(false);
-    setConfirmLoading(false);
-  };
-  const handleAssetOk = (eth, selectedItems) => {
-    setETHAmount(eth);
-    setSelectedTokens(selectedItems);
-    setConfirmLoading(true);
-    setIsAssetModalVisible(false);
-    setConfirmLoading(false);
-  };
-
-  const handleNFTCancel = () => {
-    setIsNFTModalVisible(false);
-  };
-  const handleAssetCancel = () => {
-    setIsAssetModalVisible(false);
-  };
-
-  const onClickReset = () => {
-    setNFTsArr([]);
-    setETHAmount();
-    setSelectedTokens([]);
-    setAddArr([]);
-    setNumArr([]);
-    setBatchaddress([]);
-    setBatchNumbers([]);
-  };
-
-  const getIpfsHash = (hash) => {
-    setIpfsHash(hash);
-  };
-
-  async function fetchIpfs() {
-    const url = `https://ipfs.moralis.io:2053/ipfs/${ipfsHash}`;
-    const response = await fetch(url);
-    const file = await response.json();
-    return file;
+  async function handleSingleBundle() {
+    await getSingleBundleArrays();
+    await singleBundleMint(contractAdressesArray, singleNumbersArray);
   }
 
-  async function sortBatchArr() {
-    var assetsAddresses = [];
-    var assetsNumbers = [];
-
-    // Add ETH amount
-    let eth = (ethAmount * ("1e" + 18)).toString();
-    assetsNumbers.push(eth);
-
-    // Add ERC20 addresses
-    if (selectedTokens && selectedTokens.length > 0) {
-      for (let i = 0; i < selectedTokens.length; i++) {
-        let tmp = selectedTokens[i].data;
-        assetsAddresses.push(tmp.token_address);
-      }
-    }
-    assetsNumbers.push(assetsAddresses.length);
-
-    // Add NFT addresses (per bundle)
-    setNumOfNft(parseInt(ERC721Number) + parseInt(ERC1155Number));
-
-    if (content.length > 0) {
-      if (ERC721Number > 0) {
-        for (let i = 0; i < numOfNft; i++) {
-          if (content[i].contract_type === "ERC721") {
-            assetsAddresses.push(content[i].token_address);
-          }
-        }
-      }
-
-      if (ERC1155Number > 0) {
-        for (let i = 0; i < numOfNft; i++) {
-          if (content[i].contract_type === "ERC1155") {
-            assetsAddresses.push(content[i].token_address);
-          }
-        }
-      }
-    }
-
-    assetsNumbers.push(ERC721Number, ERC1155Number);
-
-    //Add ERC20 Amounts
-    if (selectedTokens && selectedTokens.length > 0) {
-      for (let i = 0; i < selectedTokens.length; i++) {
-        let tmp = (selectedTokens[i].value * ("1e" + 18)).toString();
-        assetsNumbers.push(tmp);
-      }
-    }
-
-    //ERC721 ids
-    if (content.length > 0) {
-      if (ERC721Number > 0) {
-        for (let i = 0; i < numOfNft; i++) {
-          if (content[i].contract_type === "ERC721") {
-            let tmp = content[i].token_id;
-            assetsNumbers.push(tmp);
-          }
-        }
-      }
-      if (ERC1155Number > 0) {
-        for (let i = 0; i < numOfNft; i++) {
-          if (content[i].contract_type === "ERC1155") {
-            let tmpId = content[i].token_id;
-            let tmpAmt = content[i].amount;
-            assetsNumbers.push(tmpId, tmpAmt);
-          }
-        }
-      }
-    }
-    setBatchaddress(assetsAddresses);
-    setBatchNumbers(assetsNumbers);
-  }
-
-  async function multipleApproveAll(address, numbers) {
-    var ERC20add = [];
-    var count = 4;
-    console.log(address);
-    ERC20add = address.splice(0, numbers[1]);
-
-    for (let i = 0; i < ERC20add.length; i++) {
-      let toAllow = (numbers[count] * bundleNumber).toString();
-      await approveERC20contract(ERC20add[i], toAllow, assemblyAddress, contractProcessor);
-      count++;
-    }
-    for (let i = 0; i < address.length; i++) {
-      await approveNFTcontract(address[i], assemblyAddress, contractProcessor);
-    }
-  }
-
-  async function batchBundle() {
-    if (!content || content.length === 0) {
+  async function handleMultipleBundle() {
+    if (!fileContent || fileContent.length === 0) {
       try {
         const fetchIpfsFile = await fetchIpfs();
-        setContent(fetchIpfsFile);
-        console.log(content);
+        setFileContent(fetchIpfsFile);
       } catch (err) {
         let title = "No JSON submitted";
         let msg = "Oops, it seems that you forgot to submit your JSON file!";
@@ -407,25 +251,24 @@ const PackMinter = () => {
         console.log(err);
       }
     } else {
-      await sortBatchArr();
-      console.log(content);
-      console.log(batchNumbers);
-      //await multipleApproveAll(batchAddress, batchNumbers);
+      await getMultipleBundleArrays();
+      console.log(fileContent);
+      //await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
 
       var arrOfArr = [];
-      const numOfERC20 = batchNumbers[1];
+      const numOfERC20 = multipleNumbersArrays[1];
       var firstNFTIndex = 4 + parseInt(numOfERC20);
 
       var k = 0;
       for (let i = 0; i < bundleNumber; i++) {
-        let arr = cloneDeep(batchNumbers);
+        let arr = cloneDeep(multipleNumbersArrays);
 
         for (let j = firstNFTIndex; j < arr.length; j++) {
-          var value = content[k].token_id;
+          var value = fileContent[k].token_id;
           arr[j] = value;
 
-          if (content[k].contract_type === "ERC1155") {
-            var amount = content[k].amount;
+          if (fileContent[k].contract_type === "ERC1155") {
+            var amount = fileContent[k].amount;
             arr[j + 1] = amount;
             j++;
           }
@@ -434,18 +277,27 @@ const PackMinter = () => {
         arrOfArr.push(arr);
       }
     }
+    console.log(contractAdressesArray);
     console.log(arrOfArr);
-    for (let i = 0; i < bundleNumber; i++) {
-      multipleBundleMint(batchAddress, arrOfArr[i], i);
-    }
-    
+    // for (let i = 0; i < bundleNumber; i++) {
+    //   multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
+    // }
   }
 
-  const forDev = () => {
-    sortedAddArr();
-    console.log(addArr);
-    console.log(numArr);
+  const onClickReset = () => {
+    setNFTsArr([]);
+    setETHAmount(0);
+    setSelectedTokens([]);
+    setContractAdressesArray([]);
+    setSingleNumbersArray([]);
+    setMultipleNumbersArrays([]);
   };
+
+  async function forDev() {
+    await getSingleBundleArrays();
+    console.log(contractAdressesArray);
+    console.log(singleNumbersArray);
+  }
 
   return (
     <div
@@ -455,7 +307,7 @@ const PackMinter = () => {
         width: "80%"
       }}
     >
-      <Tabs centered type='card'>
+      <Tabs centered type='card' tabBarGutter="50px" defaultActiveKey='1' onChange={onClickReset} tabBarStyle={{height:"60px"}} type="line">
         <TabPane tab='Single Bundle' key='1'>
           <Divider />
           <div style={styles.bundleMinter}>
@@ -565,12 +417,13 @@ const PackMinter = () => {
               </div>
             </div>
 
-            <button style={styles.mintButton} onClick={handleMint}>
+            <button style={styles.mintButton} onClick={handleSingleBundle}>
               Bundle All
             </button>
           </div>
         </TabPane>
-        <TabPane tab='Batch Bundle' key='2'>
+        <TabPane tab='Batch Bundle' key='2' onChange={onClickReset}>
+        <Divider />
           <div style={styles.bundleMinter}>
             <h2 style={styles.h2}>Prepare Your Bundle</h2>
             <div>
@@ -650,7 +503,6 @@ const PackMinter = () => {
                     </div>
                   </div>
                 </div>
-
                 <div
                   style={{
                     width: "100",
@@ -669,7 +521,7 @@ const PackMinter = () => {
               <Input placeholder='Number of bundles' type='number' onChange={(e) => setBundleNumber(e.target.value)} />
             </div>
 
-            <button style={styles.mintButton} onClick={batchBundle}>
+            <button style={styles.mintButton} onClick={handleMultipleBundle}>
               Batch Bundle
             </button>
           </div>

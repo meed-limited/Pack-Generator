@@ -71,7 +71,7 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
         type='number'
         min={0}
         max={balance.formatted}
-        placeholder='Enter ETH amount'
+        placeholder={`Enter ${nativeName} amount`}
         onChange={setEthAmount}
       ></InputNumber>
 

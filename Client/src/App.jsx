@@ -18,7 +18,7 @@ import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
 import NFTMarketTransactions from "components/NFTMarketTransactions";
-import PackMinter from "components/PackMinter";
+import PackMinter from "components/BatchBundle";
 import BatchMinter from "components/BatchMinter";
 const { Header, Footer } = Layout;
 

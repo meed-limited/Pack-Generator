@@ -30,7 +30,7 @@ const styles = {
 };
 
 const Uploader = ({ getIpfsHash }) => {
-  const { Moralis, isInitialized, ...rest } = useMoralis();
+  const { Moralis } = useMoralis();
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
 

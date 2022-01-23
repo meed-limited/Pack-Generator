@@ -43,10 +43,8 @@ const Claim = () => {
   const contractProcessor = useWeb3ExecuteFunction();
   const claimFuntion = "burn";
   const contractABIJson = JSON.parse(assemblyABI);
-
   const [selectedBundle, setSelectedBundle] = useState({});
   const [bundleId, setBundleId] = useState();
-
   const queryMintedBundles = useMoralisQuery("CreatedBundle");
   const fetchMintedBundle = JSON.parse(
     JSON.stringify(queryMintedBundles.data, ["firstHolder", "tokenId", "salt", "addresses", "numbers", "confirmed"])
@@ -148,7 +146,6 @@ const Claim = () => {
               style={{
                 margin: "auto",
                 marginTop: "50px",
-
                 borderRadius: "8px",
                 backgroundColor: "white",
                 color: "black",

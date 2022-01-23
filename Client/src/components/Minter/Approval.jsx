@@ -28,10 +28,10 @@ export async function approveERC20contract(ERC20address, allowance, contractAddr
   await processor.fetch({
     params: ops,
     onSuccess: () => {
-      let title = "ERC20 Approval Set";
-      let msg = `The allowance of your ERC20 token has been set.`;
+      let title = "ERC20 Approval set";
+      let msg = `The allowance of your ERC20 token has been succesfully set to ${allowance}.`;
       openNotification("success", title, msg);
-      console.log("ERC20 Approval Received");
+      console.log(`ERC20 Approval set`);
     },
     onError: (error) => {
       let title = "ERC20 Approval denied";
@@ -76,13 +76,13 @@ export async function approveNFTcontract(NFTaddress, contractAddress, processor)
   await processor.fetch({
     params: ops,
     onSuccess: () => {
-      let title = "NFT Approval Set";
+      let title = "NFT Approval set";
       let msg = "The allowance for your NFTs collection has been set.";
       openNotification("success", title, msg);
       console.log("NFTs Approval set");
     },
     onError: (error) => {
-      let title = "NFTs Approval denied";
+      let title = "NFT Approval denied";
       let msg = "Something went wrong, the allowance hasn't been set.";
       openNotification("error", title, msg);
       console.log(error);
