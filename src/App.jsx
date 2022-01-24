@@ -18,7 +18,7 @@ import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
 import NFTMarketTransactions from "components/NFTMarketTransactions";
-import PackMinter from "components/BatchBundle";
+import BatchBundle from "components/BatchBundle";
 import BatchMinter from "components/BatchMinter";
 const { Header, Footer } = Layout;
 
@@ -86,8 +86,8 @@ const App = ({ isServerInfo }) => {
             <Menu.Item key="batchMinter">
               <NavLink to="/batchMinter">Minter</NavLink>
             </Menu.Item>
-            <Menu.Item key="packMinter">
-              <NavLink to="/packMinter">Bundles</NavLink>
+            <Menu.Item key="batchBundle">
+              <NavLink to="/batchBundle">Bundles</NavLink>
             </Menu.Item>
             <Menu.Item key="nftMarket" onClick={() => setInputValue("explore")} >
               <NavLink to="/NFTMarketPlace">MarketPlace</NavLink>
@@ -112,8 +112,8 @@ const App = ({ isServerInfo }) => {
           <Route path="/batchMinter">
               <BatchMinter />
             </Route>
-            <Route path="/packMinter">
-              <PackMinter />
+            <Route path="/batchBundle">
+              <BatchBundle />
             </Route>
             <Route path="/NFTMarketPlace">
               <NFTTokenIds inputValue={inputValue} setInputValue={setInputValue} />

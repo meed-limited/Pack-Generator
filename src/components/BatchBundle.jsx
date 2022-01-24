@@ -50,7 +50,7 @@ const styles = {
   }
 };
 
-const PackMinter = () => {
+const BatchBundle = () => {
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
   const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
 
@@ -418,4 +418,4 @@ const PackMinter = () => {
   );
 };
 
-export default PackMinter;
+export default BatchBundle;
