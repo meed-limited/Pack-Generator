@@ -61,9 +61,9 @@ const BatchBundle = () => {
       const file = await response.json();
       return file;
     } catch (e) {
-      let title = "Something went wrong";
-      let msg = "Oops, something went wrong while fecthing the JSON file! Did you forget to submit the file?";
-      openNotification("error", title, msg);
+      let title = "No JSON submited";
+      let msg = "It looks like you haven't submitted any JSON file.";
+      openNotification("warning", title, msg);
       console.log(e);
     }
   }
@@ -238,9 +238,9 @@ const BatchBundle = () => {
     console.log(arrOfArr);
 
     await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
-    // for (let i = 0; i < bundleNumber; i++) {
-    //   multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
-    // }
+    for (let i = 0; i < bundleNumber; i++) {
+      multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
+    }
   }
 
   const onClickReset = () => {
