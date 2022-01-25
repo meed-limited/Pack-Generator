@@ -1,6 +1,5 @@
 import { Button } from "antd";
-import { forwardRef, useImperativeHandle } from "react";
-import { useState } from "react/cjs/react.development";
+import { forwardRef, useImperativeHandle, useState } from "react";
 import { getNativeByChain } from "../../helpers/networks";
 import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
 import ERC20Modal from "./ERC20Modal";
