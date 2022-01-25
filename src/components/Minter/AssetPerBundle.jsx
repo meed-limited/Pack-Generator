@@ -30,11 +30,6 @@ const AssetPerBundle = ({ getAssetValues }) => {
     getAssetValues(eth, selectedItems);
   };
 
-  const onResetAsset = () => {
-    setEthAmount(0);
-    setSelectedTokens([]);
-  };
-
   return (
     <div>
       <Button type='primary' style={{ width: "70%", margin: "30px" }} onClick={showAssetModal}>
@@ -65,9 +60,6 @@ const AssetPerBundle = ({ getAssetValues }) => {
             ))}
         </div>
       </div>
-      <Button type='primary' style={{ margin: "auto", marginTop: "100px" }} onClick={onResetAsset} danger>
-        Reset Assets
-      </Button>
     </div>
   );
 };

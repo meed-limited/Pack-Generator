@@ -1,6 +1,6 @@
 import { Input } from "antd";
 import React, { useState } from "react";
-import { useMoralis, useMoralisQuery } from "react-moralis";
+//import { useMoralis, useMoralisQuery } from "react-moralis";
 import { Flex } from "uikit/Flex/Flex";
 
 const styles = {

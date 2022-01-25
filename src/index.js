@@ -12,7 +12,7 @@ const Application = () => {
   return (
     <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
       <MoralisDappProvider>
-        <App isServerInfo />
+        <App />
       </MoralisDappProvider>
     </MoralisProvider>
   );

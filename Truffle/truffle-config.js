@@ -1,7 +1,7 @@
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const fs = require("fs");
 require('dotenv').config()
-const mnemonic = fs.readFileSync("../.secret").toString().trim();
+const mnemonic = fs.readFileSync(".secret").toString().trim();
 const API_KEY = process.env.MORALIS_SPEEDY_NODES_KEY;
 
 

@@ -1,21 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
-
-const styles = {
-  container: {
-    display: "flex-grid",
-    marginTop: "40px",
-    margin: "auto",
-    padding: "15px",
-    backgroundColor: "white",
-    borderRadius: "8px",
-    opacity: "0.9",
-    color: "#f1356d",
-    marginBottom: "50px",
-    fontSize: "18px"
-  },
-};
+import styles from "./Minter/styles";
 
 const Uploader = ({ getIpfsHash }) => {
   const { Moralis } = useMoralis();
@@ -35,19 +21,17 @@ const Uploader = ({ getIpfsHash }) => {
   }
 
   return (
-    <div style={styles.container}>
-      <input type='file' name='file' onChange={handleChange} />
+    <div style={styles.uploadBox}>
+      <input type='file' name='file' className='ant-input' onChange={handleChange} />
       {isSelected ? (
         <div>
-          <p>Filename: {selectedFile.name}</p>
-          <p>Filetype: {selectedFile.type}</p>
-          <p>Size in bytes: {selectedFile.size}</p>
+          <p style={{ margin: "8px" }}>Filename: {selectedFile.name}</p>
         </div>
       ) : (
-        <p>Select a CSV file for the Batch-Bundle</p>
+        <p style={{ margin: "8px" }}>Select a JSON file for the Batch-Bundle</p>
       )}
       <div>
-        <Button type="primary" shape="round" size="large" style={{width:"60%"}} onClick={handleSubmission}>
+        <Button type='primary' shape='round' size='large' style={{ width: "60%" }} onClick={handleSubmission}>
           Submit
         </Button>
       </div>

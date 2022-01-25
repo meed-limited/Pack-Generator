@@ -13,7 +13,6 @@
 
 # misc
 .DS_Store
-.secret
 .env
 .env.local
 .env.development.local
@@ -34,3 +33,4 @@ typechain
 #Truffle files
 /Truffle/build
 /Truffle/data
+/Truffle/.secret

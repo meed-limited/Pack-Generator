@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  NavLink,
-  Redirect,
-} from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, NavLink, Redirect } from "react-router-dom";
 import Account from "components/Account";
 import Chains from "components/Chains";
 import NFTBalance from "components/NFTBalance";
@@ -23,13 +17,13 @@ import BatchMinter from "components/BatchMinter";
 const { Header, Footer } = Layout;
 
 const styles = {
-  content: {
+  pageContent: {
     display: "flex",
     justifyContent: "center",
     fontFamily: "Roboto, sans-serif",
     color: "#041836",
     marginTop: "90px",
-    padding: "10px",
+    padding: "10px"
   },
   header: {
     position: "fixed",
@@ -42,21 +36,18 @@ const styles = {
     fontFamily: "Roboto, sans-serif",
     borderBottom: "2px solid rgba(0, 0, 0, 0.06)",
     padding: "0 10px",
-    boxShadow: "0 1px 10px rgb(151 164 175 / 10%)",
+    boxShadow: "0 1px 10px rgb(151 164 175 / 10%)"
   },
   headerRight: {
     display: "flex",
     gap: "20px",
     alignItems: "center",
     fontSize: "15px",
-    fontWeight: "600",
-  },
+    fontWeight: "600"
+  }
 };
-const App = ({ isServerInfo }) => {
-  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } =
-    useMoralis();
-
-
+const App = () => {
+  const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
 
   const [inputValue, setInputValue] = useState("explore");
 
@@ -72,70 +63,65 @@ const App = ({ isServerInfo }) => {
           <Logo />
           <SearchCollections setInputValue={setInputValue} />
           <Menu
-            theme="light"
-            mode="horizontal"
+            theme='light'
+            mode='horizontal'
             style={{
               display: "flex",
               fontSize: "17px",
               fontWeight: "500",
               marginLeft: "50px",
-              width: "100%",
+              width: "100%"
             }}
             defaultSelectedKeys={["nftMarket"]}
           >
-            <Menu.Item key="batchMinter">
-              <NavLink to="/batchMinter">Minter</NavLink>
+            <Menu.Item key='batchMinter'>
+              <NavLink to='/batchMinter'>Minter</NavLink>
             </Menu.Item>
-            <Menu.Item key="batchBundle">
-              <NavLink to="/batchBundle">Bundles</NavLink>
+            <Menu.Item key='batchBundle'>
+              <NavLink to='/batchBundle'>Bundles</NavLink>
             </Menu.Item>
-            <Menu.Item key="nftMarket" onClick={() => setInputValue("explore")} >
-              <NavLink to="/NFTMarketPlace">MarketPlace</NavLink>
+            <Menu.Item key='nftMarket' onClick={() => setInputValue("explore")}>
+              <NavLink to='/NFTMarketPlace'>MarketPlace</NavLink>
             </Menu.Item>
-            <Menu.Item key="nft">
-              <NavLink to="/nftBalance">Your NFTs</NavLink>
+            <Menu.Item key='nft'>
+              <NavLink to='/nftBalance'>Your NFTs</NavLink>
             </Menu.Item>
-            <Menu.Item key="transactions">
-              <NavLink to="/Transactions">Transactions</NavLink>
+            <Menu.Item key='transactions'>
+              <NavLink to='/Transactions'>Transactions</NavLink>
             </Menu.Item>
-            
           </Menu>
-          
+
           <div style={styles.headerRight}>
             <Chains />
             <NativeBalance />
             <Account />
           </div>
         </Header>
-        <div style={styles.content}>
+        <div style={styles.pageContent}>
           <Switch>
-          <Route path="/batchMinter">
+            <Route path='/batchMinter'>
               <BatchMinter />
             </Route>
-            <Route path="/batchBundle">
+            <Route path='/batchBundle'>
               <BatchBundle />
             </Route>
-            <Route path="/NFTMarketPlace">
+            <Route path='/NFTMarketPlace'>
               <NFTTokenIds inputValue={inputValue} setInputValue={setInputValue} />
             </Route>
-            <Route path="/nftBalance">
+            <Route path='/nftBalance'>
               <NFTBalance />
             </Route>
-            <Route path="/Transactions">
+            <Route path='/Transactions'>
               <NFTMarketTransactions />
             </Route>
           </Switch>
-          <Redirect to="/NFTMarketPlace" />
+          <Redirect to='/NFTMarketPlace' />
         </div>
       </Router>
       <Footer style={{ textAlign: "center" }}>
         <Text style={{ display: "block" }}>
-          Lepricon Website | {" "}
-          <a
-            href="https://lepricon.io/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          Lepricon Website |{" "}
+          <a href='https://lepricon.io/' target='_blank' rel='noopener noreferrer'>
             Lepricon.io
           </a>
         </Text>
@@ -146,13 +132,13 @@ const App = ({ isServerInfo }) => {
 
 export const Logo = () => (
   <div style={{ display: "flex" }}>
-
-    <svg xmlns="http://www.w3.org/2000/svg"
-      width="2in" height="1in"
-      viewBox="0 0 1750 984">
-      <path id="Chemin importé"
-        fill="black" stroke="black" strokeWidth="1"
-        d="M 858.75,513.88
+    <svg xmlns='http://www.w3.org/2000/svg' width='2in' height='1in' viewBox='0 0 1750 984'>
+      <path
+        id='Chemin importé'
+        fill='black'
+        stroke='black'
+        strokeWidth='1'
+        d='M 858.75,513.88
            C 858.75,513.88 858.75,592.65 858.75,592.65
              858.75,592.65 880.00,592.65 880.00,592.65
              880.00,592.65 901.25,592.65 901.25,592.65
@@ -359,10 +345,9 @@ export const Logo = () => (
              1468.25,357.72 1471.62,351.96 1471.62,341.34
              1471.62,330.83 1469.50,326.08 1461.25,318.33
              1455.38,313.08 1452.50,311.33 1447.50,310.20
-             1440.88,308.83 1439.88,308.70 1435.62,309.70 Z"
+             1440.88,308.83 1439.88,308.70 1435.62,309.70 Z'
       />
     </svg>
-
   </div>
 );
 

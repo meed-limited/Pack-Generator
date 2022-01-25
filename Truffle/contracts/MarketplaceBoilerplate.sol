@@ -84,7 +84,7 @@ contract MarketPlaceBoilerPlate is ReentrancyGuard {
         bool sold = idToMarketItem[itemId].sold;
         require(
             msg.value == price,
-            "Please submit the asking price in order to complete the purchase"
+            "Submit the asking price to complete the purchase"
         );
         require(sold != true, "This Sale has alredy finnished");
         emit MarketItemSold(itemId, msg.sender);

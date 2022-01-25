@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Tabs, Divider } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import AssetModal from "./Minter/AssetModal";
 import cloneDeep from "lodash/cloneDeep";
 import Claim from "./Minter/Claim";
@@ -11,51 +11,15 @@ import Uploader from "./Uploader";
 import { approveNFTcontract } from "./Minter/Approval";
 import { approveERC20contract } from "./Minter/Approval";
 import AssetPerBundle from "./Minter/AssetPerBundle";
+import styles from "./Minter/styles";
 const { TabPane } = Tabs;
 
-const styles = {
-  bundleMinter: {
-    maxWidth: "80%",
-    margin: "0 auto",
-    textAlign: "center"
-  },
-  label: {
-    textAlign: "left",
-    display: "block"
-  },
-  h2: {
-    fontSize: "30px",
-    color: "#f1356d",
-    marginBottom: "50px"
-  },
-  mintButton: {
-    marginTop: "30px",
-    background: "#f1356d",
-    color: "#fff",
-    border: "0",
-    padding: "20px",
-    fontSize: "20px",
-    borderRadius: "8px",
-    cursor: "pointer"
-  },
-  container: {
-    opacity: "0.8",
-    borderRadius: "8px",
-    backgroundColor: "black",
-    textAlign: "center",
-    paddingTop: "50px",
-    paddingBottom: "50px",
-    fontSize: "25px",
-    color: "white"
-  }
-};
-
 const BatchBundle = () => {
+
+  const { Moralis } = useMoralis();
+
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
   const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
-
-  const [isAssetSelected, setIsAssetSelected] = useState("");
-
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
   const [fileContent, setFileContent] = useState();
@@ -176,10 +140,11 @@ const BatchBundle = () => {
       contractAddress: assemblyAddress,
       functionName: "mint",
       abi: contractABIJson,
+      msgValue: assetNumbers[0],
       params: {
         _to: walletAddress,
         _addresses: addressArr,
-        _numbers: assetNumbers
+        _numbers: assetNumbers,
       }
     };
 
@@ -246,7 +211,7 @@ const BatchBundle = () => {
 
     await getMultipleBundleArrays();
     console.log(fileContent);
-    await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
+    //await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
     var arrOfArr = [];
     if (fileContent && fileContent.length > 0) {
       const numOfERC20 = multipleNumbersArrays[1];
@@ -276,9 +241,9 @@ const BatchBundle = () => {
     }
     console.log(contractAdressesArray);
     console.log(arrOfArr);
-    for (let i = 0; i < bundleNumber; i++) {
-      multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
-    }
+    // for (let i = 0; i < bundleNumber; i++) {
+    //   multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
+    // }
   }
 
   const onClickReset = () => {
@@ -297,19 +262,13 @@ const BatchBundle = () => {
   }
 
   return (
-    <div
-      style={{
-        margin: "auto",
-        textAlign: "center",
-        width: "80%"
-      }}
-    >
+    <div style={styles.content}>
       <Tabs centered tabBarGutter='50px' onChange={onClickReset} tabBarStyle={{ height: "60px" }} type='line'>
-        <TabPane tab='Single Bundle' key='1'>
+        <TabPane tab='Single Bundle' key='1' onChange={onClickReset}>
           <Divider />
-          <div style={styles.bundleMinter}>
+          <div>
             <h2 style={styles.h2}>Prepare Your Single Bundle</h2>
-            <div style={styles.container}>
+            <div style={styles.blackContainer}>
               <label>Select all the assets to bundle:</label>
 
               <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
@@ -323,12 +282,7 @@ const BatchBundle = () => {
                     handleNFTOk={handleNFTOk}
                     confirmLoading={confirmLoading}
                   />
-                  <div
-                    style={{
-                      color: "white",
-                      fontSize: "16px"
-                    }}
-                  >
+                  <div style={{ color: "white", fontSize: "16px" }}>
                     <p>NFTs to Bundle:</p>
                     {NFTsArr &&
                       NFTsArr.length > 0 &&
@@ -347,20 +301,18 @@ const BatchBundle = () => {
                         </div>
                       ))}
                   </div>
-                  <div style={{ position: "absolute", bottom: "0", left: "45%" }}>
-                    <Button type='primary' onClick={onClickReset} danger>
-                      Reset
-                    </Button>
-                  </div>
                 </div>
                 <div>
-                  <AssetPerBundle onClickReset={isAssetSelected} getAssetValues={getAssetValues} />
-                  <div>
-                    <Button type='primary' onClick={forDev} danger>
-                      console.log
-                    </Button>
-                  </div>
+                  <AssetPerBundle getAssetValues={getAssetValues} />
                 </div>
+              </div>
+              <div>
+                <Button type='primary' onClick={onClickReset} danger>
+                  Reset
+                </Button>
+                <Button style={{ left: "20px" }} type='primary' onClick={forDev} danger>
+                  console.log
+                </Button>
               </div>
             </div>
             <button style={styles.mintButton} onClick={handleSingleBundle}>
@@ -370,15 +322,14 @@ const BatchBundle = () => {
         </TabPane>
         <TabPane tab='Batch Bundle' key='2' onChange={onClickReset}>
           <Divider />
-          <div style={styles.bundleMinter}>
+          <div>
             <h2 style={styles.h2}>Prepare Your Multiple Bundles</h2>
-            <div style={styles.container}>
+            <div style={styles.blackContainer}>
               <label>Select all the assets to bundle:</label>
-
-              <div style={{ display: "grid", gridTemplateColumns: "50% 50%", margin: "auto" }}>
-                <div style={{ margin: "30px 10px 0 30px" }}>
+              <div style={styles.contentGrid}>
+                <div style={{ margin: "auto", marginTop: "30px" }}>
                   <Uploader getIpfsHash={getIpfsHash} />
-                  <p style={{ fontSize: "15px" }}>Number of ERC721 per bundle:</p>
+                  <p>Number of ERC721 per bundle:</p>
                   <p>
                     <Input
                       style={{ width: "40%", marginBottom: "15px" }}
@@ -387,7 +338,7 @@ const BatchBundle = () => {
                       onChange={(e) => setERC721Number(e.target.value)}
                     />
                   </p>
-                  <p style={{ fontSize: "15px" }}>Number of ERC721 per bundle:</p>
+                  <p>Number of ERC1155 per bundle:</p>
                   <p>
                     <Input
                       style={{ width: "40%" }}
@@ -397,14 +348,22 @@ const BatchBundle = () => {
                     />
                   </p>
                 </div>
-                <AssetPerBundle onClickReset={isAssetSelected} getAssetValues={getAssetValues} />
+                <AssetPerBundle getAssetValues={getAssetValues} />
+              </div>
+              <div style={{ margin: "auto", width: "50%" }}>
+                <label style={{ fontSize: "17px" }}>Enter the desired amount of bundles:</label>
+                <Input
+                  placeholder='Number of bundles'
+                  type='number'
+                  onChange={(e) => setBundleNumber(e.target.value)}
+                />
+              </div>
+              <div style={{ marginTop: "30px" }}>
+                <Button type='primary' onClick={onClickReset} danger>
+                  Reset
+                </Button>
               </div>
             </div>
-            <div style={{ marginTop: "30px", margin: "auto", width: "50%" }}>
-              <label style={{ fontSize: "20px" }}>Enter the desired amount of bundles:</label>
-              <Input placeholder='Number of bundles' type='number' onChange={(e) => setBundleNumber(e.target.value)} />
-            </div>
-
             <button style={styles.mintButton} onClick={handleMultipleBundle}>
               Batch Bundle
             </button>

@@ -6,35 +6,7 @@ import { useWeb3ExecuteFunction } from "react-moralis";
 import AssetModal from "./AssetModal";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
-
-const styles = {
-  h2: {
-    fontSize: "30px",
-    color: "#f1356d",
-    marginBottom: "50px"
-  },
-  claimButton: {
-    margin: "20px",
-    height: "auto",
-    background: "#f1356d",
-    color: "#fff",
-    border: "0",
-    padding: "20px",
-    fontSize: "20px",
-    borderRadius: "8px",
-    cursor: "pointer"
-  },
-  container: {
-    opacity: "0.8",
-    borderRadius: "8px",
-    backgroundColor: "black",
-    textAlign: "center",
-    paddingTop: "50px",
-    paddingBottom: "50px",
-    fontSize: "25px",
-    color: "white"
-  }
-};
+import styles from "./styles";
 
 const Claim = () => {
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
@@ -109,16 +81,10 @@ const Claim = () => {
   }
 
   return (
-    <div
-      style={{
-        margin: "auto",
-        textAlign: "center",
-        width: "80%"
-      }}
-    >
+    <div>
       <Divider />
       <h2 style={styles.h2}>Unpack Your Bundle</h2>
-      <div style={styles.container}>
+      <div style={styles.blackContainer}>
         <label>Select the bundle to unpack:</label>
         <div style={{ display: "grid", margin: "auto", width: "70%", marginTop: "30px" }}>
           <Button type='primary' style={{ margin: "auto", width: "90%" }} onClick={showNFTModal}>
@@ -141,20 +107,7 @@ const Claim = () => {
           />
 
           {selectedBundle && selectedBundle.length > 0 && (
-            <div
-              style={{
-                margin: "auto",
-                marginTop: "50px",
-                borderRadius: "8px",
-                backgroundColor: "white",
-                color: "black",
-                opacity: "0.8",
-                fontSize: "16px",
-                width: "40%"
-              }}
-            >
-              {`Bundles Id: ${getEllipsisTxt(bundleId, 5)}`}
-            </div>
+            <div style={styles.displaySelected}>{`Bundles Id: ${getEllipsisTxt(bundleId, 5)}`}</div>
           )}
         </div>
       </div>
