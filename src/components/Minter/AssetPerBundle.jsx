@@ -1,16 +1,17 @@
 import { Button } from "antd";
+import { forwardRef, useImperativeHandle } from "react";
 import { useState } from "react/cjs/react.development";
 import { getNativeByChain } from "../../helpers/networks";
 import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
 import ERC20Modal from "./ERC20Modal";
 import styles from "./styles";
 
-const AssetPerBundle = ({ getAssetValues }) => {
+const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
   const [isAssetModalVisible, setIsAssetModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [ethAmount, setEthAmount] = useState(0);
+  const [ethAmount, setEthAmount] = useState();
   const [selectedTokens, setSelectedTokens] = useState([]);
 
   const showAssetModal = () => {
@@ -24,15 +25,21 @@ const AssetPerBundle = ({ getAssetValues }) => {
   const handleAssetOk = (eth, selectedItems) => {
     setEthAmount(eth);
     setSelectedTokens(selectedItems);
-    setConfirmLoading(true);
     setIsAssetModalVisible(false);
-    setConfirmLoading(false);
     getAssetValues(eth, selectedItems);
   };
 
+  useImperativeHandle(ref, () => ({
+    reset () {
+      setEthAmount();
+      setSelectedTokens([]);
+      getAssetValues(null, []);
+    }
+  }))
+
   return (
     <div>
-      <Button type='primary' style={{ width: "70%", margin: "30px" }} onClick={showAssetModal}>
+      <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showAssetModal}>
         Assets per bundle
       </Button>
       <ERC20Modal
@@ -43,7 +50,7 @@ const AssetPerBundle = ({ getAssetValues }) => {
       />
 
       <div style={{ color: "white", fontSize: "16px" }}>
-        <p>ETH to Bundle: </p>
+        <p>{nativeName} to Bundle: </p>
         {ethAmount && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
             {ethAmount} {nativeName}
@@ -62,6 +69,6 @@ const AssetPerBundle = ({ getAssetValues }) => {
       </div>
     </div>
   );
-};
+});
 
 export default AssetPerBundle;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { Card, Image, Alert, Modal } from "antd";
 import { useNFTBalance } from "hooks/useNFTBalance";
 const { Meta } = Card;
@@ -15,9 +15,10 @@ const styles = {
   }
 };
 
-function AssetModal({ handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }) {
+const AssetModal = forwardRef(({ handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
   const { NFTBalance, fetchSuccess } = useNFTBalance();
   const [selectedNFTs, setSelectedNFTs] = useState([]);
+
 
   const handleClickCard = (nftItem) => {
     if (isMultiple) {
@@ -52,6 +53,14 @@ function AssetModal({ handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLo
   const handleClickOk = () => {
     handleNFTOk(selectedNFTs);
   };
+
+  
+  useImperativeHandle(ref, () => ({
+    reset () {
+      setSelectedNFTs([])
+      handleNFTOk([]);
+    }
+  }))
 
   return (
     <>
@@ -106,6 +115,6 @@ function AssetModal({ handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLo
       </Modal>
     </>
   );
-}
+})
 
 export default AssetModal;

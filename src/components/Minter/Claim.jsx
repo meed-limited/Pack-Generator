@@ -48,6 +48,10 @@ const Claim = () => {
     claimBundle();
   };
 
+  const resetOnClaim = () => {
+    setBundleId();
+  }
+
   async function claimBundle() {
     const data = await getBundle(bundleId);
 
@@ -67,9 +71,11 @@ const Claim = () => {
     await contractProcessor.fetch({
       params: ops,
       onSuccess: () => {
-        let title = "Bundle unpacked!";
+        let title = "Bundle claimed!";
         let msg = "Your bundle has been succesfully unpacked!";
         openNotification("success", title, msg);
+        console.log("bundle claimed");
+        resetOnClaim();
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -87,7 +93,7 @@ const Claim = () => {
       <div style={styles.blackContainer}>
         <label>Select the bundle to unpack:</label>
         <div style={{ display: "grid", margin: "auto", width: "70%", marginTop: "30px" }}>
-          <Button type='primary' style={{ margin: "auto", width: "90%" }} onClick={showNFTModal}>
+          <Button type='primary' shape='round' style={{ margin: "auto", width: "90%" }} onClick={showNFTModal}>
             Pick an NFT
           </Button>
           <AssetModal
@@ -111,7 +117,7 @@ const Claim = () => {
           )}
         </div>
       </div>
-      <Button style={styles.claimButton} onClick={handleClaim}>
+      <Button style={styles.runFunctionButton} onClick={handleClaim}>
         Claim you Bundle
       </Button>
     </div>

@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Button, Input, Tabs, Divider } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
+import { useWeb3ExecuteFunction } from "react-moralis";
 import AssetModal from "./Minter/AssetModal";
 import cloneDeep from "lodash/cloneDeep";
 import Claim from "./Minter/Claim";
 import { openNotification } from "./Notification";
 import { sortSingleArrays, sortMultipleArrays } from "./Minter/ArraySorting";
-import Uploader from "./Uploader";
+import Uploader from "./Minter/Uploader";
 import { approveNFTcontract } from "./Minter/Approval";
 import { approveERC20contract } from "./Minter/Approval";
 import AssetPerBundle from "./Minter/AssetPerBundle";
@@ -15,9 +15,6 @@ import styles from "./Minter/styles";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
-
-  const { Moralis } = useMoralis();
-
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
   const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -34,6 +31,9 @@ const BatchBundle = () => {
   const [bundleNumber, setBundleNumber] = useState();
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(assemblyABI);
+
+  const assetPerBundleRef = React.useRef()
+  const assetModalRef = React.useRef()
 
   const showNFTModal = () => {
     setIsNFTModalVisible(true);
@@ -154,6 +154,7 @@ const BatchBundle = () => {
         let title = "Bundle created!";
         let msg = "Your bundle has been succesfully created!<br/>Open in the explorer";
         openNotification("success", title, msg);
+        console.log("Bundle created");
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -170,6 +171,7 @@ const BatchBundle = () => {
       contractAddress: assemblyAddress,
       functionName: "mint",
       abi: contractABIJson,
+      msgValue: assetNumbers[0],
       params: {
         _to: walletAddress,
         _addresses: addressArr,
@@ -180,7 +182,7 @@ const BatchBundle = () => {
     await contractProcessor.fetch({
       params: ops,
       onSuccess: () => {
-        console.log(`bundle minted ${bundleNum}`);
+        console.log(`bundle ${bundleNum} minted`);
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -247,12 +249,21 @@ const BatchBundle = () => {
   }
 
   const onClickReset = () => {
-    setNFTsArr([]);
-    setEthAmount(0);
-    setSelectedTokens([]);
-    setContractAdressesArray([]);
-    setSingleNumbersArray([]);
-    setMultipleNumbersArrays([]);
+    // setNFTsArr([]);
+    // setEthAmount(0);
+    // setSelectedTokens([]);
+    // setContractAdressesArray([]);
+    // setSingleNumbersArray([]);
+    // setMultipleNumbersArrays([]);
+
+    if(assetPerBundleRef && assetPerBundleRef.current) {
+      assetPerBundleRef.current.reset();
+    }
+
+    if(assetModalRef && assetModalRef.current) {
+      assetModalRef.current.reset();
+    }
+
   };
 
   async function forDev() {
@@ -273,7 +284,7 @@ const BatchBundle = () => {
 
               <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
                 <div style={{ position: "relative" }}>
-                  <Button type='primary' style={{ width: "70%", margin: "30px" }} onClick={showNFTModal}>
+                  <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showNFTModal}>
                     Pick Some NFTs
                   </Button>
                   <AssetModal
@@ -281,6 +292,7 @@ const BatchBundle = () => {
                     isNFTModalVisible={isNFTModalVisible}
                     handleNFTOk={handleNFTOk}
                     confirmLoading={confirmLoading}
+                    ref={assetModalRef}
                   />
                   <div style={{ color: "white", fontSize: "16px" }}>
                     <p>NFTs to Bundle:</p>
@@ -303,7 +315,7 @@ const BatchBundle = () => {
                   </div>
                 </div>
                 <div>
-                  <AssetPerBundle getAssetValues={getAssetValues} />
+                  <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef}/>
                 </div>
               </div>
               <div>
@@ -315,7 +327,7 @@ const BatchBundle = () => {
                 </Button>
               </div>
             </div>
-            <button style={styles.mintButton} onClick={handleSingleBundle}>
+            <button style={styles.runFunctionButton} onClick={handleSingleBundle}>
               Bundle All
             </button>
           </div>
@@ -348,7 +360,7 @@ const BatchBundle = () => {
                     />
                   </p>
                 </div>
-                <AssetPerBundle getAssetValues={getAssetValues} />
+                <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef}/>
               </div>
               <div style={{ margin: "auto", width: "50%" }}>
                 <label style={{ fontSize: "17px" }}>Enter the desired amount of bundles:</label>
@@ -364,7 +376,7 @@ const BatchBundle = () => {
                 </Button>
               </div>
             </div>
-            <button style={styles.mintButton} onClick={handleMultipleBundle}>
+            <button style={styles.runFunctionButton} onClick={handleMultipleBundle}>
               Batch Bundle
             </button>
           </div>

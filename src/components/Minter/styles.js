@@ -1,7 +1,7 @@
 const styles = {
   content: {
     //width: "70%",
-    width: "70vw",
+    width: "55vw",
     margin: "auto",
     textAlign: "center"
   },
@@ -14,8 +14,9 @@ const styles = {
     color: "#f1356d",
     marginBottom: "50px"
   },
-  mintButton: {
-    marginTop: "30px",
+  runFunctionButton: {
+    margin: "20px",
+    height: "auto",
     background: "#f1356d",
     color: "#fff",
     border: "0",
@@ -67,17 +68,6 @@ const styles = {
   },
 
   // Claim tab
-  claimButton: {
-    margin: "20px",
-    height: "auto",
-    background: "#f1356d",
-    color: "#fff",
-    border: "0",
-    padding: "20px",
-    fontSize: "20px",
-    borderRadius: "8px",
-    cursor: "pointer"
-  },
   displaySelected: {
     margin: "auto",
     marginTop: "50px",

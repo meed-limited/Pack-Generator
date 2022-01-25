@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
-import styles from "./Minter/styles";
+import styles from "./styles";
 
 const Uploader = ({ getIpfsHash }) => {
   const { Moralis } = useMoralis();

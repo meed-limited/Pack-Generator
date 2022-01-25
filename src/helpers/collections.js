@@ -13,6 +13,12 @@ export const networkCollections = {
       name: "Pixel Show",
       addrs: "0xCA34404dD8Bd6537BE76F3A51B379F8949bD7973",
     },
+    {
+      image:
+        "https://lh3.googleusercontent.com/hFCb17umU30lOhDJJj2XiPQgD60pMKpvD-qiflRNiQwpCkzckDXYPYDSdRj8v3ImaejCqUVkCxAbZTqafRy2C9w-qaXYdC8fwFVbRQ=w600",
+      name: "Art Abstrait",
+      addrs: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
+    },
   ],
 
   "0x1": [
