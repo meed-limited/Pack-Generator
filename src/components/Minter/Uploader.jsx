@@ -14,10 +14,12 @@ const Uploader = ({ getIpfsHash }) => {
   };
 
   async function handleSubmission() {
-    const file = new Moralis.File(selectedFile.name, selectedFile);
-    await file.saveIPFS();
-    const data = file.hash();
-    getIpfsHash(data);
+    if (selectedFile) {
+      const file = new Moralis.File(selectedFile.name, selectedFile);
+      await file.saveIPFS();
+      const data = file.hash();
+      getIpfsHash(data);
+    }
   }
 
   return (

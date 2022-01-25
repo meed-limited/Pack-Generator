@@ -48,7 +48,7 @@ export const useNFTTokenIds = (addr) => {
     }
 
     fetchData();
-  }, [data]);
+  }, [data, resolveLink]);
 
   return {
     getNFTTokenIds,

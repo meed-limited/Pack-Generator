@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Modal, Input, Typography, Button, InputNumber } from "antd";
 import AssetSelector from "../Wallet/components/AssetSelector";
 import { useNativeBalance } from "hooks/useNativeBalance";
@@ -11,20 +11,10 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
   const [currentToken, setCurrentToken] = useState();
   const { balance, nativeName } = useNativeBalance();
 
-  useEffect(() => {
-    if (isAssetModalVisible) {
-      setNativeAmount(0);
-      setERC20Tokens([]);
-      setCurrentToken({ ...currentToken, value: 0 });
-    }
-  }, [isAssetModalVisible]);
-
   const onChangeToken = (token) => {
     setCurrentToken({ ...currentToken, data: token });
   };
 
-
-  /// Todo: fix bugs in asset selector 
   const onChangeERC20Amount = (value) => {
     const max = (currentToken.data.balance / ("1e" + 18)).toString();
     if (value <= 0) {
@@ -37,8 +27,6 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
   };
 
   const handleAddToken = () => {
-    console.log(currentToken);
-
     if (ERC20Tokens.some((selectedToken) => selectedToken.data.token_address === currentToken.data.token_address)) {
       setERC20Tokens(
         ERC20Tokens.map((tokenItem) =>
@@ -54,6 +42,9 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
 
   const handleClickOk = () => {
     handleAssetOk(nativeAmount, ERC20Tokens);
+    setNativeAmount(0);
+    setERC20Tokens([]);
+    setCurrentToken();
   };
 
   return (

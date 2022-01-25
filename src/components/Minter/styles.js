@@ -1,6 +1,5 @@
 const styles = {
   content: {
-    //width: "70%",
     width: "55vw",
     margin: "auto",
     textAlign: "center"

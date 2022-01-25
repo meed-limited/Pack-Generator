@@ -17,9 +17,7 @@ const { TabPane } = Tabs;
 const BatchBundle = () => {
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
   const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
-  const [fileContent, setFileContent] = useState();
   const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [NFTsArr, setNFTsArr] = useState([]);
@@ -31,9 +29,8 @@ const BatchBundle = () => {
   const [bundleNumber, setBundleNumber] = useState();
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(assemblyABI);
-
-  const assetPerBundleRef = React.useRef()
-  const assetModalRef = React.useRef()
+  const assetPerBundleRef = React.useRef();
+  const assetModalRef = React.useRef();
 
   const showNFTModal = () => {
     setIsNFTModalVisible(true);
@@ -41,9 +38,7 @@ const BatchBundle = () => {
 
   const handleNFTOk = (selectedItems) => {
     setNFTsArr(selectedItems);
-    setConfirmLoading(true);
     setIsNFTModalVisible(false);
-    setConfirmLoading(false);
   };
 
   const handleNFTCancel = () => {
@@ -79,12 +74,14 @@ const BatchBundle = () => {
     let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
     setContractAdressesArray(data[0]);
     setSingleNumbersArray(data[1]);
+
+    return { contracts: data[0], singleArray: data[1] };
   }
 
-  async function getMultipleBundleArrays() {
+  async function getMultipleBundleArrays(fileContentValue) {
     setContractAdressesArray([]);
     setMultipleNumbersArrays([]);
-    let data = await sortMultipleArrays(ethAmount, selectedTokens, fileContent, ERC721Number, ERC1155Number);
+    let data = await sortMultipleArrays(ethAmount, selectedTokens, fileContentValue, ERC721Number, ERC1155Number);
     setContractAdressesArray(data[0]);
     setMultipleNumbersArrays(data[1]);
   }
@@ -144,7 +141,7 @@ const BatchBundle = () => {
       params: {
         _to: walletAddress,
         _addresses: addressArr,
-        _numbers: assetNumbers,
+        _numbers: assetNumbers
       }
     };
 
@@ -199,78 +196,67 @@ const BatchBundle = () => {
   }
 
   async function handleMultipleBundle() {
-    //if (!fileContent || fileContent.length === 0) {
     try {
       const fetchIpfsFile = await fetchIpfs();
-      setFileContent(fetchIpfsFile);
+      const res = await getMultipleBundleArrays(fetchIpfsFile);
+
+      var arrOfArr = [];
+      if (res && res.length > 0) {
+        const numOfERC20 = multipleNumbersArrays[1];
+        var firstNFTIndex = 4 + parseInt(numOfERC20);
+
+        var k = 0;
+        for (let i = 0; i < bundleNumber; i++) {
+          let arr = cloneDeep(multipleNumbersArrays);
+
+          for (let j = firstNFTIndex; j < arr.length; j++) {
+            var value = res[k].token_id;
+            arr[j] = value;
+
+            if (res[k].contract_type === "ERC1155") {
+              var amount = res[k].amount;
+              arr[j + 1] = amount;
+              j++;
+            }
+            k++;
+          }
+          arrOfArr.push(arr);
+        }
+      } else {
+        for (let i = 0; i < bundleNumber; i++) {
+          arrOfArr[i] = multipleNumbersArrays;
+        }
+      }
     } catch (err) {
       let title = "No JSON submitted";
       let msg = "No JSON file was detected. Your bundles won't contain any NFTs.";
       openNotification("error", title, msg);
       console.log(err);
     }
-    //} else {
 
-    await getMultipleBundleArrays();
-    console.log(fileContent);
-    //await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
-    var arrOfArr = [];
-    if (fileContent && fileContent.length > 0) {
-      const numOfERC20 = multipleNumbersArrays[1];
-      var firstNFTIndex = 4 + parseInt(numOfERC20);
-
-      var k = 0;
-      for (let i = 0; i < bundleNumber; i++) {
-        let arr = cloneDeep(multipleNumbersArrays);
-
-        for (let j = firstNFTIndex; j < arr.length; j++) {
-          var value = fileContent[k].token_id;
-          arr[j] = value;
-
-          if (fileContent[k].contract_type === "ERC1155") {
-            var amount = fileContent[k].amount;
-            arr[j + 1] = amount;
-            j++;
-          }
-          k++;
-        }
-        arrOfArr.push(arr);
-      }
-    } else {
-      for (let i = 0; i < bundleNumber; i++) {
-        arrOfArr[i] = multipleNumbersArrays;
-      }
-    }
     console.log(contractAdressesArray);
     console.log(arrOfArr);
+
+    await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
     // for (let i = 0; i < bundleNumber; i++) {
     //   multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
     // }
   }
 
   const onClickReset = () => {
-    // setNFTsArr([]);
-    // setEthAmount(0);
-    // setSelectedTokens([]);
-    // setContractAdressesArray([]);
-    // setSingleNumbersArray([]);
-    // setMultipleNumbersArrays([]);
-
-    if(assetPerBundleRef && assetPerBundleRef.current) {
+    if (assetPerBundleRef && assetPerBundleRef.current) {
       assetPerBundleRef.current.reset();
     }
-
-    if(assetModalRef && assetModalRef.current) {
+    if (assetModalRef && assetModalRef.current) {
       assetModalRef.current.reset();
     }
-
   };
 
-  async function forDev() {
-    await getSingleBundleArrays();
-    console.log(contractAdressesArray);
-    console.log(singleNumbersArray);
-  }
+  const forDev = async () => {
+    const result = await getSingleBundleArrays();
+    console.log("contractAdressesArray", result.contracts);
+    console.log("singleNumbersArray", result.singleArray);
+  };
 
   return (
     <div style={styles.content}>
@@ -291,7 +277,6 @@ const BatchBundle = () => {
                     handleNFTCancel={handleNFTCancel}
                     isNFTModalVisible={isNFTModalVisible}
                     handleNFTOk={handleNFTOk}
-                    confirmLoading={confirmLoading}
                     ref={assetModalRef}
                   />
                   <div style={{ color: "white", fontSize: "16px" }}>
@@ -315,7 +300,7 @@ const BatchBundle = () => {
                   </div>
                 </div>
                 <div>
-                  <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef}/>
+                  <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef} />
                 </div>
               </div>
               <div>
@@ -360,7 +345,7 @@ const BatchBundle = () => {
                     />
                   </p>
                 </div>
-                <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef}/>
+                <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef} />
               </div>
               <div style={{ margin: "auto", width: "50%" }}>
                 <label style={{ fontSize: "17px" }}>Enter the desired amount of bundles:</label>

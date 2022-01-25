@@ -9,7 +9,6 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
   const [isAssetModalVisible, setIsAssetModalVisible] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const [ethAmount, setEthAmount] = useState();
   const [selectedTokens, setSelectedTokens] = useState([]);
 
@@ -44,7 +43,6 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
       <ERC20Modal
         isAssetModalVisible={isAssetModalVisible}
         handleAssetOk={handleAssetOk}
-        confirmLoading={confirmLoading}
         handleAssetCancel={handleAssetCancel}
       />
 
