@@ -80,7 +80,7 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
         </Button>
       </div>
       <div style={{ width: "100", display: "flex", flexDirection: "column" }}>
-        {ERC20Tokens.length > 0 &&
+        {ERC20Tokens && ERC20Tokens.length > 0 &&
           ERC20Tokens.map((token) => (
             <p key={token.data.symbol}>
               {token.data.symbol}: {token.value}

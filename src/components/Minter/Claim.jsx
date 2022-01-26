@@ -100,6 +100,7 @@ const Claim = () => {
             handleNFTCancel={handleNFTCancel}
             isNFTModalVisible={isNFTModalVisible}
             handleNFTOk={handleNFTOk}
+            isMultiple={false}
             confirmLoading={confirmLoading}
           />
 

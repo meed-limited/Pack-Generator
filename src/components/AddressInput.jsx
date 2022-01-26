@@ -13,13 +13,6 @@ function AddressInput(props) {
     if (validatedAddress) props.onChange(address);
   }, [address]);
 
-  // useEffect(() => {
-  //   function fetchBusinesses() {
-  //     if (validatedAddress) props.onChange(address);
-  //   }
-  //   fetchBusinesses()
-  // }, [address, validatedAddress, props]);
-
   const updateAddress = useCallback((address) => {
     if (address.length === 42) setValidatedAddress(getEllipsisTxt(address, 10));
     setAddress(address);

@@ -1,5 +1,8 @@
+import cloneDeep from "lodash/cloneDeep";
+
+
 /* SINGLE BUNDLE: Sorting arrays before feeding contract:
-*********************************************************/
+ *********************************************************/
 export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
   var assetsAddresses = [];
   var assetsNumbers = [];
@@ -62,7 +65,7 @@ export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
 }
 
 /* MULTIPLE BUNDLES: Sorting arrays before feeding contract:
-************************************************************/
+ ************************************************************/
 export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfErc721, numOfErc1155) {
   var assetsAddresses = [];
   var assetsNumbers = [];
@@ -137,6 +140,7 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
           assetsNumbers.push(tmp);
         }
       }
+      //assetsAddresses.push('0');
     } catch (error) {
       console.log(error);
     }
@@ -144,4 +148,39 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
 
   var data = [assetsAddresses, assetsNumbers];
   return data;
+}
+
+
+/* MULTIPLE BUNDLES: Updating token IDs before feeding contract:
+ ****************************************************************/
+export function updateTokenIdsInArray(importedJson, multiNumArr, bundleNum) {
+  var arrOfArr = [];
+
+  if (importedJson && importedJson.length > 0) {
+    const numOfERC20 = multiNumArr[1];
+    var firstNFTIndex = 4 + parseInt(numOfERC20);
+
+    var k = 0;
+    for (let i = 0; i < bundleNum; i++) {
+      let arr = cloneDeep(multiNumArr);
+
+      for (let j = firstNFTIndex; j < arr.length; j++) {
+        var value = importedJson[k].token_id;
+        arr[j] = value;
+
+        if (importedJson[k].contract_type === "ERC1155") {
+          var amount = importedJson[k].amount;
+          arr[j + 1] = amount;
+          j++;
+        }
+        k++;
+      }
+      arrOfArr.push(arr);
+    }
+  } else {
+    for (let i = 0; i < bundleNum; i++) {
+      arrOfArr[i] = multiNumArr;
+    }
+  }
+  return arrOfArr;
 }

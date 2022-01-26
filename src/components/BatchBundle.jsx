@@ -12,6 +12,8 @@ import { approveNFTcontract } from "./Minter/Approval";
 import { approveERC20contract } from "./Minter/Approval";
 import AssetPerBundle from "./Minter/AssetPerBundle";
 import styles from "./Minter/styles";
+import { updateTokenIdsInArray } from "./Minter/ArraySorting";
+import { getEllipsisTxt } from "helpers/formatters";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
@@ -21,9 +23,6 @@ const BatchBundle = () => {
   const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [NFTsArr, setNFTsArr] = useState([]);
-  const [contractAdressesArray, setContractAdressesArray] = useState([]);
-  const [singleNumbersArray, setSingleNumbersArray] = useState([]);
-  const [multipleNumbersArrays, setMultipleNumbersArrays] = useState([]);
   const [ERC721Number, setERC721Number] = useState(0);
   const [ERC1155Number, setERC1155Number] = useState(0);
   const [bundleNumber, setBundleNumber] = useState();
@@ -69,21 +68,13 @@ const BatchBundle = () => {
   }
 
   async function getSingleBundleArrays() {
-    setContractAdressesArray([]);
-    setSingleNumbersArray([]);
     let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
-    setContractAdressesArray(data[0]);
-    setSingleNumbersArray(data[1]);
-
-    return { contracts: data[0], singleArray: data[1] };
+    return [data[0], data[1]];
   }
 
-  async function getMultipleBundleArrays(fileContentValue) {
-    setContractAdressesArray([]);
-    setMultipleNumbersArrays([]);
-    let data = await sortMultipleArrays(ethAmount, selectedTokens, fileContentValue, ERC721Number, ERC1155Number);
-    setContractAdressesArray(data[0]);
-    setMultipleNumbersArrays(data[1]);
+  async function getMultipleBundleArrays(fileContent) {
+    let data = await sortMultipleArrays(ethAmount, selectedTokens, fileContent, ERC721Number, ERC1155Number);
+    return [data[0], data[1]];
   }
 
   async function singleApproveAll(address, numbers) {
@@ -110,7 +101,6 @@ const BatchBundle = () => {
   async function multipleApproveAll(address, numbers) {
     var ERC20add = [];
     var count = 4;
-    console.log(address);
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
@@ -131,34 +121,34 @@ const BatchBundle = () => {
 
   async function singleBundleMint(assetContracts, assetNumbers) {
     const addressArr = cloneDeep(assetContracts);
-    await singleApproveAll(assetContracts, assetNumbers);
+    await singleApproveAll(assetContracts, assetNumbers).then(() => {
+      const ops = {
+        contractAddress: assemblyAddress,
+        functionName: "mint",
+        abi: contractABIJson,
+        msgValue: assetNumbers[0],
+        params: {
+          _to: walletAddress,
+          _addresses: addressArr,
+          _numbers: assetNumbers
+        }
+      };
 
-    const ops = {
-      contractAddress: assemblyAddress,
-      functionName: "mint",
-      abi: contractABIJson,
-      msgValue: assetNumbers[0],
-      params: {
-        _to: walletAddress,
-        _addresses: addressArr,
-        _numbers: assetNumbers
-      }
-    };
-
-    await contractProcessor.fetch({
-      params: ops,
-      onSuccess: () => {
-        let title = "Bundle created!";
-        let msg = "Your bundle has been succesfully created!<br/>Open in the explorer";
-        openNotification("success", title, msg);
-        console.log("Bundle created");
-      },
-      onError: (error) => {
-        let title = "Unexpected error";
-        let msg = "Oops, something went wrong while creating your bundle!";
-        openNotification("error", title, msg);
-        console.log(error);
-      }
+      contractProcessor.fetch({
+        params: ops,
+        onSuccess: () => {
+          let title = "Bundle created!";
+          let msg = "Your bundle has been succesfully created!<br/>Open in the explorer";
+          openNotification("success", title, msg);
+          console.log("Bundle created");
+        },
+        onError: (error) => {
+          let title = "Unexpected error";
+          let msg = "Oops, something went wrong while creating your bundle!";
+          openNotification("error", title, msg);
+          console.log(error);
+        }
+      });
     });
   }
 
@@ -191,55 +181,30 @@ const BatchBundle = () => {
   }
 
   async function handleSingleBundle() {
-    await getSingleBundleArrays();
-    await singleBundleMint(contractAdressesArray, singleNumbersArray);
+    let result = await getSingleBundleArrays();
+    singleBundleMint(result[0], result[1]);
   }
 
   async function handleMultipleBundle() {
     try {
       const fetchIpfsFile = await fetchIpfs();
-      const res = await getMultipleBundleArrays(fetchIpfsFile);
+      const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
+      const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, sortedData[1], bundleNumber);
+      console.log(sortedData[0]);
+      console.log(contractNumbersArray);
 
-      var arrOfArr = [];
-      if (res && res.length > 0) {
-        const numOfERC20 = multipleNumbersArrays[1];
-        var firstNFTIndex = 4 + parseInt(numOfERC20);
-
-        var k = 0;
+      /*SMART-CONTRACT CALL:
+       **********************/
+      await multipleApproveAll(sortedData[0], sortedData[1]).then(() => {
         for (let i = 0; i < bundleNumber; i++) {
-          let arr = cloneDeep(multipleNumbersArrays);
-
-          for (let j = firstNFTIndex; j < arr.length; j++) {
-            var value = res[k].token_id;
-            arr[j] = value;
-
-            if (res[k].contract_type === "ERC1155") {
-              var amount = res[k].amount;
-              arr[j + 1] = amount;
-              j++;
-            }
-            k++;
-          }
-          arrOfArr.push(arr);
+          multipleBundleMint(sortedData[0], contractNumbersArray[i], i);
         }
-      } else {
-        for (let i = 0; i < bundleNumber; i++) {
-          arrOfArr[i] = multipleNumbersArrays;
-        }
-      }
+      });
     } catch (err) {
-      let title = "No JSON submitted";
-      let msg = "No JSON file was detected. Your bundles won't contain any NFTs.";
+      let title = "Batch Bundle error";
+      let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
       openNotification("error", title, msg);
       console.log(err);
-    }
-
-    console.log(contractAdressesArray);
-    console.log(arrOfArr);
-
-    await multipleApproveAll(contractAdressesArray, multipleNumbersArrays);
-    for (let i = 0; i < bundleNumber; i++) {
-      multipleBundleMint(contractAdressesArray, arrOfArr[i], i);
     }
   }
 
@@ -254,8 +219,7 @@ const BatchBundle = () => {
 
   const forDev = async () => {
     const result = await getSingleBundleArrays();
-    console.log("contractAdressesArray", result.contracts);
-    console.log("singleNumbersArray", result.singleArray);
+    console.log(result[0], result[1]);
   };
 
   return (
@@ -277,6 +241,7 @@ const BatchBundle = () => {
                     handleNFTCancel={handleNFTCancel}
                     isNFTModalVisible={isNFTModalVisible}
                     handleNFTOk={handleNFTOk}
+                    isMultiple={true}
                     ref={assetModalRef}
                   />
                   <div style={{ color: "white", fontSize: "16px" }}>
@@ -294,7 +259,11 @@ const BatchBundle = () => {
                           }}
                           key={`${nftItem.token_id} - ${nftItem.contract_type}`}
                         >
-                          <p>{`NFT: ${nftItem.token_id} - ${nftItem.contract_type}`}</p>
+                          {nftItem.token_id.length > 6 ? (
+                            <p>{`Id: ${getEllipsisTxt(nftItem.token_id, 4)} - Type: ${nftItem.contract_type}`}</p>
+                          ) : (
+                            <p>{`Id: ${nftItem.token_id} - Type - ${nftItem.contract_type}`}</p>
+                          )}
                         </div>
                       ))}
                   </div>

@@ -33,8 +33,7 @@ function Account() {
     return (
       <div
         style={styles.account}
-        //onClick={() => authenticate({ signingMessage: "Hello Web3!" })}
-        onClick={() => authenticate()}
+        onClick={() => authenticate({ signingMessage: "Welcome to Lepricon Bundle!" })}
       >
         <p style={styles.text}>Authenticate</p>
       </div>
