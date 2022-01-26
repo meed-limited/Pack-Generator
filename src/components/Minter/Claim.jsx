@@ -3,10 +3,11 @@ import { Button, Divider, Input } from "antd";
 import { useMoralisQuery } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
-import AssetModal from "./AssetModal";
+import L3PModal from "./L3PModal";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
 import styles from "./styles";
+
 
 const Claim = () => {
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
@@ -50,7 +51,7 @@ const Claim = () => {
 
   const resetOnClaim = () => {
     setBundleId();
-  }
+  };
 
   async function claimBundle() {
     const data = await getBundle(bundleId);
@@ -96,14 +97,13 @@ const Claim = () => {
           <Button type='primary' shape='round' style={{ margin: "auto", width: "90%" }} onClick={showNFTModal}>
             Pick an NFT
           </Button>
-          <AssetModal
+          <L3PModal
             handleNFTCancel={handleNFTCancel}
             isNFTModalVisible={isNFTModalVisible}
             handleNFTOk={handleNFTOk}
             isMultiple={false}
             confirmLoading={confirmLoading}
           />
-
           <span style={{ marginBottom: "10px" }}>or</span>
           <Input
             style={{ textAlign: "center", width: "90%", margin: "auto" }}

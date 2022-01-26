@@ -15,8 +15,11 @@ const styles = {
   }
 };
 
-const AssetModal = forwardRef(
-  ({ handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
+const NFTModal = forwardRef(
+  (
+    { handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false },
+    ref
+  ) => {
     const { NFTBalance, fetchSuccess } = useNFTBalance();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
 
@@ -64,6 +67,7 @@ const AssetModal = forwardRef(
     return (
       <>
         <Modal
+          width={"790px"}
           title='Select NFTs to bundle'
           visible={isNFTModalVisible}
           onOk={handleClickOk}
@@ -80,9 +84,12 @@ const AssetModal = forwardRef(
                 <div style={{ marginBottom: "10px" }}></div>
               </>
             )}
+
             {NFTBalance &&
               NFTBalance.map((nft, index) => {
                 return (
+                  
+
                   <Card
                     hoverable
                     style={{
@@ -108,6 +115,7 @@ const AssetModal = forwardRef(
                   >
                     <Meta title={nft.name} description={nft.contract_type} />
                   </Card>
+                  
                 );
               })}
           </div>
@@ -117,4 +125,4 @@ const AssetModal = forwardRef(
   }
 );
 
-export default AssetModal;
+export default NFTModal;

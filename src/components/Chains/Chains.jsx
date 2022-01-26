@@ -3,7 +3,7 @@ import useChain from "hooks/useChain";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { PolygonLogo, ETHLogo } from "./Logos";
+import { PolygonLogo, ETHLogo, LeprichainLogo } from "./Logos";
 //import { AvaxLogo, PolygonLogo, BSCLogo, ETHLogo } from "./Logos";
 
 const styles = {
@@ -63,11 +63,11 @@ const menuItems = [
   //   value: "Smart Chain Testnet",
   //   icon: <BSCLogo />,
   // },
-  // {
-  //   key: "0x89",
-  //   value: "Polygon",
-  //   icon: <PolygonLogo />,
-  // },
+  {
+    key: "0x89",
+    value: "Polygon",
+    icon: <PolygonLogo />,
+  },
   {
     key: "0x13881",
     value: "Mumbai",
@@ -78,6 +78,11 @@ const menuItems = [
   //   value: "Avalanche",
   //   icon: <AvaxLogo />,
   // },
+  {
+    key: "0xc271",
+    value: "Leprichain",
+    icon: <LeprichainLogo />,
+  },
 ];
 
 function Chains() {

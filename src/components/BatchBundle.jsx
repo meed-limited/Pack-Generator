@@ -2,17 +2,15 @@ import React, { useState } from "react";
 import { Button, Input, Tabs, Divider } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
-import AssetModal from "./Minter/AssetModal";
+import NFTModal from "./Minter/NFTModal";
 import cloneDeep from "lodash/cloneDeep";
 import Claim from "./Minter/Claim";
 import { openNotification } from "./Notification";
-import { sortSingleArrays, sortMultipleArrays } from "./Minter/ArraySorting";
+import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Minter/ArraySorting";
 import Uploader from "./Minter/Uploader";
-import { approveNFTcontract } from "./Minter/Approval";
-import { approveERC20contract } from "./Minter/Approval";
+import { approveERC20contract, approveNFTcontract, checkExistingApproval } from "./Minter/Approval";
 import AssetPerBundle from "./Minter/AssetPerBundle";
 import styles from "./Minter/styles";
-import { updateTokenIdsInArray } from "./Minter/ArraySorting";
 import { getEllipsisTxt } from "helpers/formatters";
 const { TabPane } = Tabs;
 
@@ -189,17 +187,24 @@ const BatchBundle = () => {
     try {
       const fetchIpfsFile = await fetchIpfs();
       const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
-      const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, sortedData[1], bundleNumber);
-      console.log(sortedData[0]);
+      const assetsArray = sortedData[0];
+      const numbersArray = sortedData[1];
+      const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, numbersArray, bundleNumber);
+      console.log(assetsArray);
       console.log(contractNumbersArray);
 
       /*SMART-CONTRACT CALL:
        **********************/
-      await multipleApproveAll(sortedData[0], sortedData[1]).then(() => {
-        for (let i = 0; i < bundleNumber; i++) {
-          multipleBundleMint(sortedData[0], contractNumbersArray[i], i);
-        }
-      });
+      const clonedArray = cloneDeep(assetsArray);
+      await multipleApproveAll(clonedArray, numbersArray);
+
+      for (let i = 0; i < bundleNumber; i++) {
+        let numbers = contractNumbersArray[i];
+        multipleBundleMint(assetsArray, numbers, i);
+      }
+
+      // let currentApproval = await checkExistingApproval (sortedData[0], sortedData[1], walletAddress, assemblyAddress, contractProcessor);
+      // console.log(currentApproval)
     } catch (err) {
       let title = "Batch Bundle error";
       let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
@@ -237,7 +242,7 @@ const BatchBundle = () => {
                   <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showNFTModal}>
                     Pick Some NFTs
                   </Button>
-                  <AssetModal
+                  <NFTModal
                     handleNFTCancel={handleNFTCancel}
                     isNFTModalVisible={isNFTModalVisible}
                     handleNFTOk={handleNFTOk}

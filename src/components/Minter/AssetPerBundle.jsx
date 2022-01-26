@@ -8,22 +8,22 @@ import styles from "./styles";
 const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
-  const [isAssetModalVisible, setIsAssetModalVisible] = useState(false);
+  const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
   const [ethAmount, setEthAmount] = useState();
   const [selectedTokens, setSelectedTokens] = useState([]);
 
-  const showAssetModal = () => {
-    setIsAssetModalVisible(true);
+  const showNFTModal = () => {
+    setIsNFTModalVisible(true);
   };
 
   const handleAssetCancel = () => {
-    setIsAssetModalVisible(false);
+    setIsNFTModalVisible(false);
   };
 
   const handleAssetOk = (eth, selectedItems) => {
     setEthAmount(eth);
     setSelectedTokens(selectedItems);
-    setIsAssetModalVisible(false);
+    setIsNFTModalVisible(false);
     getAssetValues(eth, selectedItems);
   };
 
@@ -37,11 +37,11 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
 
   return (
     <div>
-      <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showAssetModal}>
+      <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showNFTModal}>
         Assets per bundle
       </Button>
       <ERC20Modal
-        isAssetModalVisible={isAssetModalVisible}
+        isNFTModalVisible={isNFTModalVisible}
         handleAssetOk={handleAssetOk}
         handleAssetCancel={handleAssetCancel}
       />

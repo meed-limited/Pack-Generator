@@ -5,7 +5,7 @@ import { useNativeBalance } from "hooks/useNativeBalance";
 
 const { Title } = Typography;
 
-const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handleAssetCancel }) => {
+const ERC20Modal = ({ isNFTModalVisible, handleAssetOk, confirmLoading, handleAssetCancel }) => {
   const [nativeAmount, setNativeAmount] = useState(0);
   const [ERC20Tokens, setERC20Tokens] = useState([]);
   const [currentToken, setCurrentToken] = useState();
@@ -50,12 +50,12 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
   return (
     <Modal
       title='Select assets to bundle'
-      visible={isAssetModalVisible}
+      visible={isNFTModalVisible}
       onOk={handleClickOk}
       confirmLoading={confirmLoading}
       onCancel={handleAssetCancel}
     >
-      <Title level={5}>Bundle ETH</Title>
+      <Title level={5}>Amount of {nativeName} to bundle</Title>
 
       <InputNumber
         style={{ marginBottom: "80px" }}
@@ -66,7 +66,7 @@ const ERC20Modal = ({ isAssetModalVisible, handleAssetOk, confirmLoading, handle
         onChange={setNativeAmount}
       ></InputNumber>
 
-      <Title level={5}>Bundle ERC20 Token</Title>
+      <Title level={5}>Amount of ERC20 Tokens to bundle</Title>
       <AssetSelector getAsset={onChangeToken} style={{ width: "auto", minWidth: "120px" }} />
       <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
         <Input
