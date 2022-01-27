@@ -137,10 +137,10 @@ export async function checkExistingApproval(addresses, numbers, walletAddress, c
       }
     };
 
-    let result = await processor.fetch({
+    await processor.fetch({
       params: ops,
-      onSuccess: () => {
-        console.log(`Checking allowance`);
+      onSuccess: (e) => {
+        console.log(`Checking allowance: ${e}`);
       },
       onError: (error) => {
         let title = "Error checking allowance";
@@ -149,58 +149,58 @@ export async function checkExistingApproval(addresses, numbers, walletAddress, c
         console.log(error);
       }
     });
-    existingAllowance = existingAllowance.concat(result);
+    //existingAllowance = existingAllowance.concat(result);
   }
 
-  for (let i = 0; i < addresses.length; i++) {
-    const ops = {
-      contractAddress: addresses[i],
-      functionName: "isApprovedForAll",
-      abi: [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "operator",
-              "type": "address"
-            }
-          ],
-          "name": "isApprovedForAll",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ],
-      params: {
-        owner: walletAddress,
-        operator: contractAddress
-      }
-    };
+  // for (let i = 0; i < addresses.length; i++) {
+  //   const ops = {
+  //     contractAddress: addresses[i],
+  //     functionName: "isApprovedForAll",
+  //     abi: [
+  //       {
+  //         "inputs": [
+  //           {
+  //             "internalType": "address",
+  //             "name": "owner",
+  //             "type": "address"
+  //           },
+  //           {
+  //             "internalType": "address",
+  //             "name": "operator",
+  //             "type": "address"
+  //           }
+  //         ],
+  //         "name": "isApprovedForAll",
+  //         "outputs": [
+  //           {
+  //             "internalType": "bool",
+  //             "name": "",
+  //             "type": "bool"
+  //           }
+  //         ],
+  //         "stateMutability": "view",
+  //         "type": "function"
+  //       }
+  //     ],
+  //     params: {
+  //       owner: walletAddress,
+  //       operator: contractAddress
+  //     }
+  //   };
 
-    let result = await processor.fetch({
-      params: ops,
-      onSuccess: () => {
-        console.log(`NFT Approval: ${result}`);
-      },
-      onError: (error) => {
-        let title = "Error checking allowance";
-        let msg = "Something went wrong while checking your allowances. Pleas try again.";
-        openNotification("error", title, msg);
-        console.log(error);
-      }
-    });
-    existingAllowance = existingAllowance.concat(result);
-  }
+  //   let result = await processor.fetch({
+  //     params: ops,
+  //     onSuccess: () => {
+  //       console.log(`NFT Approval: ${result}`);
+  //     },
+  //     onError: (error) => {
+  //       let title = "Error checking allowance";
+  //       let msg = "Something went wrong while checking your allowances. Pleas try again.";
+  //       openNotification("error", title, msg);
+  //       console.log(error);
+  //     }
+  //   });
+  //   existingAllowance = existingAllowance.concat(result);
+  // }
   return existingAllowance;
 }

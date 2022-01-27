@@ -68,6 +68,14 @@ export const networkConfigs = {
     rpcUrl: "https://rpc-mumbai.matic.today/",
     blockExplorerUrl: "https://mumbai.polygonscan.com/",
   },
+  "0xc271": {
+    chainId: 49777,
+    chainName: "Leprichain",
+    currencyName: "L3P",
+    currencySymbol: "L3P",
+    rpcUrl: "https://node.leprichain.blockwell.ai/",
+    blockExplorerUrl: "https://explorer.leprichain.blockwell.ai/",
+  },
 };
 
 export const getNativeByChain = (chain) =>

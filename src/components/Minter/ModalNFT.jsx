@@ -10,13 +10,13 @@ const styles = {
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    maxWidth: "100%",
+    maxWidth: "1000px",
     gap: "10px"
   }
 };
 
-const L3PModal = forwardRef(
-  ({ handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
+const ModalNFT = forwardRef(
+  ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
     const { NFTBalance, fetchSuccess } = useNFTBalance();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
 
@@ -61,16 +61,12 @@ const L3PModal = forwardRef(
       }
     }));
 
-    const L3PBundleBalance = NFTBalance.filter(function (results) {
-      return results.token_address.includes("0xbc779ce41259cd7107ed2c36e00258b6234111bd");
-    });
-
     return (
       <>
         <Modal
           width={"790px"}
-          title='Select an L3PB bundle to unpack:'
-          visible={isNFTModalVisible}
+          title='Select NFTs to bundle'
+          visible={isModalNFTVisible}
           onOk={handleClickOk}
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
@@ -86,8 +82,8 @@ const L3PModal = forwardRef(
               </>
             )}
 
-            {L3PBundleBalance &&
-              L3PBundleBalance.map((nft, index) => {
+            {NFTBalance &&
+              NFTBalance.map((nft, index) => {
                 return (
                   <Card
                     hoverable
@@ -98,7 +94,13 @@ const L3PModal = forwardRef(
                           `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
                       )
                         ? "2px solid black"
-                        : undefined
+                        : undefined,
+                      opacity: selectedNFTs.some(
+                        (nftItem) =>
+                          `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
+                      )
+                        ? "1"
+                        : "0.8"
                     }}
                     cover={
                       <Image
@@ -123,4 +125,4 @@ const L3PModal = forwardRef(
   }
 );
 
-export default L3PModal;
+export default ModalNFT;

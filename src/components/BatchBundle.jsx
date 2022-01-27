@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Button, Input, Tabs, Divider } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
-import NFTModal from "./Minter/NFTModal";
+import { useMoralis, useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
+import ModalNFT from "./Minter/ModalNFT";
 import cloneDeep from "lodash/cloneDeep";
-import Claim from "./Minter/Claim";
+import BundleClaim from "./BundleClaim";
 import { openNotification } from "./Notification";
 import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Minter/ArraySorting";
 import Uploader from "./Minter/Uploader";
@@ -12,11 +12,15 @@ import { approveERC20contract, approveNFTcontract, checkExistingApproval } from 
 import AssetPerBundle from "./Minter/AssetPerBundle";
 import styles from "./Minter/styles";
 import { getEllipsisTxt } from "helpers/formatters";
+import { getExplorer } from "helpers/networks";
+import { FileSearchOutlined } from "@ant-design/icons";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
-  const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
-  const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
+  const queryMintedBundles = useMoralisQuery("CreatedBundle");
+  const { Moralis } = useMoralis();
+  const { walletAddress, chainId, assemblyAddress, assemblyABI } = useMoralisDapp();
+  const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
@@ -28,18 +32,21 @@ const BatchBundle = () => {
   const contractABIJson = JSON.parse(assemblyABI);
   const assetPerBundleRef = React.useRef();
   const assetModalRef = React.useRef();
+  const fetchMintedBundle = JSON.parse(
+    JSON.stringify(queryMintedBundles.data, ["firstHolder", "tokenId", "salt", "addresses", "numbers", "address", "confirmed"])
+  );
 
-  const showNFTModal = () => {
-    setIsNFTModalVisible(true);
+  const showModalNFT = () => {
+    setIsModalNFTVisible(true);
   };
 
   const handleNFTOk = (selectedItems) => {
     setNFTsArr(selectedItems);
-    setIsNFTModalVisible(false);
+    setIsModalNFTVisible(false);
   };
 
   const handleNFTCancel = () => {
-    setIsNFTModalVisible(false);
+    setIsModalNFTVisible(false);
   };
 
   const getAssetValues = (ethAmt, Erc20) => {
@@ -134,9 +141,11 @@ const BatchBundle = () => {
 
       contractProcessor.fetch({
         params: ops,
-        onSuccess: () => {
+        onSuccess: async (e) => {
+          // const nftId = await fetchMintedBundle[fetchMintedBundle.length -1].tokenId; // PB: DB delayed = not getting the last id !!!!
+          // console.log(nftId)
           let title = "Bundle created!";
-          let msg = "Your bundle has been succesfully created!<br/>Open in the explorer";
+          let msg = "Your bundle has been succesfully created! Click to view in the explorer";
           openNotification("success", title, msg);
           console.log("Bundle created");
         },
@@ -203,8 +212,9 @@ const BatchBundle = () => {
         multipleBundleMint(assetsArray, numbers, i);
       }
 
-      // let currentApproval = await checkExistingApproval (sortedData[0], sortedData[1], walletAddress, assemblyAddress, contractProcessor);
+      // let currentApproval = await checkExistingApproval(sortedData[0], sortedData[1], walletAddress, assemblyAddress, contractProcessor);
       // console.log(currentApproval)
+
     } catch (err) {
       let title = "Batch Bundle error";
       let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
@@ -239,12 +249,12 @@ const BatchBundle = () => {
 
               <div style={{ display: "grid", gridTemplateColumns: "50% 50%" }}>
                 <div style={{ position: "relative" }}>
-                  <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showNFTModal}>
+                  <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showModalNFT}>
                     Pick Some NFTs
                   </Button>
-                  <NFTModal
+                  <ModalNFT
                     handleNFTCancel={handleNFTCancel}
-                    isNFTModalVisible={isNFTModalVisible}
+                    isModalNFTVisible={isModalNFTVisible}
                     handleNFTOk={handleNFTOk}
                     isMultiple={true}
                     ref={assetModalRef}
@@ -341,7 +351,7 @@ const BatchBundle = () => {
           </div>
         </TabPane>
         <TabPane tab='Claim Bundle' key='3'>
-          <Claim />
+          <BundleClaim />
         </TabPane>
       </Tabs>
     </div>

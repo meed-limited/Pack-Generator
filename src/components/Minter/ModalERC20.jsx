@@ -5,7 +5,7 @@ import { useNativeBalance } from "hooks/useNativeBalance";
 
 const { Title } = Typography;
 
-const ERC20Modal = ({ isNFTModalVisible, handleAssetOk, confirmLoading, handleAssetCancel }) => {
+const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAssetCancel }) => {
   const [nativeAmount, setNativeAmount] = useState(0);
   const [ERC20Tokens, setERC20Tokens] = useState([]);
   const [currentToken, setCurrentToken] = useState();
@@ -50,7 +50,7 @@ const ERC20Modal = ({ isNFTModalVisible, handleAssetOk, confirmLoading, handleAs
   return (
     <Modal
       title='Select assets to bundle'
-      visible={isNFTModalVisible}
+      visible={isModalNFTVisible}
       onOk={handleClickOk}
       confirmLoading={confirmLoading}
       onCancel={handleAssetCancel}
@@ -92,4 +92,4 @@ const ERC20Modal = ({ isNFTModalVisible, handleAssetOk, confirmLoading, handleAs
   );
 };
 
-export default ERC20Modal;
+export default ModalERC20;

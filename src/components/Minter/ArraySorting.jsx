@@ -82,7 +82,7 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
       assetsAddresses.push(tmp.token_address);
     }
   }
-  assetsNumbers.push(assetsAddresses.length, numOfErc721, numOfErc1155);
+  assetsNumbers.push(assetsAddresses.length, parseInt(numOfErc721), parseInt(numOfErc1155));
 
   if (importedJson && importedJson.length > 0) {
     try {

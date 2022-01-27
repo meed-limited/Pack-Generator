@@ -2,28 +2,28 @@ import { Button } from "antd";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { getNativeByChain } from "../../helpers/networks";
 import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
-import ERC20Modal from "./ERC20Modal";
+import ModalERC20 from "./ModalERC20";
 import styles from "./styles";
 
 const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
-  const [isNFTModalVisible, setIsNFTModalVisible] = useState(false);
+  const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [ethAmount, setEthAmount] = useState();
   const [selectedTokens, setSelectedTokens] = useState([]);
 
-  const showNFTModal = () => {
-    setIsNFTModalVisible(true);
+  const showModalERC20 = () => {
+    setIsModalNFTVisible(true);
   };
 
   const handleAssetCancel = () => {
-    setIsNFTModalVisible(false);
+    setIsModalNFTVisible(false);
   };
 
   const handleAssetOk = (eth, selectedItems) => {
     setEthAmount(eth);
     setSelectedTokens(selectedItems);
-    setIsNFTModalVisible(false);
+    setIsModalNFTVisible(false);
     getAssetValues(eth, selectedItems);
   };
 
@@ -37,11 +37,11 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
 
   return (
     <div>
-      <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showNFTModal}>
+      <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showModalERC20}>
         Assets per bundle
       </Button>
-      <ERC20Modal
-        isNFTModalVisible={isNFTModalVisible}
+      <ModalERC20
+        isModalNFTVisible={isModalNFTVisible}
         handleAssetOk={handleAssetOk}
         handleAssetCancel={handleAssetCancel}
       />

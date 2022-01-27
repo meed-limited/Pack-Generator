@@ -10,16 +10,13 @@ const styles = {
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    maxWidth: "1000px",
+    maxWidth: "100%",
     gap: "10px"
   }
 };
 
-const NFTModal = forwardRef(
-  (
-    { handleNFTCancel, isNFTModalVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false },
-    ref
-  ) => {
+const ModalL3PBOnly = forwardRef(
+  ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
     const { NFTBalance, fetchSuccess } = useNFTBalance();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
 
@@ -64,12 +61,16 @@ const NFTModal = forwardRef(
       }
     }));
 
+    const L3PBundleBalance = NFTBalance.filter(function (results) {
+      return results.token_address.includes("0xbc779ce41259cd7107ed2c36e00258b6234111bd"); // Edit to official Bundle contract address
+    });
+
     return (
       <>
         <Modal
           width={"790px"}
-          title='Select NFTs to bundle'
-          visible={isNFTModalVisible}
+          title='Select an L3PB bundle to unpack:'
+          visible={isModalNFTVisible}
           onOk={handleClickOk}
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
@@ -85,11 +86,9 @@ const NFTModal = forwardRef(
               </>
             )}
 
-            {NFTBalance &&
-              NFTBalance.map((nft, index) => {
+            {L3PBundleBalance &&
+              L3PBundleBalance.map((nft, index) => {
                 return (
-                  
-
                   <Card
                     hoverable
                     style={{
@@ -99,7 +98,13 @@ const NFTModal = forwardRef(
                           `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
                       )
                         ? "2px solid black"
-                        : undefined
+                        : undefined,
+                      opacity: selectedNFTs.some(
+                        (nftItem) =>
+                          `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
+                      )
+                        ? "1"
+                        : "0.8"
                     }}
                     cover={
                       <Image
@@ -115,7 +120,6 @@ const NFTModal = forwardRef(
                   >
                     <Meta title={nft.name} description={nft.contract_type} />
                   </Card>
-                  
                 );
               })}
           </div>
@@ -125,4 +129,4 @@ const NFTModal = forwardRef(
   }
 );
 
-export default NFTModal;
+export default ModalL3PBOnly;
