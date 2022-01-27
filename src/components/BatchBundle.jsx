@@ -12,14 +12,11 @@ import { approveERC20contract, approveNFTcontract, checkExistingApproval } from 
 import AssetPerBundle from "./Minter/AssetPerBundle";
 import styles from "./Minter/styles";
 import { getEllipsisTxt } from "helpers/formatters";
-import { getExplorer } from "helpers/networks";
-import { FileSearchOutlined } from "@ant-design/icons";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
   const queryMintedBundles = useMoralisQuery("CreatedBundle");
-  const { Moralis } = useMoralis();
-  const { walletAddress, chainId, assemblyAddress, assemblyABI } = useMoralisDapp();
+  const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
