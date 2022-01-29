@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Divider, Input } from "antd";
+import { Button, Input } from "antd";
 import { useMoralisQuery } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
@@ -93,14 +93,19 @@ const BundleClaim = () => {
 
   return (
     <div>
-      <Divider />
-      <h2 style={styles.h2}>Unpack Your Bundle</h2>
-      <div style={styles.blackContainer}>
-        <label>Select the bundle to unpack:</label>
-        <div style={{ display: "grid", margin: "auto", width: "70%", marginTop: "30px" }}>
-          <Button type='primary' shape='round' style={{ margin: "auto", width: "90%" }} onClick={showModalNFT}>
+      <div style={styles.transparentContainer}>
+        <label style={{ letterSpacing: "1px" }}>Unpack your Bundle</label>
+        <div style={{ display: "grid", margin: "auto", width: "70%" }}>
+          <div style={{ width: "70%", margin: "auto" }}>
+          <Button
+            type='primary'
+            shape='round'
+            style={styles.selectButton}
+            onClick={showModalNFT}
+          >
             Pick an NFT
           </Button>
+          </div>
           <L3PModal
             handleNFTCancel={handleNFTCancel}
             isModalNFTVisible={isModalNFTVisible}
@@ -108,10 +113,10 @@ const BundleClaim = () => {
             isMultiple={false}
             confirmLoading={confirmLoading}
           />
-          <span style={{ marginBottom: "10px" }}>or</span>
+          <p style={{ margin: "auto", marginBottom: "25px", fontSize: "16px" }}>or</p>
+          <label style={styles.label}>ENTER BUNDLE ID</label>
           <Input
-            style={{ textAlign: "center", width: "90%", margin: "auto" }}
-            placeholder='Enter bundle Id'
+            style={styles.transparentInput}
             type='number'
             value={bundleId}
             onChange={(e) => setBundleId(e.target.value)}
@@ -122,9 +127,9 @@ const BundleClaim = () => {
           )}
         </div>
       </div>
-      <Button style={styles.runFunctionButton} onClick={handleClaim}>
-        Claim you Bundle
-      </Button>
+      <button shape="round" style={styles.runFunctionButton} onClick={handleClaim}>
+        Claim your Bundle
+      </button>
     </div>
   );
 };

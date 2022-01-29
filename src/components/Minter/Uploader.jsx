@@ -33,7 +33,7 @@ const Uploader = ({ getIpfsHash }) => {
         <p style={{ margin: "8px" }}>Select a JSON file for the Batch-Bundle</p>
       )}
       <div>
-        <Button type='primary' shape='round' size='large' style={{ width: "60%" }} onClick={handleSubmission}>
+        <Button type='primary' shape='round' size='large' style={ styles.resetButton } onClick={handleSubmission}>
           Submit
         </Button>
       </div>

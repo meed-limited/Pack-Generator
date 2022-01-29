@@ -162,7 +162,7 @@ function NFTBalance() {
   }
 
   return (
-    <>
+    <div style={{ margin: "100px" }}>
       <div style={styles.NFTs}>
         {contractABIJson.noContractDeployed && (
           <>
@@ -173,6 +173,7 @@ function NFTBalance() {
             <div style={{ marginBottom: "10px" }}></div>
           </>
         )}
+
         {!fetchSuccess && (
           <>
             <Alert
@@ -243,7 +244,7 @@ function NFTBalance() {
           <Input autoFocus placeholder='Listing Price in MATIC' onChange={(e) => setPrice(e.target.value)} />
         </Spin>
       </Modal>
-    </>
+    </div>
   );
 }
 

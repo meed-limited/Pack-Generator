@@ -18,12 +18,13 @@ const styles = {
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "1000px",
-    gap: "10px"
+    gap: "10px",
   },
   banner: {
     display: "flex",
     justifyContent: "space-evenly",
     alignItems: "center",
+    //marginTop: "-80px",
     margin: "0 auto",
     width: "600px",
     height: "150px",
@@ -155,9 +156,9 @@ function NFTTokenIds({ inputValue, setInputValue }) {
 
   return (
     <>
-      <div>
+      <div style={{marginTop:"100px"}}>
         {contractABIJson.noContractDeployed && (
-          <>
+          < >
             <Alert
               message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'
               type='error'

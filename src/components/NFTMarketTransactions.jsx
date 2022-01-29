@@ -4,13 +4,14 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { Table, Tag, Space } from "antd";
 import { PolygonCurrency } from "./Chains/Logos";
 import moment from "moment";
+import styles from "./Minter/styles";
 
-const styles = {
-  table: {
-    margin: "0 auto",
-    width: "1000px"
-  }
-};
+// const styles = {
+//   table: {
+//     margin: "0 auto",
+//     width: "1000px"
+//   }
+// };
 
 function NFTMarketTransactions() {
   const { walletAddress } = useMoralisDapp();
@@ -119,7 +120,7 @@ function NFTMarketTransactions() {
 
   return (
     <>
-      <div>
+      <div style={{margin:"100px"}}>
         <div style={styles.table}>
           <Table columns={columns} dataSource={data} />
         </div>

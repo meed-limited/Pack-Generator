@@ -4,6 +4,7 @@ import { getNativeByChain } from "../../helpers/networks";
 import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
 import ModalERC20 from "./ModalERC20";
 import styles from "./styles";
+//import buttonImg from "../../assets/buttonImg.svg";
 
 const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
@@ -28,17 +29,17 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   };
 
   useImperativeHandle(ref, () => ({
-    reset () {
+    reset() {
       setEthAmount();
       setSelectedTokens([]);
       getAssetValues(null, []);
     }
-  }))
+  }));
 
   return (
     <div>
-      <Button type='primary' shape='round' style={{ width: "70%", margin: "30px" }} onClick={showModalERC20}>
-        Assets per bundle
+      <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalERC20}>
+        ASSETS TO BUNDLE
       </Button>
       <ModalERC20
         isModalNFTVisible={isModalNFTVisible}

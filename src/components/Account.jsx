@@ -7,21 +7,30 @@ import { useState } from "react";
 import Address from "./Address/Address";
 import { SelectOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
+import { withRouter } from "react-router";
+
+/*eslint no-dupe-keys: "Off"*/
 const styles = {
   account: {
+    display: "flex",
+    alignItems: "center",
     height: "42px",
     padding: "0 15px",
-    display: "flex",
+    backgroundColor: "transparent",
+    background: "rgba(240, 248, 255, 0.10)",
+    background: "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background: "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background: "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     justifyContent: "center",
-    alignItems: "center",
     width: "fit-content",
     borderRadius: "12px",
-    backgroundColor: "rgb(244, 244, 244)",
+    border: "0",
     cursor: "pointer",
+    marginRight: "20px",
   },
   text: {
-    color: "#21BF96",
-  },
+    color: "white"
+  }
 };
 
 function Account() {
@@ -31,10 +40,7 @@ function Account() {
 
   if (!isAuthenticated) {
     return (
-      <div
-        style={styles.account}
-        onClick={() => authenticate({ signingMessage: "Welcome to Lepricon Bundle!" })}
-      >
+      <div style={styles.account} onClick={() => authenticate({ signingMessage: "Welcome to Lepricon Bundle!" })}>
         <p style={styles.text}>Authenticate</p>
       </div>
     );
@@ -43,9 +49,7 @@ function Account() {
   return (
     <>
       <div style={styles.account} onClick={() => setIsModalVisible(true)}>
-        <p style={{ marginRight: "5px", ...styles.text }}>
-          {getEllipsisTxt(walletAddress, 6)}
-        </p>
+        <p style={{ marginRight: "5px", ...styles.text }}>{getEllipsisTxt(walletAddress, 6)}</p>
         <Blockie currentWallet scale={3} />
       </div>
       <Modal
@@ -55,10 +59,10 @@ function Account() {
         bodyStyle={{
           padding: "15px",
           fontSize: "17px",
-          fontWeight: "500",
+          fontWeight: "500"
         }}
         style={{ fontSize: "16px", fontWeight: "500" }}
-        width="400px"
+        width='400px'
       >
         Account
         <Card
@@ -68,26 +72,17 @@ function Account() {
           }}
           bodyStyle={{ padding: "15px" }}
         >
-          <Address
-            avatar="left"
-            size={6}
-            copyable
-            style={{ fontSize: "20px" }}
-          />
+          <Address avatar='left' size={6} copyable style={{ fontSize: "20px" }} />
           <div style={{ marginTop: "10px", padding: "0 10px" }}>
-            <a
-              href={`${getExplorer(chainId)}/address/${walletAddress}`}
-              target="_blank"
-              rel="noreferrer"
-            >
+            <a href={`${getExplorer(chainId)}/address/${walletAddress}`} target='_blank' rel='noreferrer'>
               <SelectOutlined style={{ marginRight: "5px" }} />
               View on Explorer
             </a>
           </div>
         </Card>
         <Button
-          size="large"
-          type="primary"
+          size='large'
+          type='primary'
           style={{
             width: "100%",
             marginTop: "10px",

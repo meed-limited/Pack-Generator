@@ -6,6 +6,7 @@ import { DownOutlined } from "@ant-design/icons";
 import { PolygonLogo, ETHLogo, LeprichainLogo } from "./Logos";
 //import { AvaxLogo, PolygonLogo, BSCLogo, ETHLogo } from "./Logos";
 
+/*eslint no-dupe-keys: "Off"*/
 const styles = {
   item: {
     display: "flex",
@@ -14,10 +15,16 @@ const styles = {
     fontWeight: "500",
     fontFamily: "Roboto, sans-serif",
     fontSize: "14px",
+    color:"white",
     padding: "0 10px",
+    backgroundColor: "transparent",
+    background: "rgba(240, 248, 255, 0.10)",
+    background: "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background: "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background: "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
   },
   button: {
-    border: "2px solid rgb(231, 234, 243)",
+    border: "0",
     borderRadius: "12px",
   },
 };
@@ -78,11 +85,11 @@ const menuItems = [
   //   value: "Avalanche",
   //   icon: <AvaxLogo />,
   // },
-  {
-    key: "0xc271",
-    value: "Leprichain",
-    icon: <LeprichainLogo />,
-  },
+  // {
+  //   key: "0xc271",
+  //   value: "Leprichain",
+  //   icon: <LeprichainLogo />,
+  // },
 ];
 
 function Chains() {
