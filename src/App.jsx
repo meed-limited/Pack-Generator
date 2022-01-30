@@ -12,7 +12,7 @@ import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
 import NFTMarketTransactions from "components/NFTMarketTransactions";
-import BatchBundle from "components/BatchBundle";
+import BatchBundle from "components/Bundles";
 //import BatchMinter from "components/BatchMinter";
 import Home from "components/Home";
 import background from "./assets/background.jpg";

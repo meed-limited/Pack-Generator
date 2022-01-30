@@ -4,7 +4,7 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { Table, Tag, Space } from "antd";
 import { PolygonCurrency } from "./Chains/Logos";
 import moment from "moment";
-import styles from "./Minter/styles";
+import styles from "./Bundle/styles";
 
 // const styles = {
 //   table: {

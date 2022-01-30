@@ -149,6 +149,7 @@
 
 .ant-dropdown-menu {
   background-color: #ea2789 !important;
+  border-radius: 12px !important;
 }
 
 .ant-btn:hover {

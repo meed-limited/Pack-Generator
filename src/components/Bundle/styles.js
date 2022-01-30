@@ -34,7 +34,7 @@ const styles = {
     margin: "30px auto 30px auto",
     backgroundImage: `url(${buttonImg})`,
     backgroundSize: "cover",
-    border: "1px solid yellow",
+    border: "1px solid yellow"
   },
   // selectButton2: {
   //   width: "70%",
@@ -73,7 +73,7 @@ const styles = {
     cursor: "pointer",
     borderRadius: "25px",
     fontWeight: "600",
-    letterSpacing: "2px",
+    letterSpacing: "2px"
   },
   transparentContainer: {
     borderRadius: "20px",
@@ -158,7 +158,7 @@ const styles = {
     display: "block"
   },
 
-  // Batch Bundle tab
+  // Bundle tab
   uploadBox: {
     display: "flex-grid",
     marginTop: "40px",
@@ -197,7 +197,7 @@ const styles = {
     width: "40%"
   },
 
-  // MarketPlace:
+  // MARKETPLACE:
   table: {
     margin: "0 auto",
     width: "1000px"

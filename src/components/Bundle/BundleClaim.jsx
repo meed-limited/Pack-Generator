@@ -3,10 +3,10 @@ import { Button, Input } from "antd";
 import { useMoralisQuery } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
-import L3PModal from "./Minter/ModalL3PBOnly";
+import L3PModal from "./ModalL3PBOnly";
 import { getEllipsisTxt } from "helpers/formatters";
-import { openNotification } from "./Notification";
-import styles from "./Minter/styles";
+import { openNotification } from "../Notification";
+import styles from "./styles";
 
 const BundleClaim = () => {
   const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
