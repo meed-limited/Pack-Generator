@@ -72,19 +72,25 @@
 
 .ant-card-meta-title {
   color: white !important;
+  letter-spacing: 2px;
+  font-weight: 400;
+  font-family: Sora;
+}
+
+.ant-card-meta-description {
+  color: white !important;
+  letter-spacing: 1px;
+  font-family: Sora;
 }
 
 .ant-card-actions {
   color: yellow !important;
+  border-radius: 10px !important;
 }
 
 .ant-card-actions > li > span a:not(.ant-btn),
 .ant-card-actions > li > span > .anticon {
   color: yellow !important;
-}
-
-.ant-card-meta-description {
-  color: white !important;
 }
 
 .ant-tabs-tab {
