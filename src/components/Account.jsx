@@ -7,7 +7,6 @@ import { useState } from "react";
 import Address from "./Address/Address";
 import { SelectOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
-import { withRouter } from "react-router";
 
 /*eslint no-dupe-keys: "Off"*/
 const styles = {
@@ -15,7 +14,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     height: "42px",
-    padding: "0 15px",
+    padding: "5px",
     backgroundColor: "transparent",
     background: "rgba(240, 248, 255, 0.10)",
     background: "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
@@ -26,7 +25,6 @@ const styles = {
     borderRadius: "12px",
     border: "0",
     cursor: "pointer",
-    marginRight: "20px",
   },
   text: {
     color: "white"

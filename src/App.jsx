@@ -46,7 +46,9 @@ const styles = {
   },
   header: {
     backgroundImage: `url(${headerBackground})`,
+    //backgroundPosition: "center",
     backgroundSize: "cover",
+    //backgroundRepeat: "no-repeat",
     height: "70px",
     position: "fixed",
     zIndex: 1,
@@ -55,15 +57,16 @@ const styles = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    fontFamily: "Roboto, sans-serif",
-    padding: "0 10px"
+    fontFamily: "Sora, sans-serif",
+    padding: "0 10px",
   },
   headerRight: {
     display: "flex",
     gap: "20px",
     alignItems: "center",
     fontSize: "15px",
-    fontWeight: "600"
+    paddingTop:"10px",
+    fontWeight: "500"
   },
   footer: {
     backgroundImage: `url(${footerBackground})`,
@@ -76,7 +79,6 @@ const styles = {
     width: "100%",
     bottom: "0",
     backgroundColor: "transparent",
-    boxShadow: "0 1px 10px rgb(151 164 175 / 10%)"
   }
 };
 const App = () => {
@@ -100,12 +102,14 @@ const App = () => {
             mode='horizontal'
             style={{
               display: "flex",
-              fontSize: "17px",
-              fontWeight: "500",
+              fontSize: "13px",
+              fontWeight: "400",
               color: "white !important",
               borderBottom: "none",
-              marginLeft: "150px",
+              justifyContent: "center",
+              margin: "auto",
               width: "100%",
+              paddingTop:"10px",
               backgroundColor: "transparent"
             }}
             defaultSelectedKeys={["/Home"]}
@@ -117,8 +121,7 @@ const App = () => {
             <Menu.Item key='batchBundle'>
               <NavLink to='/Bundles'>Bundles</NavLink>
             </Menu.Item>
-            {/* <Menu.Item key='nftMarket' onClick={() => setInputValue("explore")}> */}
-            <Menu.Item key='nftMarket'>
+            <Menu.Item key='nftMarket' onClick={() => setInputValue("explore")}>
               <NavLink to='/MarketPlace'>MarketPlace</NavLink>
             </Menu.Item>
             <Menu.Item key='nft'>
@@ -172,7 +175,7 @@ const App = () => {
 };
 
 export const Logo = () => (
-  <img style={{ width: "1.5in", maxWidth: "none", margin: "10px" }} src={lepriconLogoWhite} alt='LepriconLogo' />
+  <img style={{ width: "1.25in", maxWidth: "none", margin: "30px" }} src={lepriconLogoWhite} alt='LepriconLogo' />
 );
 
 export default App;

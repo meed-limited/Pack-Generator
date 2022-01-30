@@ -34,7 +34,7 @@ const Uploader = ({ getIpfsHash }) => {
       )}
       <div>
         <Button type='primary' shape='round' size='large' style={ styles.resetButton } onClick={handleSubmission}>
-          Submit
+          SUBMIT
         </Button>
       </div>
     </div>

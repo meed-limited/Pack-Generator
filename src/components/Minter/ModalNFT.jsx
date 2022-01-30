@@ -11,7 +11,7 @@ const styles = {
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "1000px",
-    gap: "10px"
+    gap: "10px",
   }
 };
 
@@ -64,7 +64,7 @@ const ModalNFT = forwardRef(
     return (
       <>
         <Modal
-          width={"790px"}
+          width={"810px"}
           title='Select NFTs to bundle'
           visible={isModalNFTVisible}
           onOk={handleClickOk}

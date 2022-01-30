@@ -20,7 +20,6 @@ const BatchMinter = () => {
   return (
     <div style={styles.content}>
     
-      <h2 style={styles.h2}>Batch as many NFTs as you want in one go !</h2>
       <div style={styles.transparentContainer}>
         <label style={styles.label}>Name</label>
         <Input style={styles.input} type='text' required value={nftName} onChange={(e) => setNftName(e.target.value)} />

@@ -68,7 +68,7 @@ const ModalL3PBOnly = forwardRef(
     return (
       <>
         <Modal
-          width={"790px"}
+          width={"810px"}
           title='Select an L3PB bundle to unpack:'
           visible={isModalNFTVisible}
           onOk={handleClickOk}

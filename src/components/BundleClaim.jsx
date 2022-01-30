@@ -103,7 +103,7 @@ const BundleClaim = () => {
             style={styles.selectButton}
             onClick={showModalNFT}
           >
-            Pick an NFT
+            PICK AN NFT
           </Button>
           </div>
           <L3PModal
@@ -127,9 +127,9 @@ const BundleClaim = () => {
           )}
         </div>
       </div>
-      <button shape="round" style={styles.runFunctionButton} onClick={handleClaim}>
-        Claim your Bundle
-      </button>
+      <Button shape="round" style={styles.runFunctionButton} onClick={handleClaim}>
+        CLAIM YOUR BUNDLE
+      </Button>
     </div>
   );
 };

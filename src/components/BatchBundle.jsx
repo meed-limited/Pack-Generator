@@ -239,7 +239,7 @@ const BatchBundle = () => {
   return (
     <div style={styles.content}>
       <Tabs centered tabBarGutter='50px' onChange={onClickReset} tabBarStyle={styles.tabs} type='line'>
-        <TabPane tab='Single Bundle' key='1' onChange={onClickReset}>
+        <TabPane tab='SINGLE BUNDLE' key='1' onChange={onClickReset}>
           <div>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your single Bundle</label>
@@ -304,7 +304,7 @@ const BatchBundle = () => {
             </button>
           </div>
         </TabPane>
-        <TabPane tab='Batch Bundle' key='2' onChange={onClickReset}>
+        <TabPane tab='BATCH BUNDLE' key='2' onChange={onClickReset}>
           <div>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundle</label>
@@ -316,7 +316,6 @@ const BatchBundle = () => {
                     <p>
                       <Input
                         style={styles.transparentInput}
-                        placeholder='Number of ERC721'
                         type='number'
                         onChange={(e) => setERC721Number(e.target.value)}
                       />
@@ -325,7 +324,6 @@ const BatchBundle = () => {
                     <p>
                       <Input
                         style={styles.transparentInput}
-                        placeholder='Number of ERC1155'
                         type='number'
                         onChange={(e) => setERC1155Number(e.target.value)}
                       />
@@ -345,25 +343,24 @@ const BatchBundle = () => {
                 <label style={{ fontSize: "17px" }}>Enter the desired amount of bundles:</label>
                 <Input
                   style={styles.transparentInput}
-                  placeholder='Number of bundles'
                   type='number'
                   onChange={(e) => setBundleNumber(e.target.value)}
                 />
               </div>
               <div style={{ marginTop: "30px" }}>
                 <Button style={styles.resetButton} shape='round' onClick={onClickReset}>
-                  Reset
+                  RESET
                 </Button>
               </div>
             </div>
             <div style={{ marginBottom: "110px" }}>
-              <button shape='round' style={styles.runFunctionButton} onClick={handleMultipleBundle}>
-                Bundle
-              </button>
+              <Button shape='round' style={styles.runFunctionButton} onClick={handleMultipleBundle}>
+                BATCH BUNDLE
+              </Button>
             </div>
           </div>
         </TabPane>
-        <TabPane tab='Claim Bundle' key='3'>
+        <TabPane tab='CLAIM BUNDLE' key='3'>
           <BundleClaim />
         </TabPane>
       </Tabs>

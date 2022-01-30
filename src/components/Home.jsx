@@ -26,7 +26,7 @@ const Home = () => {
       style={{ display: "grid", gridTemplateColumns: "50% 50%", width: "100vw", height: "fit-content", paddingTop: "100px" }}
     >
       <div style={{ position: "relative", height: "auto" }}>
-        <p style={{ letterSpacing: "6px", color: "white", fontSize: "45px" }}>PACK GENERATOR</p>
+        <p style={{ letterSpacing: "6px", color: "white", fontSize: "45px", fontWeight: "370" }}>PACK GENERATOR</p>
         <img
           src={TEXT_LEPLOGO}
           alt=''
@@ -42,6 +42,8 @@ const Home = () => {
           style={{
             color: "white",
             fontSize: "15px",
+            fontWeight: "350",
+            letterSpacing: "1px",
             whiteSpace: "pre-wrap"
           }}
         >

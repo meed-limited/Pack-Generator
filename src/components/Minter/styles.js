@@ -19,6 +19,8 @@ const styles = {
     textAlign: "center",
     width: "90%",
     margin: "auto",
+    color: "white",
+    border: "none", // border or no border ???
     background: "rgba(240, 248, 255, 0.10)",
     background:
       "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
@@ -28,11 +30,11 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
   },
   selectButton: {
-    width: "60%",
+    width: "55%",
     margin: "30px auto 30px auto",
     backgroundImage: `url(${buttonImg})`,
     backgroundSize: "cover",
-    border: "none"
+    border: "1px solid yellow",
   },
   // selectButton2: {
   //   width: "70%",
@@ -59,6 +61,7 @@ const styles = {
   runFunctionButton: {
     margin: "20px",
     width: "300px",
+    height: "50px",
     background: "#d020ba",
     background: "-moz-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     background: "-webkit-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
@@ -68,7 +71,9 @@ const styles = {
     padding: "8px",
     fontSize: "20px",
     cursor: "pointer",
-    borderRadius: "25px"
+    borderRadius: "25px",
+    fontWeight: "600",
+    letterSpacing: "2px",
   },
   transparentContainer: {
     borderRadius: "20px",

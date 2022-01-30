@@ -4,7 +4,6 @@ import { getNativeByChain } from "../../helpers/networks";
 import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
 import ModalERC20 from "./ModalERC20";
 import styles from "./styles";
-//import buttonImg from "../../assets/buttonImg.svg";
 
 const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
@@ -48,19 +47,19 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
       />
 
       <div style={{ color: "white", fontSize: "16px" }}>
-        <p>{nativeName} to Bundle: </p>
+        <p style={{ marginBottom: "10px" }}>{nativeName} to Bundle: </p>
         {ethAmount && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
             {ethAmount} {nativeName}
           </p>
         )}
         <div>
-          <p style={{ marginTop: "30px" }}>Tokens to bundle:</p>
+          <p style={{ marginTop: "30px", marginBottom: "10px" }}>Tokens to bundle:</p>
           {selectedTokens &&
             selectedTokens.length > 0 &&
             selectedTokens.map((selectedToken, key) => (
-              <div style={styles.displayAssets} key={`${selectedToken.data.symbol} - ${selectedToken.value}`}>
-                <p>{`${selectedToken.data.symbol}: ${selectedToken.value}`}</p>
+              <div style={styles.displayAssets} key={`${selectedToken.value} - ${selectedToken.data.symbol}`}>
+                <p style={{ marginBottom: "5px" }}>{`${selectedToken.value} ${selectedToken.data.symbol}`}</p>
               </div>
             ))}
         </div>

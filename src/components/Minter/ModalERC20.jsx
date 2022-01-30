@@ -44,7 +44,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
     handleAssetOk(nativeAmount, ERC20Tokens);
     setNativeAmount(0);
     setERC20Tokens([]);
-    setCurrentToken();
+    setCurrentToken(currentToken);
   };
 
   return (
