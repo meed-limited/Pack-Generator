@@ -6,6 +6,13 @@ import buttonImg from "assets/buttonImg.svg";
 import { Link } from "react-router-dom";
 
 const styles = {
+  grid: {
+    display: "grid",
+    gridTemplateColumns: "60% 40%",
+    width: "100vw",
+    height: "auto",
+    paddingTop: "100px"
+  },
   homeButton: {
     width: "193px",
     margin: "auto",
@@ -15,50 +22,68 @@ const styles = {
     borderRadius: "2px",
     height: "50px",
     fontSize: "20px",
-    marginTop: "40px"
+    marginTop: "10px"
+  },
+  title: {
+    position: "absolute",
+    top: "5px",
+    letterSpacing: "6px",
+    color: "white",
+    fontSize: "40px",
+    fontWeight: "370"
+  },
+  text: {
+    position: "absolute",
+    bottom: "25px",
+    color: "white",
+    fontSize: "15px",
+    fontWeight: "350",
+    letterSpacing: "1px",
+    whiteSpace: "pre-wrap"
+  },
+  imageDLC: {
+    transform: "scale(1)",
+    marginTop: "0",
+    margin: "auto",
+    paddingTop: "0",
+    width: "100%",
   }
 };
 
 const Home = () => {
   const text = `Pack and unpack NFTs with other digital assets. \nMintone or mint a batch. \nIt's like DLC for blockchain.`;
+
   return (
-    <div
-      style={{ display: "grid", gridTemplateColumns: "50% 50%", width: "100vw", height: "fit-content", paddingTop: "100px" }}
-    >
-      <div style={{ position: "relative", height: "auto" }}>
-        <p style={{ letterSpacing: "6px", color: "white", fontSize: "45px", fontWeight: "370" }}>PACK GENERATOR</p>
-        <img
-          src={TEXT_LEPLOGO}
-          alt=''
-          position='relative'
-          style={{
-            transform: "scale(1)",
-            marginTop: "0",
-            margin: "auto",
-            paddingTop: "0"
-          }}
-        />
-        <p
-          style={{
-            color: "white",
-            fontSize: "15px",
-            fontWeight: "350",
-            letterSpacing: "1px",
-            whiteSpace: "pre-wrap"
-          }}
-        >
-          {text}
-        </p>
+    <div style={styles.grid}>
+      
+      <div>
+        <div style={{ position: "relative", textAlign: "left", height:"fit-content" }}>
+          <img
+            src={TEXT_LEPLOGO}
+            alt=''
+            position='relative'
+            style={styles.imageDLC}
+          />
+          <div style={styles.title}>PACK GENERATOR</div>
+
+          <div style={styles.text}>{text}</div>
+        </div>
+
         <Link to='/Bundles'>
-        <Button ghost style={styles.homeButton}>
-          Get Started
-        </Button>
+          <Button ghost style={styles.homeButton}>
+            Get Started
+          </Button>
         </Link>
       </div>
 
       <div>
-        <img src={pack} alt='' style={{ transform: "scale(1.2)", margin: "auto", paddingTop: "70px" }} />
+        <img
+          src={pack}
+          alt=''
+          style={{ transform: "scale(1.2)", margin: "auto", paddingTop: "70px", paddingLeft: "80px" }}
+        />
       </div>
+
     </div>
   );
 };

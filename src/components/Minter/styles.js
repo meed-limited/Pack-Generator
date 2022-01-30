@@ -59,7 +59,7 @@ const styles = {
     cursor: "pointer"
   },
   runFunctionButton: {
-    margin: "20px",
+    margin: "35px",
     width: "300px",
     height: "50px",
     background: "#d020ba",
@@ -86,8 +86,8 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-    paddingTop: "50px",
-    paddingBottom: "50px",
+    paddingTop: "30px",
+    paddingBottom: "20px",
     fontSize: "25px",
     color: "white"
   },
@@ -103,7 +103,8 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-    paddingBottom: "50px",
+    paddingBottom: "30px",
+    marginBottom: "0",
     fontSize: "25px",
     color: "white"
   },

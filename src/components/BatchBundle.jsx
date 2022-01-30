@@ -293,7 +293,7 @@ const BatchBundle = () => {
                   </div>
                 </div>
               </div>
-              <div>
+              <div style={{ marginTop: "10px" }}>
                 <Button shape='round' style={styles.resetButton} onClick={onClickReset}>
                   RESET
                 </Button>
@@ -307,7 +307,8 @@ const BatchBundle = () => {
         <TabPane tab='BATCH BUNDLE' key='2' onChange={onClickReset}>
           <div>
             <div style={styles.transparentContainer}>
-              <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundle</label>
+              <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
+              <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing:"1px", fontWeight:"300" }}>Select all the assets to bundle</p>
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
@@ -339,7 +340,7 @@ const BatchBundle = () => {
                   <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef} />
                 </div>
               </div>
-              <div style={{ margin: "auto", width: "50%" }}>
+              <div style={{ margin: "auto", marginTop: "10px", width: "50%" }}>
                 <label style={{ fontSize: "17px" }}>Enter the desired amount of bundles:</label>
                 <Input
                   style={styles.transparentInput}
@@ -347,7 +348,7 @@ const BatchBundle = () => {
                   onChange={(e) => setBundleNumber(e.target.value)}
                 />
               </div>
-              <div style={{ marginTop: "30px" }}>
+              <div style={{ marginTop: "10px" }}>
                 <Button style={styles.resetButton} shape='round' onClick={onClickReset}>
                   RESET
                 </Button>

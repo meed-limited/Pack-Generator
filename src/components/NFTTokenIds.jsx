@@ -39,9 +39,10 @@ const styles = {
     border: "solid 4px white"
   },
   text: {
-    color: "#041836",
+    color: "white",
     fontSize: "27px",
-    fontWeight: "bold"
+    fontWeight: "bold",
+    letterSpacing: "2px"
   }
 };
 
@@ -191,7 +192,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
                   <div
                     style={{
                       fontSize: "15px",
-                      color: "#9c9c9c",
+                      color: "yellow",
                       fontWeight: "normal"
                     }}
                   >

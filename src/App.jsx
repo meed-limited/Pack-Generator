@@ -175,7 +175,7 @@ const App = () => {
 };
 
 export const Logo = () => (
-  <img style={{ width: "1.25in", maxWidth: "none", margin: "30px" }} src={lepriconLogoWhite} alt='LepriconLogo' />
+  <img style={{ width: "1.25in", maxWidth: "none", margin: "30px", paddingTop:"5px" }} src={lepriconLogoWhite} alt='LepriconLogo' />
 );
 
 export default App;
