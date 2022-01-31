@@ -22,11 +22,12 @@ const styles = {
     borderRadius: "2px",
     height: "50px",
     fontSize: "20px",
-    marginTop: "10px"
+    //marginTop: "10px"
   },
   title: {
-    position: "absolute",
-    top: "5px",
+    //position: "absolute",
+    //top: "0px",
+    marginTop: "20px",
     letterSpacing: "6px",
     color: "white",
     fontSize: "40px",
@@ -34,7 +35,7 @@ const styles = {
   },
   text: {
     position: "absolute",
-    bottom: "25px",
+    bottom: "60px",
     color: "white",
     fontSize: "15px",
     fontWeight: "350",
@@ -46,7 +47,7 @@ const styles = {
     marginTop: "0",
     margin: "auto",
     paddingTop: "0",
-    width: "100%",
+    width: "100%"
   }
 };
 
@@ -55,16 +56,10 @@ const Home = () => {
 
   return (
     <div style={styles.grid}>
-      
       <div>
-        <div style={{ position: "relative", textAlign: "left", height:"fit-content" }}>
-          <img
-            src={TEXT_LEPLOGO}
-            alt=''
-            position='relative'
-            style={styles.imageDLC}
-          />
-          <div style={styles.title}>PACK GENERATOR</div>
+        <div style={styles.title}>PACK GENERATOR</div>
+        <div style={{ position: "relative", textAlign: "left", height: "fit-content" }}>
+          <img src={TEXT_LEPLOGO} alt='' position='relative' style={styles.imageDLC} />
 
           <div style={styles.text}>{text}</div>
         </div>
@@ -83,7 +78,6 @@ const Home = () => {
           style={{ transform: "scale(1.2)", margin: "auto", paddingTop: "70px", paddingLeft: "80px" }}
         />
       </div>
-
     </div>
   );
 };
