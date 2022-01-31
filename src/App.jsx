@@ -104,6 +104,7 @@ const App = () => {
               display: "flex",
               fontSize: "13px",
               fontWeight: "400",
+              letterSpacing: "1px",
               color: "white !important",
               borderBottom: "none",
               justifyContent: "center",
