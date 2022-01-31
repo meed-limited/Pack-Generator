@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Tabs } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useMoralis, useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
+import { useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
 import ModalNFT from "./Bundle/ModalNFT";
 import cloneDeep from "lodash/cloneDeep";
 import BundleClaim from "./Bundle/BundleClaim";
@@ -12,11 +12,23 @@ import { approveERC20contract, approveNFTcontract, checkExistingApproval } from 
 import AssetPerBundle from "./Bundle/AssetPerBundle";
 import styles from "./Bundle/styles";
 import { getEllipsisTxt } from "helpers/formatters";
+import { FileSearchOutlined } from "@ant-design/icons";
+import { getExplorer } from "helpers/networks";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
+  const contractProcessor = useWeb3ExecuteFunction();
+  const {
+    walletAddress,
+    chainId,
+    assemblyAddressEthereum,
+    assemblyAddressPolygon,
+    assemblyAddressMumbai,
+    assemblyABI
+  } = useMoralisDapp();
+  const contractABIJson = JSON.parse(assemblyABI);
   const queryMintedBundles = useMoralisQuery("CreatedBundle");
-  const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
+
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
@@ -25,10 +37,9 @@ const BatchBundle = () => {
   const [ERC721Number, setERC721Number] = useState(0);
   const [ERC1155Number, setERC1155Number] = useState(0);
   const [bundleNumber, setBundleNumber] = useState();
-  const contractProcessor = useWeb3ExecuteFunction();
-  const contractABIJson = JSON.parse(assemblyABI);
   const assetPerBundleRef = React.useRef();
   const assetModalRef = React.useRef();
+
   const fetchMintedBundle = JSON.parse(
     JSON.stringify(queryMintedBundles.data, [
       "firstHolder",
@@ -40,6 +51,18 @@ const BatchBundle = () => {
       "confirmed"
     ])
   );
+
+  const getContractAddress = () => {
+    var contractAddr;
+    if (chainId === "0x1") {
+      contractAddr = assemblyAddressEthereum;
+    } else if (chainId === "0x89") {
+      contractAddr = assemblyAddressPolygon;
+    } else if (chainId === "0x13881") {
+      contractAddr = assemblyAddressMumbai;
+    }
+    return contractAddr;
+  };
 
   const showModalNFT = () => {
     setIsModalNFTVisible(true);
@@ -87,18 +110,18 @@ const BatchBundle = () => {
     return [data[0], data[1]];
   }
 
-  async function singleApproveAll(address, numbers) {
+  async function singleApproveAll(address, numbers, contractAddr) {
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
         let toAllow = numbers[count];
-        await approveERC20contract(ERC20add[i], toAllow, assemblyAddress, contractProcessor);
+        await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
         count++;
       }
       for (let i = 0; i < address.length; i++) {
-        await approveNFTcontract(address[i], assemblyAddress, contractProcessor);
+        await approveNFTcontract(address[i], contractAddr, contractProcessor);
       }
     } catch (error) {
       let title = "Approval error";
@@ -108,18 +131,18 @@ const BatchBundle = () => {
     }
   }
 
-  async function multipleApproveAll(address, numbers) {
+  async function multipleApproveAll(address, numbers, contractAddr) {
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
         let toAllow = (numbers[count] * bundleNumber).toString();
-        await approveERC20contract(ERC20add[i], toAllow, assemblyAddress, contractProcessor);
+        await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
         count++;
       }
       for (let i = 0; i < address.length; i++) {
-        await approveNFTcontract(address[i], assemblyAddress, contractProcessor);
+        await approveNFTcontract(address[i], contractAddr, contractProcessor);
       }
     } catch (error) {
       let title = "Approval error";
@@ -129,11 +152,11 @@ const BatchBundle = () => {
     }
   }
 
-  async function singleBundleMint(assetContracts, assetNumbers) {
+  async function singleBundleMint(assetContracts, assetNumbers, contractAddr) {
     const addressArr = cloneDeep(assetContracts);
-    await singleApproveAll(assetContracts, assetNumbers).then(() => {
+    await singleApproveAll(assetContracts, assetNumbers, contractAddr).then(() => {
       const ops = {
-        contractAddress: assemblyAddress,
+        contractAddress: contractAddr,
         functionName: "mint",
         abi: contractABIJson,
         msgValue: assetNumbers[0],
@@ -146,11 +169,26 @@ const BatchBundle = () => {
 
       contractProcessor.fetch({
         params: ops,
-        onSuccess: async (e) => {
-          // const nftId = await fetchMintedBundle[fetchMintedBundle.length -1].tokenId; // PB: DB delayed = not getting the last id !!!!
-          // console.log(nftId)
+        onSuccess: async (response) => {
+          let asset = response.events.AssemblyAsset.returnValues;
+          let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
+
           let title = "Bundle created!";
-          let msg = "Your bundle has been succesfully created! Click to view in the explorer";
+          let msg = (
+            <div>
+              Your bundle has been succesfully created!
+              <br></br>
+              Token id: {getEllipsisTxt(asset.tokenId, 6)}
+              <br></br>
+              <a href={ link } target="_blank" rel="noreferrer noopener">
+                View in explorer: &nbsp;
+                <FileSearchOutlined
+                  style={{ transform: "scale(1.3)", color: "purple" }}
+                />
+              </a>
+            </div>
+          );
+
           openNotification("success", title, msg);
           console.log("Bundle created");
         },
@@ -164,10 +202,10 @@ const BatchBundle = () => {
     });
   }
 
-  async function multipleBundleMint(assetContracts, assetNumbers, bundleNum) {
+  async function multipleBundleMint(assetContracts, assetNumbers, bundleNum, contractAddr) {
     const addressArr = cloneDeep(assetContracts);
     const ops = {
-      contractAddress: assemblyAddress,
+      contractAddress: contractAddr,
       functionName: "mint",
       abi: contractABIJson,
       msgValue: assetNumbers[0],
@@ -193,11 +231,13 @@ const BatchBundle = () => {
   }
 
   async function handleSingleBundle() {
+    const contractAddress = getContractAddress();
     let result = await getSingleBundleArrays();
-    singleBundleMint(result[0], result[1]);
+    singleBundleMint(result[0], result[1], contractAddress);
   }
 
   async function handleMultipleBundle() {
+    const contractAddress = getContractAddress();
     try {
       const fetchIpfsFile = await fetchIpfs();
       const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
@@ -210,14 +250,14 @@ const BatchBundle = () => {
       /*SMART-CONTRACT CALL:
        **********************/
       const clonedArray = cloneDeep(assetsArray);
-      await multipleApproveAll(clonedArray, numbersArray);
+      await multipleApproveAll(clonedArray, numbersArray, contractAddress);
 
       for (let i = 0; i < bundleNumber; i++) {
         let numbers = contractNumbersArray[i];
-        multipleBundleMint(assetsArray, numbers, i);
+        multipleBundleMint(assetsArray, numbers, i, contractAddress);
       }
 
-      // let currentApproval = await checkExistingApproval(sortedData[0], sortedData[1], walletAddress, assemblyAddress, contractProcessor);
+      // let currentApproval = await checkExistingApproval(sortedData[0], sortedData[1], walletAddress, assemblyAddressMumbai, contractProcessor);
       // console.log(currentApproval)
     } catch (err) {
       let title = "Batch Bundle error";
@@ -270,12 +310,14 @@ const BatchBundle = () => {
                               color: "black",
                               opacity: "0.8"
                             }}
-                            key={`${nftItem.token_id} - ${nftItem.contract_type}`}
+                            key={` ${nftItem.name} - ${nftItem.token_id} - ${nftItem.contract_type}`}
                           >
                             {nftItem.token_id.length > 6 ? (
-                              <p>{`Id: ${getEllipsisTxt(nftItem.token_id, 4)} - Type: ${nftItem.contract_type}`}</p>
+                              <p>{` ${nftItem.name} - Id: ${getEllipsisTxt(nftItem.token_id, 3)} - ${
+                                nftItem.contract_type
+                              }`}</p>
                             ) : (
-                              <p>{`Id: ${nftItem.token_id} - Type - ${nftItem.contract_type}`}</p>
+                              <p>{`${nftItem.name} - Id: ${nftItem.token_id} - ${nftItem.contract_type}`}</p>
                             )}
                           </div>
                         ))}
@@ -308,7 +350,9 @@ const BatchBundle = () => {
           <div>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
-              <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing:"1px", fontWeight:"300" }}>Select all the assets to bundle</p>
+              <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
+                Select all the assets to bundle
+              </p>
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>

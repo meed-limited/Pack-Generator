@@ -152,6 +152,10 @@
   border-radius: 12px !important;
 }
 
+.ant-dropdown {
+  border-radius: 12px !important;
+}
+
 .ant-btn:hover {
   transform: scale(1.05) !important;
 }

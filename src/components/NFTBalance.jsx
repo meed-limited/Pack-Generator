@@ -22,7 +22,7 @@ const styles = {
 
 function NFTBalance() {
   const { NFTBalance, fetchSuccess } = useNFTBalance();
-  const { chainId, marketAddress, contractABI } = useMoralisDapp();
+  const { chainId, marketAddressMumbai, contractABI } = useMoralisDapp();
   const { Moralis } = useMoralis();
   const [visible, setVisibility] = useState(false);
   const [nftToSend, setNftToSend] = useState(null);
@@ -37,7 +37,7 @@ function NFTBalance() {
     setLoading(true);
     const p = listPrice * ("1e" + 18);
     const ops = {
-      contractAddress: marketAddress,
+      contractAddress: marketAddressMumbai,
       functionName: listItemFunction,
       abi: contractABIJson,
       params: {
@@ -81,7 +81,7 @@ function NFTBalance() {
         }
       ],
       params: {
-        operator: marketAddress,
+        operator: marketAddressMumbai,
         approved: true
       }
     };

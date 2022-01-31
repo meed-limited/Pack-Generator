@@ -7,9 +7,18 @@ import L3PModal from "./ModalL3PBOnly";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
 import styles from "./styles";
+import { FileSearchOutlined } from "@ant-design/icons";
+import { getExplorer } from "helpers/networks";
 
 const BundleClaim = () => {
-  const { walletAddress, assemblyAddress, assemblyABI } = useMoralisDapp();
+  const {
+    walletAddress,
+    chainId,
+    assemblyAddressEthereum,
+    assemblyAddressPolygon,
+    assemblyAddressMumbai,
+    assemblyABI
+  } = useMoralisDapp();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
@@ -52,11 +61,24 @@ const BundleClaim = () => {
     setBundleId();
   };
 
+  const getContractAddress = () => {
+    var contractAddr;
+    if (chainId === "0x1") {
+      contractAddr = assemblyAddressEthereum;
+    } else if (chainId === "0x89") {
+      contractAddr = assemblyAddressPolygon;
+    } else if (chainId === "0x13881") {
+      contractAddr = assemblyAddressMumbai;
+    }
+    return contractAddr;
+  };
+
   async function claimBundle() {
+    const contractAddress = getContractAddress();
     const data = await getBundle(bundleId);
     try {
       const ops = {
-        contractAddress: assemblyAddress,
+        contractAddress: contractAddress,
         functionName: "burn",
         abi: contractABIJson,
         params: {
@@ -70,9 +92,21 @@ const BundleClaim = () => {
 
       await contractProcessor.fetch({
         params: ops,
-        onSuccess: () => {
+        onSuccess: (response) => {
+          let asset = response.events.Transfer.returnValues;
+          let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
+
           let title = "Bundle claimed!";
-          let msg = "Your bundle has been succesfully unpacked!";
+          let msg = (
+            <div>
+              Your bundle id: "{getEllipsisTxt(asset.tokenId, 6)}" has been succesfully unpacked!
+              <br></br>
+              <a href={link} target='_blank' rel='noreferrer noopener'>
+                View in explorer: &nbsp;
+                <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
+              </a>
+            </div>
+          );
           openNotification("success", title, msg);
           console.log("bundle claimed");
           resetOnClaim();
@@ -97,14 +131,9 @@ const BundleClaim = () => {
         <label style={{ letterSpacing: "1px" }}>Unpack your Bundle</label>
         <div style={{ display: "grid", margin: "auto", width: "70%" }}>
           <div style={{ width: "70%", margin: "auto" }}>
-          <Button
-            type='primary'
-            shape='round'
-            style={styles.selectButton}
-            onClick={showModalNFT}
-          >
-            PICK AN NFT
-          </Button>
+            <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
+              PICK AN NFT
+            </Button>
           </div>
           <L3PModal
             handleNFTCancel={handleNFTCancel}
@@ -127,7 +156,7 @@ const BundleClaim = () => {
           )}
         </div>
       </div>
-      <Button shape="round" style={styles.runFunctionButton} onClick={handleClaim}>
+      <Button shape='round' style={styles.runFunctionButton} onClick={handleClaim}>
         CLAIM YOUR BUNDLE
       </Button>
     </div>

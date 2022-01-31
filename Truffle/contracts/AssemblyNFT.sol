@@ -185,5 +185,7 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
                 ""
             );
         }
+
+        emit AssemblyAssetClaimed(_tokenId, _addresses, _numbers);
     }
 }

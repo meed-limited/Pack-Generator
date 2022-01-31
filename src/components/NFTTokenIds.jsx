@@ -54,7 +54,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
   const [nftToBuy, setNftToBuy] = useState(null);
   const [loading, setLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
-  const { chainId, marketAddress, contractABI, walletAddress } = useMoralisDapp();
+  const { chainId, marketAddressMumbai, contractABI, walletAddress } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
   const contractABIJson = JSON.parse(contractABI);
   const { Moralis } = useMoralis();
@@ -82,7 +82,7 @@ function NFTTokenIds({ inputValue, setInputValue }) {
     const itemID = tokenDetails.itemId;
     const tokenPrice = tokenDetails.price;
     const ops = {
-      contractAddress: marketAddress,
+      contractAddress: marketAddressMumbai,
       functionName: purchaseItemFunction,
       abi: contractABIJson,
       params: {

@@ -10,6 +10,12 @@ interface IAssemblyNFT {
         uint256[] numbers
     );
 
+    event AssemblyAssetClaimed(
+        uint256 indexed tokenId,
+        address[] addresses,
+        uint256[] numbers
+    );
+
     /// @dev hash function assigns the combination of assets with salt to bytes32 signature that is also the token id.
     /// @param _salt prevents hash collision, can be chosen by user input or increasing nonce from contract.
     /// @param _addresses concat assets addresses, e.g. [ERC-20_address1, ERC-20_address2, ERC-721_address_1, ERC-1155_address_1, ERC-1155_address_2]
