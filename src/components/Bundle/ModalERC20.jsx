@@ -16,14 +16,14 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
   };
 
   const onChangeERC20Amount = (value) => {
-    const max = (currentToken.data.balance / ("1e" + 18)).toString();
-    if (value <= 0) {
-      setCurrentToken({ ...currentToken, value: 0 });
-    } else if (value > max) {
-      setCurrentToken({ ...currentToken, value: max });
-    } else {
-      setCurrentToken({ ...currentToken, value });
-    }
+      let max = (currentToken.data.balance / ("1e" + 18)).toString();
+      if (parseFloat(value) <= 0) {
+        setCurrentToken({...currentToken, value: 0});
+      } else if (parseFloat(value) > parseFloat(max)) {
+        setCurrentToken({...currentToken, value: parseFloat(max)});
+      } else {
+        setCurrentToken({...currentToken, value: parseFloat(value)});
+      }
   };
 
   const handleAddToken = () => {
@@ -58,7 +58,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
       <Title level={5}>Amount of {nativeName} to bundle</Title>
 
       <InputNumber
-        style={{ marginBottom: "80px" }}
+        style={{ marginBottom: "80px", minWidth: "200px" }}
         type='number'
         min={0}
         max={balance.formatted}
@@ -72,15 +72,23 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
         <Input
           style={{ marginTop: "10px" }}
           type='number'
+          step={0.00001}
           placeholder='Enter selected token amount'
-          onChange={(e) => onChangeERC20Amount(e.target.value)}
+          onChange={(e) => onChangeERC20Amount(parseFloat(e.target.value))}
+          //onChange={onChangeERC20Amount}
+          disabled={!currentToken ? true : false}
         ></Input>
-        <Button onClick={handleAddToken} style={{ marginTop: "8px", marginLeft: "8px" }}>
+        <Button
+          onClick={handleAddToken}
+          disabled={!currentToken || currentToken.value <= 0 || currentToken.value === undefined ? true : false}
+          style={{ marginTop: "8px", marginLeft: "8px" }}
+        >
           Add
         </Button>
       </div>
       <div style={{ width: "100", display: "flex", flexDirection: "column" }}>
-        {ERC20Tokens && ERC20Tokens.length > 0 &&
+        {ERC20Tokens &&
+          ERC20Tokens.length > 0 &&
           ERC20Tokens.map((token) => (
             <p key={token.data.symbol}>
               {token.data.symbol}: {token.value}

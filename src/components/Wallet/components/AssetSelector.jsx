@@ -5,14 +5,14 @@ import { Image, Select } from "antd";
 export default function AssetSelector({ getAsset, style }) {
   const { assets } = useERC20Balance();
   const { Moralis } = useMoralis();
-
+  
   function handleChange(value) {
     const token = assets.find((token) => token.token_address === value);
     getAsset(token);
   }
 
   return (
-    <Select size='large' style={style} onChange={handleChange}>
+    <Select size='large' style={style}  onChange={handleChange}>
       {assets &&
         assets.map((item, key) => (
           <Select.Option value={item["token_address"]} key={item["token_address"]}>

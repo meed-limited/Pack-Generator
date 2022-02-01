@@ -8,7 +8,7 @@ import BundleClaim from "./Bundle/BundleClaim";
 import { openNotification } from "./Notification";
 import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Bundle/ArraySorting";
 import Uploader from "./Bundle/Uploader";
-import { approveERC20contract, approveNFTcontract, checkExistingApproval } from "./Bundle/Approval";
+import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Bundle/Approval";
 import AssetPerBundle from "./Bundle/AssetPerBundle";
 import styles from "./Bundle/styles";
 import { getEllipsisTxt } from "helpers/formatters";
@@ -111,17 +111,32 @@ const BatchBundle = () => {
   }
 
   async function singleApproveAll(address, numbers, contractAddr) {
+    const currentApproval = await checkMultipleAssetsApproval(
+      address,
+      numbers,
+      walletAddress,
+      contractAddr,
+      contractProcessor
+    );
+
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
         let toAllow = numbers[count];
-        await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
-        count++;
+        if (parseInt(currentApproval[i]) < parseInt(toAllow)) {
+          await approveERC20contract(ERC20add[i], toAllow.toString(), contractAddr, contractProcessor);
+          count++;
+        }
       }
+
+      var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        await approveNFTcontract(address[i], contractAddr, contractProcessor);
+        if ((currentApproval[pointerNFT] = false)) {
+          await approveNFTcontract(address[i], contractAddr, contractProcessor);
+        }
+        pointerNFT++;
       }
     } catch (error) {
       let title = "Approval error";
@@ -132,17 +147,32 @@ const BatchBundle = () => {
   }
 
   async function multipleApproveAll(address, numbers, contractAddr) {
+    const currentMultipleApproval = await checkMultipleAssetsApproval(
+      address,
+      numbers,
+      walletAddress,
+      contractAddr,
+      contractProcessor
+    );
+
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
         let toAllow = (numbers[count] * bundleNumber).toString();
-        await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
+        if (parseInt(currentMultipleApproval[i]) < parseInt(toAllow)) {
+          await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
         count++;
+        }
       }
+
+      var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        await approveNFTcontract(address[i], contractAddr, contractProcessor);
+        if ((currentMultipleApproval[pointerNFT] = false)) {
+          await approveNFTcontract(address[i], contractAddr, contractProcessor);
+        }
+        pointerNFT++;
       }
     } catch (error) {
       let title = "Approval error";
@@ -154,7 +184,8 @@ const BatchBundle = () => {
 
   async function singleBundleMint(assetContracts, assetNumbers, contractAddr) {
     const addressArr = cloneDeep(assetContracts);
-    await singleApproveAll(assetContracts, assetNumbers, contractAddr).then(() => {
+
+    await singleApproveAll(addressArr, assetNumbers, contractAddr).then(() => {
       const ops = {
         contractAddress: contractAddr,
         functionName: "mint",
@@ -162,7 +193,7 @@ const BatchBundle = () => {
         msgValue: assetNumbers[0],
         params: {
           _to: walletAddress,
-          _addresses: addressArr,
+          _addresses: assetContracts,
           _numbers: assetNumbers
         }
       };
@@ -180,11 +211,9 @@ const BatchBundle = () => {
               <br></br>
               Token id: {getEllipsisTxt(asset.tokenId, 6)}
               <br></br>
-              <a href={ link } target="_blank" rel="noreferrer noopener">
+              <a href={link} target='_blank' rel='noreferrer noopener'>
                 View in explorer: &nbsp;
-                <FileSearchOutlined
-                  style={{ transform: "scale(1.3)", color: "purple" }}
-                />
+                <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
               </a>
             </div>
           );
@@ -257,8 +286,6 @@ const BatchBundle = () => {
         multipleBundleMint(assetsArray, numbers, i, contractAddress);
       }
 
-      // let currentApproval = await checkExistingApproval(sortedData[0], sortedData[1], walletAddress, assemblyAddressMumbai, contractProcessor);
-      // console.log(currentApproval)
     } catch (err) {
       let title = "Batch Bundle error";
       let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
@@ -273,14 +300,14 @@ const BatchBundle = () => {
     }
     if (assetModalRef && assetModalRef.current) {
       assetModalRef.current.reset();
-    }
+    } 
   };
 
   return (
     <div style={styles.content}>
       <Tabs centered tabBarGutter='50px' onChange={onClickReset} tabBarStyle={styles.tabs} type='line'>
-        <TabPane tab='SINGLE BUNDLE' key='1' onChange={onClickReset}>
-          <div>
+        <TabPane tab='SINGLE BUNDLE' key='1' >
+          <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your single Bundle</label>
 
@@ -341,13 +368,13 @@ const BatchBundle = () => {
                 </Button>
               </div>
             </div>
-            <button shape='round' style={styles.runFunctionButton} onClick={handleSingleBundle}>
+            <Button shape='round' style={styles.runFunctionButton} onClick={handleSingleBundle}>
               BUNDLE
-            </button>
+            </Button>
           </div>
         </TabPane>
-        <TabPane tab='BATCH BUNDLE' key='2' onChange={onClickReset}>
-          <div>
+        <TabPane tab='BATCH BUNDLE' key='2' >
+          <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
               <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
@@ -398,7 +425,7 @@ const BatchBundle = () => {
                 </Button>
               </div>
             </div>
-            <div style={{ marginBottom: "110px" }}>
+            <div>
               <Button shape='round' style={styles.runFunctionButton} onClick={handleMultipleBundle}>
                 BATCH BUNDLE
               </Button>

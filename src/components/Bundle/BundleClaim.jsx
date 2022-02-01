@@ -126,7 +126,8 @@ const BundleClaim = () => {
   }
 
   return (
-    <div>
+    <div style={{ height: "auto" }}>
+    
       <div style={styles.transparentContainer}>
         <label style={{ letterSpacing: "1px" }}>Unpack your Bundle</label>
         <div style={{ display: "grid", margin: "auto", width: "70%" }}>

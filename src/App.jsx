@@ -35,9 +35,9 @@ const styles = {
   pageContent: {
     //minHeight: "100vh",
     //flexDirection: "column",
-    //justifyContent: "center",
-    flex: "1",
-    display: "flex",
+    justifyContent: "top",
+    flex: "auto",
+    //display: "flex",
     marginTop: "30px",
     fontFamily: "Roboto, sans-serif",
     margin: "auto",

@@ -1,4 +1,5 @@
 import { openNotification } from "components/Notification";
+import cloneDeep from "lodash/cloneDeep";
 
 // Allow a specific amount of an ERC20 address
 export async function approveERC20contract(ERC20address, allowance, contractAddress, processor) {
@@ -51,16 +52,8 @@ export async function approveNFTcontract(NFTaddress, contractAddress, processor)
     abi: [
       {
         inputs: [
-          {
-            internalType: "address",
-            name: "operator",
-            type: "address"
-          },
-          {
-            internalType: "bool",
-            name: "_approved",
-            type: "bool"
-          }
+          { internalType: "address", name: "operator", type: "address" },
+          { internalType: "bool", name: "_approved", type: "bool" }
         ],
         name: "setApprovalForAll",
         outputs: [],
@@ -91,44 +84,63 @@ export async function approveNFTcontract(NFTaddress, contractAddress, processor)
   });
 }
 
+// Check existing allowance for a token ERC20
+export async function checkSingleAssetApproval(assetAddress, walletAddress, contractAddress, processor) {
+  const ops = {
+    contractAddress: assetAddress,
+    functionName: "allowance",
+    abi: [
+      {
+        inputs: [
+          { internalType: "address", name: "owner", type: "address" },
+          { internalType: "address", name: "spender", type: "address" }
+        ],
+        name: "allowance",
+        outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+        stateMutability: "view",
+        type: "function"
+      }
+    ],
+    params: {
+      owner: walletAddress,
+      spender: contractAddress
+    }
+  };
 
+  await processor.fetch({
+    params: ops,
+    onSuccess: (response) => {
+      console.log(response);
+    },
+    onError: (error) => {
+      let title = "Error checking allowance";
+      let msg = "Something went wrong while checking your allowances. Pleas try again.";
+      openNotification("error", title, msg);
+      console.log(error);
+    }
+  });
+}
 
-
-
-// Check for already existing approval
-export async function checkExistingApproval(addresses, numbers, walletAddress, contractAddress, processor) {
+// Check existing approval for an array of assets (tokens & NFTs), return an array
+export async function checkMultipleAssetsApproval(addresses, numbers, walletAddress, contractAddress, processor) {
+  const clonedAddresses = cloneDeep(addresses);
   var existingAllowance = [];
-  var ERC20add = [];
-  ERC20add = addresses.splice(0, numbers[1]);
+  var ERC20add = clonedAddresses.splice(0, numbers[1]);
 
   for (let i = 0; i < ERC20add.length; i++) {
     const ops = {
-      contractAddress: ERC20add[i],
+      contractAddress: ERC20add[i].toString(),
       functionName: "allowance",
       abi: [
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            }
+          inputs: [
+            { internalType: "address", name: "owner", type: "address" },
+            { internalType: "address", name: "spender", type: "address" }
           ],
-          "name": "allowance",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
+          name: "allowance",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          stateMutability: "view",
+          type: "function"
         }
       ],
       params: {
@@ -139,8 +151,8 @@ export async function checkExistingApproval(addresses, numbers, walletAddress, c
 
     await processor.fetch({
       params: ops,
-      onSuccess: (e) => {
-        console.log(`Checking allowance: ${e}`);
+      onSuccess: (response) => {
+        existingAllowance[i] = response;
       },
       onError: (error) => {
         let title = "Error checking allowance";
@@ -149,58 +161,42 @@ export async function checkExistingApproval(addresses, numbers, walletAddress, c
         console.log(error);
       }
     });
-    //existingAllowance = existingAllowance.concat(result);
   }
 
-  // for (let i = 0; i < addresses.length; i++) {
-  //   const ops = {
-  //     contractAddress: addresses[i],
-  //     functionName: "isApprovedForAll",
-  //     abi: [
-  //       {
-  //         "inputs": [
-  //           {
-  //             "internalType": "address",
-  //             "name": "owner",
-  //             "type": "address"
-  //           },
-  //           {
-  //             "internalType": "address",
-  //             "name": "operator",
-  //             "type": "address"
-  //           }
-  //         ],
-  //         "name": "isApprovedForAll",
-  //         "outputs": [
-  //           {
-  //             "internalType": "bool",
-  //             "name": "",
-  //             "type": "bool"
-  //           }
-  //         ],
-  //         "stateMutability": "view",
-  //         "type": "function"
-  //       }
-  //     ],
-  //     params: {
-  //       owner: walletAddress,
-  //       operator: contractAddress
-  //     }
-  //   };
+  for (let i = 0; i < clonedAddresses.length; i++) {
+    const ops = {
+      contractAddress: clonedAddresses[i].toString(),
+      functionName: "isApprovedForAll",
+      abi: [
+        {
+          inputs: [
+            { internalType: "address", name: "owner", type: "address" },
+            { internalType: "address", name: "operator", type: "address" }
+          ],
+          name: "isApprovedForAll",
+          outputs: [{ internalType: "bool", name: "", type: "bool" }],
+          stateMutability: "view",
+          type: "function"
+        }
+      ],
+      params: {
+        owner: walletAddress,
+        operator: contractAddress
+      }
+    };
 
-  //   let result = await processor.fetch({
-  //     params: ops,
-  //     onSuccess: () => {
-  //       console.log(`NFT Approval: ${result}`);
-  //     },
-  //     onError: (error) => {
-  //       let title = "Error checking allowance";
-  //       let msg = "Something went wrong while checking your allowances. Pleas try again.";
-  //       openNotification("error", title, msg);
-  //       console.log(error);
-  //     }
-  //   });
-  //   existingAllowance = existingAllowance.concat(result);
-  // }
+    await processor.fetch({
+      params: ops,
+      onSuccess: (response) => {
+        existingAllowance[i + numbers[1]] = response;
+      },
+      onError: (error) => {
+        let title = "Error checking allowance";
+        let msg = "Something went wrong while checking your allowances. Pleas try again.";
+        openNotification("error", title, msg);
+        console.log(error);
+      }
+    });
+  }
   return existingAllowance;
 }

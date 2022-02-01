@@ -9,8 +9,8 @@ const styles = {
   grid: {
     display: "grid",
     gridTemplateColumns: "60% 40%",
-    width: "100vw",
-    height: "auto",
+    width: "90vw",
+    height: "-webkit-fill-available",
     paddingTop: "100px"
   },
   homeButton: {
@@ -22,11 +22,8 @@ const styles = {
     borderRadius: "2px",
     height: "50px",
     fontSize: "20px",
-    //marginTop: "10px"
   },
   title: {
-    //position: "absolute",
-    //top: "0px",
     marginTop: "20px",
     letterSpacing: "6px",
     color: "white",
@@ -75,7 +72,7 @@ const Home = () => {
         <img
           src={pack}
           alt=''
-          style={{ transform: "scale(1.2)", margin: "auto", paddingTop: "70px", paddingLeft: "80px" }}
+          style={{ transform: "scale(1.2)", margin: "auto", paddingTop: "70px", paddingLeft: "50px" }}
         />
       </div>
     </div>

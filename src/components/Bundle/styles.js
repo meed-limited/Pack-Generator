@@ -4,7 +4,7 @@ import buttonImg from "../../assets/buttonImg.svg";
 const styles = {
   content: {
     width: "75vw",
-    height: "80vh",
+    height: "auto",
     margin: "auto",
     marginTop: "30px",
     textAlign: "center"
