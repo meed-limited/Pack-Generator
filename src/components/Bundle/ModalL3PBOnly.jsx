@@ -11,7 +11,7 @@ const styles = {
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "100%",
-    gap: "10px"
+    gap: "10px",
   }
 };
 
@@ -61,8 +61,8 @@ const ModalL3PBOnly = forwardRef(
       }
     }));
 
-    const L3PBundleBalance = NFTBalance.filter(function (results) {
-      return results.token_address.includes("0xbc779ce41259cd7107ed2c36e00258b6234111bd"); // Edit to official Bundle contract address
+    const L3PBundleBalance = NFTBalance.filter(results => {
+      return results.token_address.includes("0x8019748ed0b33651b30f049cdda1dc89a8b1bc98"); // Edit to official Bundle contract address (NO MAJ!)
     });
 
     return (
@@ -92,6 +92,7 @@ const ModalL3PBOnly = forwardRef(
                   <Card
                     hoverable
                     style={{
+                      transform: "scale(0.8)",
                       width: 240,
                       border: selectedNFTs.some(
                         (nftItem) =>
@@ -104,7 +105,7 @@ const ModalL3PBOnly = forwardRef(
                           `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
                       )
                         ? "1"
-                        : "0.8"
+                        : "0.7"
                     }}
                     cover={
                       <Image

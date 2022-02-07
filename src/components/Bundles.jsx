@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Tabs } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
+import { useWeb3ExecuteFunction } from "react-moralis";
 import ModalNFT from "./Bundle/ModalNFT";
 import cloneDeep from "lodash/cloneDeep";
 import BundleClaim from "./Bundle/BundleClaim";
@@ -27,7 +27,6 @@ const BatchBundle = () => {
     assemblyABI
   } = useMoralisDapp();
   const contractABIJson = JSON.parse(assemblyABI);
-  const queryMintedBundles = useMoralisQuery("CreatedBundle");
 
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
@@ -39,18 +38,6 @@ const BatchBundle = () => {
   const [bundleNumber, setBundleNumber] = useState();
   const assetPerBundleRef = React.useRef();
   const assetModalRef = React.useRef();
-
-  const fetchMintedBundle = JSON.parse(
-    JSON.stringify(queryMintedBundles.data, [
-      "firstHolder",
-      "tokenId",
-      "salt",
-      "addresses",
-      "numbers",
-      "address",
-      "confirmed"
-    ])
-  );
 
   const getContractAddress = () => {
     var contractAddr;
@@ -118,7 +105,7 @@ const BatchBundle = () => {
       contractAddr,
       contractProcessor
     );
-
+console.log(currentApproval)
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
@@ -133,7 +120,7 @@ const BatchBundle = () => {
 
       var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        if ((currentApproval[pointerNFT] = false)) {
+        if ((currentApproval[pointerNFT] == false)) {
           await approveNFTcontract(address[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
@@ -163,13 +150,13 @@ const BatchBundle = () => {
         let toAllow = (numbers[count] * bundleNumber).toString();
         if (parseInt(currentMultipleApproval[i]) < parseInt(toAllow)) {
           await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
-        count++;
+          count++;
         }
       }
 
       var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        if ((currentMultipleApproval[pointerNFT] = false)) {
+        if ((currentMultipleApproval[pointerNFT] == false)) {
           await approveNFTcontract(address[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
@@ -203,7 +190,6 @@ const BatchBundle = () => {
         onSuccess: async (response) => {
           let asset = response.events.AssemblyAsset.returnValues;
           let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-
           let title = "Bundle created!";
           let msg = (
             <div>
@@ -235,20 +221,26 @@ const BatchBundle = () => {
     const addressArr = cloneDeep(assetContracts);
     const ops = {
       contractAddress: contractAddr,
-      functionName: "mint",
+      functionName: "batchMint",
       abi: contractABIJson,
-      msgValue: assetNumbers[0],
+      msgValue: parseInt(assetNumbers[0]) * parseInt(bundleNum),
       params: {
         _to: walletAddress,
         _addresses: addressArr,
-        _numbers: assetNumbers
+        _arrayOfNumbers: assetNumbers,
+        _amountOfBundles: bundleNum
       }
     };
 
     await contractProcessor.fetch({
       params: ops,
       onSuccess: () => {
-        console.log(`bundle ${bundleNum} minted`);
+        let title = `Bundles minted!`;
+        let msg = (
+          <div>Congrats!!! {bundleNum} bundles have just been minted and sent to your wallet!</div>
+        );
+        openNotification("success", title, msg);
+        console.log(`${bundleNum} bundles have been minted`);
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -279,13 +271,19 @@ const BatchBundle = () => {
       /*SMART-CONTRACT CALL:
        **********************/
       const clonedArray = cloneDeep(assetsArray);
-      await multipleApproveAll(clonedArray, numbersArray, contractAddress);
+      await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
+        let counter = contractNumbersArray.length / 250;
+        counter = Math.ceil(counter);
 
-      for (let i = 0; i < bundleNumber; i++) {
-        let numbers = contractNumbersArray[i];
-        multipleBundleMint(assetsArray, numbers, i, contractAddress);
-      }
-
+        for (let i = 0; i < counter; i++) {
+          if (contractNumbersArray.length > 250) {
+            let temp = contractNumbersArray.splice(0, 250);
+            multipleBundleMint(assetsArray, temp, 250, contractAddress);
+          } else {
+            multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
+          }
+        }
+      });
     } catch (err) {
       let title = "Batch Bundle error";
       let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
@@ -300,13 +298,13 @@ const BatchBundle = () => {
     }
     if (assetModalRef && assetModalRef.current) {
       assetModalRef.current.reset();
-    } 
+    }
   };
 
   return (
     <div style={styles.content}>
       <Tabs centered tabBarGutter='50px' onChange={onClickReset} tabBarStyle={styles.tabs} type='line'>
-        <TabPane tab='SINGLE BUNDLE' key='1' >
+        <TabPane tab='SINGLE BUNDLE' key='1'>
           <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your single Bundle</label>
@@ -373,7 +371,7 @@ const BatchBundle = () => {
             </Button>
           </div>
         </TabPane>
-        <TabPane tab='BATCH BUNDLE' key='2' >
+        <TabPane tab='BATCH BUNDLE' key='2'>
           <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>

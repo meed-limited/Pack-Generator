@@ -11,11 +11,12 @@ const { Meta } = Card;
 const styles = {
   NFTs: {
     display: "flex",
+    position: "absolute",
     flexWrap: "wrap",
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    maxWidth: "1000px",
+    width: "1000px",
     gap: "10px"
   }
 };

@@ -5,7 +5,7 @@ import Account from "components/Account";
 import Chains from "components/Chains";
 import NFTBalance from "components/NFTBalance";
 import NFTTokenIds from "components/NFTTokenIds";
-import { Menu, Layout, AutoComplete, Button } from "antd";
+import { Menu, Layout, AutoComplete } from "antd";
 //import SearchCollections from "components/SearchCollections";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
@@ -37,6 +37,7 @@ const styles = {
     //flexDirection: "column",
     justifyContent: "top",
     flex: "auto",
+    width: "inherit",
     //display: "flex",
     marginTop: "30px",
     fontFamily: "Roboto, sans-serif",

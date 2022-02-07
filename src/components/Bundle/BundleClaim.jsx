@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { Button, Input } from "antd";
-import { useMoralisQuery } from "react-moralis";
+import { useMoralis } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
-import L3PModal from "./ModalL3PBOnly";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
 import styles from "./styles";
 import { FileSearchOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
+import ModalL3PBOnly from "./ModalL3PBOnly";
 
 const BundleClaim = () => {
   const {
@@ -19,20 +19,20 @@ const BundleClaim = () => {
     assemblyAddressMumbai,
     assemblyABI
   } = useMoralisDapp();
+  const { Moralis } = useMoralis();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(assemblyABI);
   const [selectedBundle, setSelectedBundle] = useState({});
   const [bundleId, setBundleId] = useState();
-  const queryMintedBundles = useMoralisQuery("CreatedBundle");
-  const fetchMintedBundle = JSON.parse(
-    JSON.stringify(queryMintedBundles.data, ["firstHolder", "tokenId", "salt", "addresses", "numbers", "confirmed"])
-  );
 
-  const getBundle = (idToFetch) => {
-    const result = fetchMintedBundle?.find((e) => e.tokenId === idToFetch && e.confirmed === true);
-    return result;
+  const getBundle = async (idToFetch) => {
+    const CreatedBundle = Moralis.Object.extend("CreatedBundle");
+    const query = new Moralis.Query(CreatedBundle);
+    query.equalTo("tokenId", idToFetch);
+    const res = await query.find();
+    return res;
   };
 
   const showModalNFT = () => {
@@ -75,7 +75,8 @@ const BundleClaim = () => {
 
   async function claimBundle() {
     const contractAddress = getContractAddress();
-    const data = await getBundle(bundleId);
+    const res = await getBundle(bundleId);
+    const data = JSON.parse(JSON.stringify(res));
     try {
       const ops = {
         contractAddress: contractAddress,
@@ -84,9 +85,9 @@ const BundleClaim = () => {
         params: {
           _to: walletAddress,
           _tokenId: bundleId,
-          _salt: data.salt,
-          _addresses: data.addresses,
-          _numbers: data.numbers
+          _salt: data[0].salt,
+          _addresses: data[0].addresses,
+          _numbers: data[0].numbers
         }
       };
 
@@ -95,7 +96,6 @@ const BundleClaim = () => {
         onSuccess: (response) => {
           let asset = response.events.Transfer.returnValues;
           let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-
           let title = "Bundle claimed!";
           let msg = (
             <div>
@@ -127,7 +127,6 @@ const BundleClaim = () => {
 
   return (
     <div style={{ height: "auto" }}>
-    
       <div style={styles.transparentContainer}>
         <label style={{ letterSpacing: "1px" }}>Unpack your Bundle</label>
         <div style={{ display: "grid", margin: "auto", width: "70%" }}>
@@ -136,7 +135,7 @@ const BundleClaim = () => {
               PICK AN NFT
             </Button>
           </div>
-          <L3PModal
+          <ModalL3PBOnly
             handleNFTCancel={handleNFTCancel}
             isModalNFTVisible={isModalNFTVisible}
             handleNFTOk={handleNFTOk}
