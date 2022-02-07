@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.11;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
@@ -187,5 +187,65 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         }
 
         emit AssemblyAssetClaimed(_tokenId, _addresses, _numbers);
+    }
+
+    function _batchMint(
+        address _to,
+        address[] memory _addresses,
+        uint256[] memory _numbers
+    ) public payable returns (uint256 tokenId) {
+        require(
+            _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],
+            "2 array length not match"
+        );
+        require(
+            _addresses.length == _numbers.length - 4 - _numbers[3],
+            "numbers length not match"
+        );
+        uint256 pointerA; //points to first erc20 address, if there is any
+        uint256 pointerB = 4; //points to first erc20 amount, if there is any
+        for (uint256 i = 0; i < _numbers[1]; i++) {
+            require(_numbers[pointerB] > 0, "transfer erc20 0 amount");
+            IERC20(_addresses[pointerA++]).safeTransferFrom(
+                _msgSender(),
+                address(this),
+                _numbers[pointerB++]
+            );
+        }
+        for (uint256 j = 0; j < _numbers[2]; j++) {
+            IERC721(_addresses[pointerA++]).safeTransferFrom(
+                _msgSender(),
+                address(this),
+                _numbers[pointerB++]
+            );
+        }
+        for (uint256 k = 0; k < _numbers[3]; k++) {
+            IERC1155(_addresses[pointerA++]).safeTransferFrom(
+                _msgSender(),
+                address(this),
+                _numbers[pointerB],
+                _numbers[_numbers[3] + pointerB++],
+                ""
+            );
+        }
+        tokenId = hash(nonce, _addresses, _numbers);
+        super._mint(_to, tokenId);
+        emit AssemblyAsset(_to, tokenId, nonce, _addresses, _numbers);
+        nonce++;
+    }
+
+    function batchMint(
+        address _to,
+        address[] memory _addresses,
+        uint256[][] memory _arrayOfNumbers,
+        uint256 _amountOfBundles
+    ) external payable {
+        require(_to != address(0), "can't mint to address(0)");
+        uint256 totalEth = _arrayOfNumbers[0][0] * _amountOfBundles;
+        require(msg.value == totalEth, "value not match");
+
+        for (uint256 i = 0; i < _amountOfBundles; i++) {
+            _batchMint(_to, _addresses, _arrayOfNumbers[i]);
+        }
     }
 }
