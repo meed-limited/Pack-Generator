@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Tabs } from "antd";
+import { Button, Input, Tabs, Tooltip } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import ModalNFT from "./Bundle/ModalNFT";
@@ -12,7 +12,7 @@ import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval }
 import AssetPerBundle from "./Bundle/AssetPerBundle";
 import styles from "./Bundle/styles";
 import { getEllipsisTxt } from "helpers/formatters";
-import { FileSearchOutlined } from "@ant-design/icons";
+import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
 const { TabPane } = Tabs;
 
@@ -105,7 +105,7 @@ const BatchBundle = () => {
       contractAddr,
       contractProcessor
     );
-console.log(currentApproval)
+    console.log(currentApproval);
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
@@ -120,7 +120,7 @@ console.log(currentApproval)
 
       var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        if ((currentApproval[pointerNFT] == false)) {
+        if (currentApproval[pointerNFT] == false) {
           await approveNFTcontract(address[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
@@ -156,7 +156,7 @@ console.log(currentApproval)
 
       var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        if ((currentMultipleApproval[pointerNFT] == false)) {
+        if (currentMultipleApproval[pointerNFT] == false) {
           await approveNFTcontract(address[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
@@ -236,9 +236,7 @@ console.log(currentApproval)
       params: ops,
       onSuccess: () => {
         let title = `Bundles minted!`;
-        let msg = (
-          <div>Congrats!!! {bundleNum} bundles have just been minted and sent to your wallet!</div>
-        );
+        let msg = <div>Congrats!!! {bundleNum} bundles have just been minted and sent to your wallet!</div>;
         openNotification("success", title, msg);
         console.log(`${bundleNum} bundles have been minted`);
       },
@@ -258,6 +256,7 @@ console.log(currentApproval)
   }
 
   async function handleMultipleBundle() {
+    const BUNDLE_LIMIT = 250;
     const contractAddress = getContractAddress();
     try {
       const fetchIpfsFile = await fetchIpfs();
@@ -272,13 +271,13 @@ console.log(currentApproval)
        **********************/
       const clonedArray = cloneDeep(assetsArray);
       await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
-        let counter = contractNumbersArray.length / 250;
+        let counter = contractNumbersArray.length / BUNDLE_LIMIT;
         counter = Math.ceil(counter);
 
         for (let i = 0; i < counter; i++) {
-          if (contractNumbersArray.length > 250) {
-            let temp = contractNumbersArray.splice(0, 250);
-            multipleBundleMint(assetsArray, temp, 250, contractAddress);
+          if (contractNumbersArray.length > BUNDLE_LIMIT) {
+            let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
+            multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
           } else {
             multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
           }
@@ -315,6 +314,14 @@ console.log(currentApproval)
                     <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
                       Pick Some NFTs
                     </Button>
+                    <Tooltip
+                      title="Select the NFT(s) that you'd like to add to the bundle."
+                      style={{ position: "absolute", top: "35px", right: "80px" }}
+                    >
+                      <QuestionCircleOutlined
+                        style={{ color: "white", paddingLeft: "15px", paddingBottom: "40px", transform: "scale(0.8)" }}
+                      />
+                    </Tooltip>
                     <ModalNFT
                       handleNFTCancel={handleNFTCancel}
                       isModalNFTVisible={isModalNFTVisible}
@@ -382,7 +389,15 @@ console.log(currentApproval)
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
                     <Uploader getIpfsHash={getIpfsHash} />
-                    <p style={{ fontSize: "15px" }}>Number of ERC721 per bundle:</p>
+                    <p style={{ fontSize: "15px" }}>
+                      Number of ERC721 per bundle:
+                      <Tooltip
+                        title='Enter the number of ERC721 NFT that will be contained inside each bundle.'
+                        style={{ position: "absolute", top: "35px", right: "80px" }}
+                      >
+                        <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
+                      </Tooltip>
+                    </p>
                     <p>
                       <Input
                         style={styles.transparentInput}
@@ -390,7 +405,15 @@ console.log(currentApproval)
                         onChange={(e) => setERC721Number(e.target.value)}
                       />
                     </p>
-                    <p style={{ fontSize: "15px", marginTop: "20px" }}>Number of ERC1155 per bundle:</p>
+                    <p style={{ fontSize: "15px", marginTop: "20px" }}>
+                      Number of ERC1155 per bundle:
+                      <Tooltip
+                        title='Enter the number of ERC1155 NFT that will be contained inside each bundle.'
+                        style={{ position: "absolute", top: "35px", right: "80px" }}
+                      >
+                        <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
+                      </Tooltip>
+                    </p>
                     <p>
                       <Input
                         style={styles.transparentInput}
@@ -410,7 +433,15 @@ console.log(currentApproval)
                 </div>
               </div>
               <div style={{ margin: "auto", marginTop: "10px", width: "50%" }}>
-                <label style={{ fontSize: "17px" }}>Enter the desired amount of bundles:</label>
+                <label style={{ fontSize: "17px" }}>
+                  Enter the desired amount of bundles:
+                  <Tooltip
+                    title='Enter the total amount of bundles to be minted.'
+                    style={{ position: "absolute", top: "35px", right: "80px" }}
+                  >
+                    <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
+                  </Tooltip>
+                </label>
                 <Input
                   style={styles.transparentInput}
                   type='number'

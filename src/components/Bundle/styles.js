@@ -31,21 +31,12 @@ const styles = {
   },
   selectButton: {
     width: "55%",
-    margin: "30px auto 30px auto",
+    margin: "30px auto 30px 35px",
+    textAlign: "center",
     backgroundImage: `url(${buttonImg})`,
     backgroundSize: "cover",
     border: "1px solid yellow"
   },
-  // selectButton2: {
-  //   width: "70%",
-  //   margin: "30px",
-  //   height: "45px",
-  //   borderImage: "linear-gradient(to right, #FFC400 0%, #C59237 50%, #7835A4 100%) 1",
-  //   background: "transparent",
-  //   backgroundSize: "100% 100%",
-  //   borderStyle: "solid",
-  //   borderWidth: "3px"
-  // },
   resetButton: {
     paddingLeft: "30px",
     paddingRight: "30px",

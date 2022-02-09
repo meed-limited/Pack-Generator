@@ -24,7 +24,6 @@ const styles = {
     display: "flex",
     justifyContent: "space-evenly",
     alignItems: "center",
-    //marginTop: "-80px",
     margin: "0 auto",
     width: "600px",
     height: "150px",

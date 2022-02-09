@@ -1,6 +1,5 @@
 import cloneDeep from "lodash/cloneDeep";
 
-
 /* SINGLE BUNDLE: Sorting arrays before feeding contract:
  *********************************************************/
 export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
@@ -150,10 +149,10 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
   return data;
 }
 
-
 /* MULTIPLE BUNDLES: Updating token IDs before feeding contract:
  ****************************************************************/
 export function updateTokenIdsInArray(importedJson, multiNumArr, bundleNum) {
+  console.log(multiNumArr)
   var arrOfArr = [];
 
   if (importedJson && importedJson.length > 0) {

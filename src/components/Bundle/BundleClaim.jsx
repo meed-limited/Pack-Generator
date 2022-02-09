@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Button, Input } from "antd";
+import { Button, Input, Tooltip } from "antd";
 import { useMoralis } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
 import styles from "./styles";
-import { FileSearchOutlined } from "@ant-design/icons";
+import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
 import ModalL3PBOnly from "./ModalL3PBOnly";
 
@@ -130,10 +130,15 @@ const BundleClaim = () => {
       <div style={styles.transparentContainer}>
         <label style={{ letterSpacing: "1px" }}>Unpack your Bundle</label>
         <div style={{ display: "grid", margin: "auto", width: "70%" }}>
-          <div style={{ width: "70%", margin: "auto" }}>
+          <div style={{ width: "70%", margin: "auto", position: "relative" }}>
             <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
               PICK AN NFT
             </Button>
+            
+            <Tooltip title="Pick the L3P bundle that you'd like to unpack." style={{ position: "absolute", top:"35px", right:"80px" }}>
+              <QuestionCircleOutlined style={{ color: "white", paddingLeft:"15px", paddingBottom:"40px", transform:"scale(0.8)"}}/>
+            </Tooltip>
+            
           </div>
           <ModalL3PBOnly
             handleNFTCancel={handleNFTCancel}

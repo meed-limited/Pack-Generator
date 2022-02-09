@@ -1,4 +1,5 @@
-import { Button } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
+import { Button, Tooltip } from "antd";
 import { forwardRef, useImperativeHandle, useState } from "react";
 import { getNativeByChain } from "../../helpers/networks";
 import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
@@ -40,6 +41,14 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
       <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalERC20}>
         ASSETS TO BUNDLE
       </Button>
+      <Tooltip
+        title="Select all the assets (Native and/or ERC20) that you'd like to add to the bundle(s)."
+        style={{ position: "absolute", top: "35px", right: "80px" }}
+      >
+        <QuestionCircleOutlined
+          style={{ color: "white", paddingLeft: "15px", paddingBottom: "40px", transform: "scale(0.8)" }}
+        />
+      </Tooltip>
       <ModalERC20
         isModalNFTVisible={isModalNFTVisible}
         handleAssetOk={handleAssetOk}
