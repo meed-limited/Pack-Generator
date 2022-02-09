@@ -392,7 +392,7 @@ const BatchBundle = () => {
                     <p style={{ fontSize: "15px" }}>
                       Number of ERC721 per bundle:
                       <Tooltip
-                        title='Enter the number of ERC721 NFT that will be contained inside each bundle.'
+                        title='Enter the number of ERC721 NFT that will be contained inside each bundle (up to 50 ERC721 per bundle).'
                         style={{ position: "absolute", top: "35px", right: "80px" }}
                       >
                         <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -402,13 +402,15 @@ const BatchBundle = () => {
                       <Input
                         style={styles.transparentInput}
                         type='number'
+                        min='0'
+                        max='50'
                         onChange={(e) => setERC721Number(e.target.value)}
                       />
                     </p>
                     <p style={{ fontSize: "15px", marginTop: "20px" }}>
                       Number of ERC1155 per bundle:
                       <Tooltip
-                        title='Enter the number of ERC1155 NFT that will be contained inside each bundle.'
+                        title='Enter the number of ERC1155 NFT that will be contained inside each bundle (up to 50 ERC1155 per bundle).'
                         style={{ position: "absolute", top: "35px", right: "80px" }}
                       >
                         <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -418,6 +420,8 @@ const BatchBundle = () => {
                       <Input
                         style={styles.transparentInput}
                         type='number'
+                        min='0'
+                        max='50'
                         onChange={(e) => setERC1155Number(e.target.value)}
                       />
                     </p>
@@ -436,7 +440,7 @@ const BatchBundle = () => {
                 <label style={{ fontSize: "17px" }}>
                   Enter the desired amount of bundles:
                   <Tooltip
-                    title='Enter the total amount of bundles to be minted.'
+                    title='Enter the total amount of bundles to be minted (up to 10,000, with 250 bundles per Tx).'
                     style={{ position: "absolute", top: "35px", right: "80px" }}
                   >
                     <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -445,6 +449,8 @@ const BatchBundle = () => {
                 <Input
                   style={styles.transparentInput}
                   type='number'
+                  min='0'
+                  max='10000'
                   onChange={(e) => setBundleNumber(e.target.value)}
                 />
               </div>

@@ -1,6 +1,6 @@
 export const networkCollections = {
   "0x13881": [
-    //Add Your Collections here
+    //Add Your MUMBAI Collections here
     {
       image:
         "https://lh3.googleusercontent.com/BWCni9INm--eqCK800BbRkL10zGyflxfPwTHt4XphMSWG3XZvPx1JyGdfU9vSor8K046DJg-Q8Y4ioUlWHiCZqgR_L00w4vcbA-w=s0",
@@ -21,7 +21,24 @@ export const networkCollections = {
     },
   ],
 
+  "0x89": [
+    //Add Your POLYGON Collections here
+    {
+      image:
+        "https://lh3.googleusercontent.com/drFQztyvWfO6XYt-kpuY1I2oDD3LmJ4E8D2nE6yc0gkbM3XrGP_wXd-LlljXhTAWDczM4sd9nrBRbhLynw1vblIL8HleX_U-VwyewQ=w600",
+      name: "Chilli Bottles",
+      addrs: "0xE3ECE750517f51aE262B4df02e0950E4c2b4d830",
+    },
+    
+  ],
+
   "0x1": [
+    {
+      image:
+        "https://lh3.googleusercontent.com/drFQztyvWfO6XYt-kpuY1I2oDD3LmJ4E8D2nE6yc0gkbM3XrGP_wXd-LlljXhTAWDczM4sd9nrBRbhLynw1vblIL8HleX_U-VwyewQ=w600",
+      name: "Chilli Bottles",
+      addrs: "0xE3ECE750517f51aE262B4df02e0950E4c2b4d830",
+    },
     {
       image:
         "https://lh3.googleusercontent.com/Ju9CkWtV-1Okvf45wo8UctR-M9He2PjILP0oOvxE89AyiPPGtrR3gysu1Zgy0hjd2xKIgjJJtWIc0ybj4Vd7wv8t3pxDGHoJBzDB=s130",

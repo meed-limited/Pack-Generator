@@ -72,6 +72,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
         <Input
           style={{ marginTop: "10px" }}
           type='number'
+          min='0'
           step={0.00001}
           placeholder='Enter selected token amount'
           onChange={(e) => onChangeERC20Amount(parseFloat(e.target.value))}

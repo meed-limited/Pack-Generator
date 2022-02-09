@@ -152,6 +152,7 @@ const BundleClaim = () => {
           <Input
             style={styles.transparentInput}
             type='number'
+            min='0'
             value={bundleId}
             onChange={(e) => setBundleId(e.target.value)}
           />

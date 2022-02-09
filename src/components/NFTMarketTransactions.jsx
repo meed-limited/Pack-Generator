@@ -6,13 +6,6 @@ import { PolygonCurrency } from "./Chains/Logos";
 import moment from "moment";
 import styles from "./Bundle/styles";
 
-// const styles = {
-//   table: {
-//     margin: "0 auto",
-//     width: "1000px"
-//   }
-// };
-
 function NFTMarketTransactions() {
   const { walletAddress } = useMoralisDapp();
   const queryItemImages = useMoralisQuery("ItemImages");
