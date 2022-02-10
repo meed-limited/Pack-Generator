@@ -159,3 +159,7 @@
 .ant-btn:hover {
   transform: scale(1.05) !important;
 }
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.836) !important;
+}

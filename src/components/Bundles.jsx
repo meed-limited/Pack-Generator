@@ -14,6 +14,7 @@ import styles from "./Bundle/styles";
 import { getEllipsisTxt } from "helpers/formatters";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
+import ContractAddrsSelector from "./Bundle/ContractAddrsSelector";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
@@ -38,17 +39,24 @@ const BatchBundle = () => {
   const [bundleNumber, setBundleNumber] = useState();
   const assetPerBundleRef = React.useRef();
   const assetModalRef = React.useRef();
+  const [customAddrs, setCustomAddrs] = useState();
+
+  const customContractAddrs = (addrs) => {
+    setCustomAddrs(addrs);
+  };
 
   const getContractAddress = () => {
-    var contractAddr;
-    if (chainId === "0x1") {
-      contractAddr = assemblyAddressEthereum;
-    } else if (chainId === "0x89") {
-      contractAddr = assemblyAddressPolygon;
-    } else if (chainId === "0x13881") {
-      contractAddr = assemblyAddressMumbai;
+    if (customAddrs && customAddrs.length > 0) {
+      return customAddrs;
+    } else {
+      if (chainId === "0x1") {
+        return assemblyAddressEthereum;
+      } else if (chainId === "0x89") {
+        return assemblyAddressPolygon;
+      } else if (chainId === "0x13881") {
+        return assemblyAddressMumbai;
+      }
     }
-    return contractAddr;
   };
 
   const showModalNFT = () => {
@@ -105,7 +113,7 @@ const BatchBundle = () => {
       contractAddr,
       contractProcessor
     );
-    console.log(currentApproval);
+    
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
@@ -258,6 +266,7 @@ const BatchBundle = () => {
   async function handleMultipleBundle() {
     const BUNDLE_LIMIT = 250;
     const contractAddress = getContractAddress();
+    console.log(contractAddress)
     try {
       const fetchIpfsFile = await fetchIpfs();
       const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
@@ -385,6 +394,9 @@ const BatchBundle = () => {
               <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
                 Select all the assets to bundle
               </p>
+
+              <ContractAddrsSelector customContractAddrs={customContractAddrs} />
+
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
