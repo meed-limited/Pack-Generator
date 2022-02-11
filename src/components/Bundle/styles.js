@@ -94,7 +94,7 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-    paddingBottom: "30px",
+    paddingBottom: "20px",
     marginBottom: "0",
     fontSize: "25px",
     color: "white"

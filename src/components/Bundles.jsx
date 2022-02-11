@@ -39,6 +39,7 @@ const BatchBundle = () => {
   const [bundleNumber, setBundleNumber] = useState();
   const assetPerBundleRef = React.useRef();
   const assetModalRef = React.useRef();
+  const customContractAddrsRef = React.useRef();
   const [customAddrs, setCustomAddrs] = useState();
 
   const customContractAddrs = (addrs) => {
@@ -77,6 +78,18 @@ const BatchBundle = () => {
     setSelectedTokens(Erc20);
   };
 
+  const handleERC721Number = (e) => {
+    setERC721Number(e.target.value);
+  };
+
+  const handleERC1155Number = (e) => {
+    setERC1155Number(e.target.value);
+  };
+
+  const handleBundleNumber = (e) => {
+    setBundleNumber(e.target.value);
+  };
+
   const getIpfsHash = (hash) => {
     setIpfsHash(hash);
   };
@@ -113,7 +126,7 @@ const BatchBundle = () => {
       contractAddr,
       contractProcessor
     );
-    
+
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
@@ -128,7 +141,7 @@ const BatchBundle = () => {
 
       var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        if (currentApproval[pointerNFT] == false) {
+        if (currentApproval[pointerNFT] === false) {
           await approveNFTcontract(address[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
@@ -164,7 +177,7 @@ const BatchBundle = () => {
 
       var pointerNFT = numbers[1];
       for (let i = 0; i < address.length; i++) {
-        if (currentMultipleApproval[pointerNFT] == false) {
+        if (currentMultipleApproval[pointerNFT] === false) {
           await approveNFTcontract(address[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
@@ -226,6 +239,7 @@ const BatchBundle = () => {
   }
 
   async function multipleBundleMint(assetContracts, assetNumbers, bundleNum, contractAddr) {
+    console.log(contractAddr);
     const addressArr = cloneDeep(assetContracts);
     const ops = {
       contractAddress: contractAddr,
@@ -242,9 +256,19 @@ const BatchBundle = () => {
 
     await contractProcessor.fetch({
       params: ops,
-      onSuccess: () => {
+      onSuccess: (response) => {
+        let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
         let title = `Bundles minted!`;
-        let msg = <div>Congrats!!! {bundleNum} bundles have just been minted and sent to your wallet!</div>;
+        let msg = (
+          <div>
+            Congrats!!! {bundleNum} bundles have just been minted and sent to your wallet!
+            <br></br>
+            <a href={link} target='_blank' rel='noreferrer noopener'>
+              View in explorer: &nbsp;
+              <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
+            </a>
+          </div>
+        );
         openNotification("success", title, msg);
         console.log(`${bundleNum} bundles have been minted`);
       },
@@ -266,7 +290,7 @@ const BatchBundle = () => {
   async function handleMultipleBundle() {
     const BUNDLE_LIMIT = 250;
     const contractAddress = getContractAddress();
-    console.log(contractAddress)
+    console.log(contractAddress);
     try {
       const fetchIpfsFile = await fetchIpfs();
       const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
@@ -301,11 +325,17 @@ const BatchBundle = () => {
   }
 
   const onClickReset = () => {
+    setERC721Number(0);
+    setERC1155Number(0);
+    setBundleNumber();
     if (assetPerBundleRef && assetPerBundleRef.current) {
       assetPerBundleRef.current.reset();
     }
     if (assetModalRef && assetModalRef.current) {
       assetModalRef.current.reset();
+    }
+    if (customContractAddrsRef && customContractAddrsRef.current) {
+      customContractAddrsRef.current.reset();
     }
   };
 
@@ -395,7 +425,7 @@ const BatchBundle = () => {
                 Select all the assets to bundle
               </p>
 
-              <ContractAddrsSelector customContractAddrs={customContractAddrs} />
+              <ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />
 
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
@@ -416,7 +446,8 @@ const BatchBundle = () => {
                         type='number'
                         min='0'
                         max='50'
-                        onChange={(e) => setERC721Number(e.target.value)}
+                        value={ERC721Number}
+                        onChange={handleERC721Number}
                       />
                     </p>
                     <p style={{ fontSize: "15px", marginTop: "20px" }}>
@@ -434,7 +465,8 @@ const BatchBundle = () => {
                         type='number'
                         min='0'
                         max='50'
-                        onChange={(e) => setERC1155Number(e.target.value)}
+                        value={ERC1155Number}
+                        onChange={handleERC1155Number}
                       />
                     </p>
                   </div>
@@ -463,7 +495,8 @@ const BatchBundle = () => {
                   type='number'
                   min='0'
                   max='10000'
-                  onChange={(e) => setBundleNumber(e.target.value)}
+                  value={bundleNumber}
+                  onChange={handleBundleNumber}
                 />
               </div>
               <div style={{ marginTop: "10px" }}>

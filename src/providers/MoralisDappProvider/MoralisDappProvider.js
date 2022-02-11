@@ -34,7 +34,7 @@ function MoralisDappProvider({ children }) {
   // Contracts deployed on Mumbaï
   const assemblyAddressMumbai = "0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98";
   const marketAddressMumbai = "0x44De79625cAd8A91F1BA8e0f93ffa37Ac95A7025";
-  const factoryAddressMumbai = "0xaE8E6c1bC0D4A6BB30a04340bdF8263B282ac526";
+  const factoryAddressMumbai = "0xcc2A04eF122fB40b3Bf5b0c86601579786ca8F0A";
 
   // OLD wihtout batch function: "0xBc779cE41259Cd7107ed2C36E00258b6234111bD"
 

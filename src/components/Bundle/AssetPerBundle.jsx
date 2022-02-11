@@ -59,7 +59,7 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
         <p style={{ marginBottom: "10px" }}>{nativeName} to Bundle: </p>
         {ethAmount && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
-            {ethAmount} {nativeName}
+            {ethAmount.toFixed(4)} {nativeName}
           </p>
         )}
         <div>
@@ -68,7 +68,7 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
             selectedTokens.length > 0 &&
             selectedTokens.map((selectedToken, key) => (
               <div style={styles.displayAssets} key={`${selectedToken.value} - ${selectedToken.data.symbol}`}>
-                <p style={{ marginBottom: "5px" }}>{`${selectedToken.value} ${selectedToken.data.symbol}`}</p>
+                <p style={{ marginBottom: "5px" }}>{`${selectedToken.value.toFixed(4)} ${selectedToken.data.symbol}`}</p>
               </div>
             ))}
         </div>

@@ -9,31 +9,82 @@ import styles from "./styles";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
 import ModalL3PBOnly from "./ModalL3PBOnly";
+import { useContractAddress } from "hooks/useContractAddress";
 
 const BundleClaim = () => {
-  const {
-    walletAddress,
-    chainId,
-    assemblyAddressEthereum,
-    assemblyAddressPolygon,
-    assemblyAddressMumbai,
-    assemblyABI
-  } = useMoralisDapp();
+  const { walletAddress, chainId, assemblyABI, factoryABI } = useMoralisDapp();
+  const { getAssemblyAddress, getFactoryAddress } = useContractAddress();
   const { Moralis } = useMoralis();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(assemblyABI);
+  const factoryABIJson = JSON.parse(factoryABI);
   const [selectedBundle, setSelectedBundle] = useState({});
   const [bundleId, setBundleId] = useState();
+  const [numberOfCollection, setNumberOfCollection] = useState(0);
 
-  const getBundle = async (idToFetch) => {
+  const getBundlePerId = async (idToFetch) => {
     const CreatedBundle = Moralis.Object.extend("CreatedBundle");
     const query = new Moralis.Query(CreatedBundle);
     query.equalTo("tokenId", idToFetch);
     const res = await query.find();
     return res;
   };
+
+  const getAmountOfCustomCollection = async () => {
+    const contractAddress = getFactoryAddress();
+    const ops = {
+      contractAddress: contractAddress,
+      functionName: "numberOfCustomCollections",
+      abi: factoryABIJson
+    };
+
+    await contractProcessor.fetch({
+      params: ops,
+      onSuccess: (response) => {
+        setNumberOfCollection(response);
+      },
+      onError: (error) => {
+        console.log(error);
+      }
+    });
+  };
+
+  const getAllCustomCollectionAddresses = async () => {
+    const contractAddress = getFactoryAddress();
+    var collectionAddressArray = [];
+
+    for (let i = 0; i < numberOfCollection; i++) {
+      const ops = {
+        contractAddress: contractAddress,
+        functionName: "customCollectionList",
+        abi: factoryABIJson,
+        params: {
+          "": [i]
+        }
+      };
+
+      await contractProcessor.fetch({
+        params: ops,
+        onSuccess: (response) => {
+          collectionAddressArray[i] = response;
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+    }
+    return collectionAddressArray;
+  };
+
+  const getArrayOfAllAddresses = async () => {
+    var addr = await getAllCustomCollectionAddresses();
+    const factAdd = await getFactoryAddress();
+    addr = addr.concat(factAdd);
+    console.log(addr)
+    return addr;
+  }
 
   const showModalNFT = () => {
     setIsModalNFTVisible(true);
@@ -54,28 +105,17 @@ const BundleClaim = () => {
   };
 
   const handleClaim = () => {
-    claimBundle();
+    //claimBundle();
+    getArrayOfAllAddresses();
   };
 
   const resetOnClaim = () => {
     setBundleId();
   };
 
-  const getContractAddress = () => {
-    var contractAddr;
-    if (chainId === "0x1") {
-      contractAddr = assemblyAddressEthereum;
-    } else if (chainId === "0x89") {
-      contractAddr = assemblyAddressPolygon;
-    } else if (chainId === "0x13881") {
-      contractAddr = assemblyAddressMumbai;
-    }
-    return contractAddr;
-  };
-
   async function claimBundle() {
-    const contractAddress = getContractAddress();
-    const res = await getBundle(bundleId);
+    const contractAddress = getAssemblyAddress();
+    const res = await getBundlePerId(bundleId);
     const data = JSON.parse(JSON.stringify(res));
     try {
       const ops = {
@@ -134,11 +174,15 @@ const BundleClaim = () => {
             <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
               PICK AN NFT
             </Button>
-            
-            <Tooltip title="Pick the L3P bundle that you'd like to unpack." style={{ position: "absolute", top:"35px", right:"80px" }}>
-              <QuestionCircleOutlined style={{ color: "white", paddingLeft:"15px", paddingBottom:"40px", transform:"scale(0.8)"}}/>
+
+            <Tooltip
+              title="Pick the L3P bundle that you'd like to unpack."
+              style={{ position: "absolute", top: "35px", right: "80px" }}
+            >
+              <QuestionCircleOutlined
+                style={{ color: "white", paddingLeft: "15px", paddingBottom: "40px", transform: "scale(0.8)" }}
+              />
             </Tooltip>
-            
           </div>
           <ModalL3PBOnly
             handleNFTCancel={handleNFTCancel}

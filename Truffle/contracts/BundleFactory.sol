@@ -57,8 +57,9 @@ contract BundleFactory {
         return CustomCollectionAddress;
     }
 
-    // /// @dev This function allow to get the total amount of custom collection created.
-    // function numberOfCustomCollections() external view returns (uint256) {
-    //     return customCollectionList.length;
-    // }
+    /// @dev This function allow to get the total amount of custom collection created.
+    function numberOfCustomCollections() external view returns (uint256) {
+        return customCollectionList.length;
+    }
 }
+
