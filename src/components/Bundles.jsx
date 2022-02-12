@@ -314,19 +314,19 @@ const BatchBundle = () => {
         /*SMART-CONTRACT CALL:
          **********************/
         const clonedArray = cloneDeep(assetsArray);
-        // await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
-        //   let counter = contractNumbersArray.length / BUNDLE_LIMIT;
-        //   counter = Math.ceil(counter);
+        await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
+          let counter = contractNumbersArray.length / BUNDLE_LIMIT;
+          counter = Math.ceil(counter);
 
-        //   for (let i = 0; i < counter; i++) {
-        //     if (contractNumbersArray.length > BUNDLE_LIMIT) {
-        //       let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
-        //       multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
-        //     } else {
-        //       multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
-        //     }
-        //   }
-        // });
+          for (let i = 0; i < counter; i++) {
+            if (contractNumbersArray.length > BUNDLE_LIMIT) {
+              let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
+              multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
+            } else {
+              multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
+            }
+          }
+        });
       } catch (err) {
         let title = "Batch Bundle error";
         let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
