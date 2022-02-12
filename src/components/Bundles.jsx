@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Input, Tabs, Tooltip } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
@@ -30,6 +30,7 @@ const BatchBundle = () => {
   const contractABIJson = JSON.parse(assemblyABI);
 
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
+  const [isJSON, setIsJSON] = useState(false);
   const [ipfsHash, setIpfsHash] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
@@ -94,19 +95,29 @@ const BatchBundle = () => {
     setIpfsHash(hash);
   };
 
-  async function fetchIpfs() {
-    const url = `https://ipfs.moralis.io:2053/ipfs/${ipfsHash}`;
-    try {
-      const response = await fetch(url);
-      const file = await response.json();
-      return file;
-    } catch (e) {
+  const isFile = (bool) => {
+    setIsJSON(bool);
+  };
+
+  const fetchIpfs = async () => {
+    if (isJSON && ipfsHash) {
+      const url = `https://ipfs.moralis.io:2053/ipfs/${ipfsHash}`;
+      const response = await fetch(url).then((res) => res.json());
+      return response;
+    } else {
       let title = "No JSON submited";
-      let msg = "It looks like you haven't submitted any JSON file.";
+      let msg = "You haven't submitted any JSON file. Your bundles won't contain any NFTs.";
       openNotification("warning", title, msg);
-      console.log(e);
     }
-  }
+  };
+
+  useEffect(() => {
+    if (ipfsHash && ipfsHash.length > 0) {
+      let title = "File processed!";
+      let msg = "Your file has been processed. You can now batch-mint your bundles!";
+      openNotification("success", title, msg);
+    }
+  }, [ipfsHash]);
 
   async function getSingleBundleArrays() {
     let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
@@ -288,39 +299,44 @@ const BatchBundle = () => {
   }
 
   async function handleMultipleBundle() {
-    const BUNDLE_LIMIT = 250;
-    const contractAddress = getContractAddress();
-    console.log(contractAddress);
-    try {
-      const fetchIpfsFile = await fetchIpfs();
-      const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
-      const assetsArray = sortedData[0];
-      const numbersArray = sortedData[1];
-      const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, numbersArray, bundleNumber);
-      console.log(assetsArray);
-      console.log(contractNumbersArray);
+    if (!isJSON || (isJSON && ipfsHash)) {
+      const BUNDLE_LIMIT = 200;
+      const contractAddress = getContractAddress();
+      try {
+        const fetchIpfsFile = await fetchIpfs();
+        const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
+        const assetsArray = sortedData[0];
+        const numbersArray = sortedData[1];
+        const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, numbersArray, bundleNumber);
+        console.log(assetsArray);
+        console.log(contractNumbersArray);
 
-      /*SMART-CONTRACT CALL:
-       **********************/
-      const clonedArray = cloneDeep(assetsArray);
-      await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
-        let counter = contractNumbersArray.length / BUNDLE_LIMIT;
-        counter = Math.ceil(counter);
+        /*SMART-CONTRACT CALL:
+         **********************/
+        const clonedArray = cloneDeep(assetsArray);
+        // await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
+        //   let counter = contractNumbersArray.length / BUNDLE_LIMIT;
+        //   counter = Math.ceil(counter);
 
-        for (let i = 0; i < counter; i++) {
-          if (contractNumbersArray.length > BUNDLE_LIMIT) {
-            let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
-            multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
-          } else {
-            multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
-          }
-        }
-      });
-    } catch (err) {
-      let title = "Batch Bundle error";
-      let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
-      openNotification("error", title, msg);
-      console.log(err);
+        //   for (let i = 0; i < counter; i++) {
+        //     if (contractNumbersArray.length > BUNDLE_LIMIT) {
+        //       let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
+        //       multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
+        //     } else {
+        //       multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
+        //     }
+        //   }
+        // });
+      } catch (err) {
+        let title = "Batch Bundle error";
+        let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
+        openNotification("error", title, msg);
+        console.log(err);
+      }
+    } else {
+      let title = "Processing file...";
+      let msg = "Please be patient while we're preparing your bundles! It won't take long.";
+      openNotification("warning", title, msg);
     }
   }
 
@@ -430,7 +446,7 @@ const BatchBundle = () => {
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
-                    <Uploader getIpfsHash={getIpfsHash} />
+                    <Uploader getIpfsHash={getIpfsHash} isFile={isFile} />
                     <p style={{ fontSize: "15px" }}>
                       Number of ERC721 per bundle:
                       <Tooltip

@@ -1,9 +1,10 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
+import { openNotification } from "../Notification";
 import styles from "./styles";
 
-const Uploader = ({ getIpfsHash }) => {
+const Uploader = ({ getIpfsHash, isFile }) => {
   const { Moralis } = useMoralis();
   const [selectedFile, setSelectedFile] = useState();
   const [isSelected, setIsSelected] = useState(false);
@@ -13,14 +14,19 @@ const Uploader = ({ getIpfsHash }) => {
     setIsSelected(true);
   };
 
-  async function handleSubmission() {
-    if (selectedFile) {
-      const file = new Moralis.File(selectedFile.name, selectedFile);
-      await file.saveIPFS();
-      const data = file.hash();
-      getIpfsHash(data);
-    }
-  }
+  const handleSubmission = async () => {
+      if (selectedFile) {
+        isFile(true);
+        let title = "Processing JSON file";
+        let msg = "Please be patient while the submitted file is being processed.";
+        openNotification("info", title, msg);
+
+        const file = new Moralis.File(selectedFile.name, selectedFile);
+        await file.saveIPFS()
+          .then(res => res.hash())
+          .then(data => getIpfsHash(data))
+      }
+  };
 
   return (
     <div style={styles.uploadBox}>
@@ -33,7 +39,7 @@ const Uploader = ({ getIpfsHash }) => {
         <p style={{ margin: "8px" }}>Select a JSON file for the Batch-Bundle</p>
       )}
       <div>
-        <Button type='primary' shape='round' size='large' style={ styles.resetButton } onClick={handleSubmission}>
+        <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleSubmission}>
           SUBMIT
         </Button>
       </div>

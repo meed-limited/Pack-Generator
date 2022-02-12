@@ -43,8 +43,6 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
     createNewContract(name, symbol);
   };
 
-  // 0x04204E84cafD104eFD953E6C83Fc35B44d1c8A9A
-
   const createNewContract = async (name, symbol) => {
     var contractAddr = getContractAddress();
     var newAddress;

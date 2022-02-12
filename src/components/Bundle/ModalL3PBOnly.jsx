@@ -1,6 +1,9 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { Card, Image, Alert, Modal } from "antd";
+import { useContractAddress } from "hooks/useContractAddress";
 import { useNFTBalance } from "hooks/useNFTBalance";
+import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+import { useWeb3ExecuteFunction } from "react-moralis";
 const { Meta } = Card;
 
 const styles = {
@@ -17,8 +20,14 @@ const styles = {
 
 const ModalL3PBOnly = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
-    const { NFTBalance, fetchSuccess } = useNFTBalance();
+    const contractProcessor = useWeb3ExecuteFunction();
+    const { factoryABI } = useMoralisDapp();
+    const { getFactoryAddress } = useContractAddress();
+    const { NFTBalance, fetchSuccess } = useNFTBalance(); 
+    const factoryABIJson = JSON.parse(factoryABI);
     const [selectedNFTs, setSelectedNFTs] = useState([]);
+    const [numberOfCollection, setNumberOfCollection] = useState(0);
+    const [customCollectionList, setCustomCollectionList] = useState(0);
 
     const handleClickCard = (nftItem) => {
       if (isMultiple) {
@@ -54,6 +63,64 @@ const ModalL3PBOnly = forwardRef(
       handleNFTOk(selectedNFTs);
     };
 
+    const getAmountOfCustomCollection = async () => {
+      const contractAddress = getFactoryAddress();
+      const ops = {
+        contractAddress: contractAddress,
+        functionName: "numberOfCustomCollections",
+        abi: factoryABIJson
+      };
+  
+      await contractProcessor.fetch({
+        params: ops,
+        onSuccess: (response) => {
+          setNumberOfCollection(response);
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+    };
+  
+    const getAllCustomCollectionAddresses = async () => {
+      getAmountOfCustomCollection();
+      const contractAddress = getFactoryAddress();
+      var collectionAddressArray = [];
+  
+      for (let i = 0; i < numberOfCollection; i++) {
+        const ops = {
+          contractAddress: contractAddress,
+          functionName: "customCollectionList",
+          abi: factoryABIJson,
+          params: {
+            "": [i]
+          }
+        };
+  
+        await contractProcessor.fetch({
+          params: ops,
+          onSuccess: (response) => {
+            collectionAddressArray[i] = response;
+          },
+          onError: (error) => {
+            console.log(error);
+          }
+        });
+      }
+      return collectionAddressArray;
+    };  
+
+    const getArrayOfAllAddresses = async () => {
+      var array = [];
+      const customAdd = await getAllCustomCollectionAddresses();
+      const factAdd = await getFactoryAddress();
+      array = array.concat(factAdd, customAdd);
+
+      setCustomCollectionList(array);
+      console.log(array)
+      return array;
+    }
+
     useImperativeHandle(ref, () => ({
       reset() {
         setSelectedNFTs([]);
@@ -62,7 +129,8 @@ const ModalL3PBOnly = forwardRef(
     }));
 
     const L3PBundleBalance = NFTBalance.filter(results => {
-      return results.token_address.includes("0x8019748ed0b33651b30f049cdda1dc89a8b1bc98"); // Edit to official Bundle contract address (NO MAJ!)
+      //return results.token_address.includes("0x8019748ed0b33651b30f049cdda1dc89a8b1bc98"); // Edit to official Bundle contract address (NO MAJ!)
+      return results.token_address.includes(customCollectionList);
     });
 
     return (

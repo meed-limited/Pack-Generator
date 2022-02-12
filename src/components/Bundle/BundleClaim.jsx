@@ -12,17 +12,15 @@ import ModalL3PBOnly from "./ModalL3PBOnly";
 import { useContractAddress } from "hooks/useContractAddress";
 
 const BundleClaim = () => {
-  const { walletAddress, chainId, assemblyABI, factoryABI } = useMoralisDapp();
-  const { getAssemblyAddress, getFactoryAddress } = useContractAddress();
+  const { walletAddress, chainId, assemblyABI } = useMoralisDapp();
+  const { getAssemblyAddress } = useContractAddress();
   const { Moralis } = useMoralis();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(assemblyABI);
-  const factoryABIJson = JSON.parse(factoryABI);
   const [selectedBundle, setSelectedBundle] = useState({});
   const [bundleId, setBundleId] = useState();
-  const [numberOfCollection, setNumberOfCollection] = useState(0);
 
   const getBundlePerId = async (idToFetch) => {
     const CreatedBundle = Moralis.Object.extend("CreatedBundle");
@@ -31,60 +29,6 @@ const BundleClaim = () => {
     const res = await query.find();
     return res;
   };
-
-  const getAmountOfCustomCollection = async () => {
-    const contractAddress = getFactoryAddress();
-    const ops = {
-      contractAddress: contractAddress,
-      functionName: "numberOfCustomCollections",
-      abi: factoryABIJson
-    };
-
-    await contractProcessor.fetch({
-      params: ops,
-      onSuccess: (response) => {
-        setNumberOfCollection(response);
-      },
-      onError: (error) => {
-        console.log(error);
-      }
-    });
-  };
-
-  const getAllCustomCollectionAddresses = async () => {
-    const contractAddress = getFactoryAddress();
-    var collectionAddressArray = [];
-
-    for (let i = 0; i < numberOfCollection; i++) {
-      const ops = {
-        contractAddress: contractAddress,
-        functionName: "customCollectionList",
-        abi: factoryABIJson,
-        params: {
-          "": [i]
-        }
-      };
-
-      await contractProcessor.fetch({
-        params: ops,
-        onSuccess: (response) => {
-          collectionAddressArray[i] = response;
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
-    }
-    return collectionAddressArray;
-  };
-
-  const getArrayOfAllAddresses = async () => {
-    var addr = await getAllCustomCollectionAddresses();
-    const factAdd = await getFactoryAddress();
-    addr = addr.concat(factAdd);
-    console.log(addr)
-    return addr;
-  }
 
   const showModalNFT = () => {
     setIsModalNFTVisible(true);
@@ -105,16 +49,26 @@ const BundleClaim = () => {
   };
 
   const handleClaim = () => {
-    //claimBundle();
-    getArrayOfAllAddresses();
+    claimBundle();
   };
 
   const resetOnClaim = () => {
     setBundleId();
   };
 
+  const getContractAddress = () => {
+    const defaultFactoryAddress = getAssemblyAddress();
+    if (selectedBundle && selectedBundle[0].token_address != defaultFactoryAddress) {
+      return selectedBundle[0].token_address;
+    } else {
+      return defaultFactoryAddress;
+    }
+  };
+
   async function claimBundle() {
-    const contractAddress = getAssemblyAddress();
+    const contractAddress = getContractAddress();
+    console.log(contractAddress)
+    console.log(selectedBundle)
     const res = await getBundlePerId(bundleId);
     const data = JSON.parse(JSON.stringify(res));
     try {
