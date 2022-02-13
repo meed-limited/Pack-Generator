@@ -250,7 +250,6 @@ const BatchBundle = () => {
   }
 
   async function multipleBundleMint(assetContracts, assetNumbers, bundleNum, contractAddr) {
-    console.log(contractAddr);
     const addressArr = cloneDeep(assetContracts);
     const ops = {
       contractAddress: contractAddr,
@@ -308,8 +307,6 @@ const BatchBundle = () => {
         const assetsArray = sortedData[0];
         const numbersArray = sortedData[1];
         const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, numbersArray, bundleNumber);
-        console.log(assetsArray);
-        console.log(contractNumbersArray);
 
         /*SMART-CONTRACT CALL:
          **********************/

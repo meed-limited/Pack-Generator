@@ -152,7 +152,6 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
 /* MULTIPLE BUNDLES: Updating token IDs before feeding contract:
  ****************************************************************/
 export function updateTokenIdsInArray(importedJson, multiNumArr, bundleNum) {
-  console.log(multiNumArr)
   var arrOfArr = [];
 
   if (importedJson && importedJson.length > 0) {

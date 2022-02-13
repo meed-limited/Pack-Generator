@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Input, Tooltip } from "antd";
-import { useMoralis } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
@@ -9,26 +8,19 @@ import styles from "./styles";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
 import ModalL3PBOnly from "./ModalL3PBOnly";
+import { useAssemblyEvent } from "hooks/useAssemblyEvent";
 import { useContractAddress } from "hooks/useContractAddress";
 
 const BundleClaim = () => {
   const { walletAddress, chainId, assemblyABI } = useMoralisDapp();
+  const { retrieveAssemblyEvent } = useAssemblyEvent();
   const { getAssemblyAddress } = useContractAddress();
-  const { Moralis } = useMoralis();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(assemblyABI);
   const [selectedBundle, setSelectedBundle] = useState({});
   const [bundleId, setBundleId] = useState();
-
-  const getBundlePerId = async (idToFetch) => {
-    const CreatedBundle = Moralis.Object.extend("CreatedBundle");
-    const query = new Moralis.Query(CreatedBundle);
-    query.equalTo("tokenId", idToFetch);
-    const res = await query.find();
-    return res;
-  };
 
   const showModalNFT = () => {
     setIsModalNFTVisible(true);
@@ -58,19 +50,18 @@ const BundleClaim = () => {
 
   const getContractAddress = () => {
     const defaultFactoryAddress = getAssemblyAddress();
-    if (selectedBundle && selectedBundle[0].token_address != defaultFactoryAddress) {
+    if (selectedBundle && selectedBundle[0].token_address !== defaultFactoryAddress) {
       return selectedBundle[0].token_address;
     } else {
       return defaultFactoryAddress;
     }
   };
 
-  async function claimBundle() {
+  const claimBundle = async () => {
     const contractAddress = getContractAddress();
-    console.log(contractAddress)
-    console.log(selectedBundle)
-    const res = await getBundlePerId(bundleId);
-    const data = JSON.parse(JSON.stringify(res));
+
+    const data = await retrieveAssemblyEvent(selectedBundle, contractAddress);
+    console.log(data);
     try {
       const ops = {
         contractAddress: contractAddress,
@@ -78,10 +69,10 @@ const BundleClaim = () => {
         abi: contractABIJson,
         params: {
           _to: walletAddress,
-          _tokenId: bundleId,
-          _salt: data[0].salt,
-          _addresses: data[0].addresses,
-          _numbers: data[0].numbers
+          _tokenId: selectedBundle[0].token_id,
+          _salt: data[2],
+          _addresses: data[0],
+          _numbers: data[1]
         }
       };
 
@@ -117,7 +108,7 @@ const BundleClaim = () => {
       let msg = "Oops, you can't claim this bundle at this time. It is either unconfirmed yet, or already claimed.";
       openNotification("error", title, msg);
     }
-  }
+  };
 
   return (
     <div style={{ height: "auto" }}>
