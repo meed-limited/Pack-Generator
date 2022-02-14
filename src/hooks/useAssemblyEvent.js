@@ -24,7 +24,7 @@ export const useAssemblyEvent = () => {
         arrayOfNumber = event[0].returnValues.numbers;
         salt = event[0].returnValues.salt;
       });
-
+      
     return [arrayOfAddress, arrayOfNumber, salt];
   };
 

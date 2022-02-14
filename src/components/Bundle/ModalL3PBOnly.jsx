@@ -1,9 +1,12 @@
 import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { Card, Image, Alert, Modal } from "antd";
+import { Card, Image, Alert, Modal, Button } from "antd";
 import { useContractAddress } from "hooks/useContractAddress";
 import { useNFTBalance } from "hooks/useNFTBalance";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
+import { useSynchronousState } from "@toolz/use-synchronous-state";
+import buttonImg from "../../assets/buttonImg.svg";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 const { Meta } = Card;
 
 const styles = {
@@ -14,7 +17,19 @@ const styles = {
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "100%",
-    gap: "10px",
+    gap: "10px"
+  },
+  selectButton: {
+    display: "block",
+    width: "185px",
+    height: "50px",
+    margin: "auto",
+    marginBottom: "30px",
+    color: "white",
+    textAlign: "center",
+    backgroundImage: `url(${buttonImg})`,
+    backgroundSize: "cover",
+    border: "2px solid yellow"
   }
 };
 
@@ -22,12 +37,14 @@ const ModalL3PBOnly = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
     const contractProcessor = useWeb3ExecuteFunction();
     const { factoryABI } = useMoralisDapp();
-    const { getFactoryAddress } = useContractAddress();
-    const { NFTBalance, fetchSuccess } = useNFTBalance(); 
     const factoryABIJson = JSON.parse(factoryABI);
+    const { NFTBalance, fetchSuccess } = useNFTBalance();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
-    const [numberOfCollection, setNumberOfCollection] = useState(0);
-    const [customCollectionList, setCustomCollectionList] = useState(0);
+    const [numberOfCollection, setNumberOfCollection] = useSynchronousState(0);
+    const [customArray, setCustomArray] = useSynchronousState([]);
+    const [bundleToClaim, setBundleToClaim] = useSynchronousState([]);
+    const { getFactoryAddress } = useContractAddress();
+    const contractAddress = getFactoryAddress();
 
     const handleClickCard = (nftItem) => {
       if (isMultiple) {
@@ -64,13 +81,12 @@ const ModalL3PBOnly = forwardRef(
     };
 
     const getAmountOfCustomCollection = async () => {
-      const contractAddress = getFactoryAddress();
       const ops = {
         contractAddress: contractAddress,
         functionName: "numberOfCustomCollections",
         abi: factoryABIJson
       };
-  
+
       await contractProcessor.fetch({
         params: ops,
         onSuccess: (response) => {
@@ -81,13 +97,11 @@ const ModalL3PBOnly = forwardRef(
         }
       });
     };
-  
-    const getAllCustomCollectionAddresses = async () => {
-      getAmountOfCustomCollection();
-      const contractAddress = getFactoryAddress();
+
+    const getArrayOfCollectionAddresses = async (num) => {
       var collectionAddressArray = [];
-  
-      for (let i = 0; i < numberOfCollection; i++) {
+
+      for (let i = 0; i < num; i++) {
         const ops = {
           contractAddress: contractAddress,
           functionName: "customCollectionList",
@@ -96,7 +110,7 @@ const ModalL3PBOnly = forwardRef(
             "": [i]
           }
         };
-  
+
         await contractProcessor.fetch({
           params: ops,
           onSuccess: (response) => {
@@ -107,19 +121,42 @@ const ModalL3PBOnly = forwardRef(
           }
         });
       }
+      collectionAddressArray = collectionAddressArray.concat(
+        contractAddress,
+        "0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98"
+      );
       return collectionAddressArray;
-    };  
+    };
 
-    const getArrayOfAllAddresses = async () => {
-      var array = [];
-      const customAdd = await getAllCustomCollectionAddresses();
-      const factAdd = await getFactoryAddress();
-      array = array.concat(factAdd, customAdd);
+    const getCustomArray = async () => {
+      await getAmountOfCustomCollection();
+      const num = numberOfCollection();
+      await getArrayOfCollectionAddresses(num).then((res) => {
+        setCustomArray(res);
+      });
+      allBundle();
+    };
 
-      setCustomCollectionList(array);
-      console.log(array)
-      return array;
-    }
+    const L3PBundleBalance = NFTBalance.filter((results) => {
+      return results.contract_type.includes("ERC721");
+    });
+
+    const allBundle = () => {
+      const addr = customArray();
+      var arr = [];
+      for (let i = 0; i < addr.length; i++) {
+        for (let j = 0; j < L3PBundleBalance.length; j++) {
+          if (L3PBundleBalance[j].token_address.toLowerCase() === addr[i].toLowerCase()) {
+            arr.push(L3PBundleBalance[j]);
+          }
+        }
+      }
+      setBundleToClaim(arr);
+    };
+
+    // const L3PBundleBalance = NFTBalance.filter((results) => {
+    //   return results.token_address.includes("0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98"); // Edit to official Bundle contract address (NO MAJ!)
+    // });
 
     useImperativeHandle(ref, () => ({
       reset() {
@@ -127,11 +164,6 @@ const ModalL3PBOnly = forwardRef(
         handleNFTOk([]);
       }
     }));
-
-    const L3PBundleBalance = NFTBalance.filter(results => {
-      //return results.token_address.includes("0x8019748ed0b33651b30f049cdda1dc89a8b1bc98"); // Edit to official Bundle contract address (NO MAJ!)
-      return results.token_address.includes(customCollectionList);
-    });
 
     return (
       <>
@@ -143,6 +175,15 @@ const ModalL3PBOnly = forwardRef(
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
         >
+          <div style={{ display: "flex" }}>
+          <Button style={styles.selectButton} onClick={getCustomArray}>
+            Load claimable bundle
+          </Button>
+
+          <Button type="primary" style={{marginTop: "10px"}} onClick={handleClickOk}>OK</Button>
+          </div>
+          
+
           <div style={styles.NFTs}>
             {!fetchSuccess && (
               <>
@@ -154,8 +195,10 @@ const ModalL3PBOnly = forwardRef(
               </>
             )}
 
-            {L3PBundleBalance &&
-              L3PBundleBalance.map((nft, index) => {
+            {/* {bundleBalance &&
+              bundleBalance.map((nft, index) => { */}
+            {bundleToClaim() &&
+              bundleToClaim().map((nft, index) => {
                 return (
                   <Card
                     hoverable

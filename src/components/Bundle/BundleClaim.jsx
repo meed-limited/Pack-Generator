@@ -59,9 +59,7 @@ const BundleClaim = () => {
 
   const claimBundle = async () => {
     const contractAddress = getContractAddress();
-
     const data = await retrieveAssemblyEvent(selectedBundle, contractAddress);
-    console.log(data);
     try {
       const ops = {
         contractAddress: contractAddress,
