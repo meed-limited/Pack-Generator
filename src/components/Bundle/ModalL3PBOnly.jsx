@@ -6,7 +6,6 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { useWeb3ExecuteFunction } from "react-moralis";
 import { useSynchronousState } from "@toolz/use-synchronous-state";
 import buttonImg from "../../assets/buttonImg.svg";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
 const { Meta } = Card;
 
 const styles = {
