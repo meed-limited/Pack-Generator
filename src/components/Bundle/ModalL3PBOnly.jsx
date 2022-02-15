@@ -181,10 +181,7 @@ const ModalL3PBOnly = forwardRef(
 
           <Button type="primary" style={{marginTop: "10px"}} onClick={handleClickOk}>OK</Button>
           </div>
-          
-
-          <div style={styles.NFTs}>
-            {!fetchSuccess && (
+          {!fetchSuccess && (
               <>
                 <Alert
                   message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
@@ -194,6 +191,9 @@ const ModalL3PBOnly = forwardRef(
               </>
             )}
 
+          <div style={styles.NFTs}>
+            
+
             {/* {bundleBalance &&
               bundleBalance.map((nft, index) => { */}
             {bundleToClaim() &&
@@ -202,7 +202,7 @@ const ModalL3PBOnly = forwardRef(
                   <Card
                     hoverable
                     style={{
-                      transform: "scale(0.8)",
+                      transform: "scale(0.9)",
                       width: 240,
                       border: selectedNFTs.some(
                         (nftItem) =>

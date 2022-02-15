@@ -11,7 +11,7 @@ const styles = {
     justifyContent: "flex-start",
     margin: "0 auto",
     maxWidth: "1000px",
-    gap: "10px",
+    gap: "20px"
   }
 };
 
@@ -71,17 +71,16 @@ const ModalNFT = forwardRef(
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
         >
+          {!fetchSuccess && (
+            <>
+              <Alert
+                message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
+                type='warning'
+              />
+              <div style={{ marginBottom: "10px" }}></div>
+            </>
+          )}
           <div style={styles.NFTs}>
-            {!fetchSuccess && (
-              <>
-                <Alert
-                  message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
-                  type='warning'
-                />
-                <div style={{ marginBottom: "10px" }}></div>
-              </>
-            )}
-
             {NFTBalance &&
               NFTBalance.map((nft, index) => {
                 return (

@@ -91,7 +91,7 @@ const BatchBundle = () => {
   };
 
   const getJsonFile = (file) => {
-    console.log(file)
+    console.log(file);
     setJsonFile(file);
   };
 
@@ -286,50 +286,51 @@ const BatchBundle = () => {
   }
 
   async function handleMultipleBundle() {
-    console.log(isJSON)
+    console.log(isJSON);
+    if (!isJSON) {
+      let title = "No CSV submitted";
+      let msg =
+        "You haven't submitted any CSV file. Your bundles won't contain any NFTs. Reject all transactions to cancel.";
+      openNotification("warning", title, msg);
+    }
+    const BUNDLE_LIMIT = 200;
+    const contractAddress = getContractAddress();
+    try {
+      const sortedData = await getMultipleBundleArrays(jsonFile);
+      const assetsArray = sortedData[0];
+      const numbersArray = sortedData[1];
+      const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, bundleNumber);
 
-    // if (!isJSON || (isJSON && isJsonValid(jsonFile))) {
-      const BUNDLE_LIMIT = 200;
-      const contractAddress = getContractAddress();
-      try {
-        const sortedData = await getMultipleBundleArrays(jsonFile);
-        const assetsArray = sortedData[0];
-        const numbersArray = sortedData[1];
-        const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, bundleNumber);
+      /*SMART-CONTRACT CALL:
+       **********************/
+      const clonedArray = cloneDeep(assetsArray);
+      await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
+        let counter = contractNumbersArray.length / BUNDLE_LIMIT;
+        counter = Math.ceil(counter);
 
-        /*SMART-CONTRACT CALL:
-         **********************/
-        const clonedArray = cloneDeep(assetsArray);
-        await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
-          let counter = contractNumbersArray.length / BUNDLE_LIMIT;
-          counter = Math.ceil(counter);
-
-          for (let i = 0; i < counter; i++) {
-            if (contractNumbersArray.length > BUNDLE_LIMIT) {
-              let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
-              multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
-            } else {
-              multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
-            }
+        for (let i = 0; i < counter; i++) {
+          if (contractNumbersArray.length > BUNDLE_LIMIT) {
+            let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
+            multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
+          } else {
+            multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
           }
-        });
-      } catch (err) {
-        let title = "Batch Bundle error";
-        let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
-        openNotification("error", title, msg);
-        console.log(err);
-      }
-    // } else {
-    //   let title = "Processing file...";
-    //   let msg = "Please be patient while we're preparing your bundles! It won't take long.";
-    //   openNotification("warning", title, msg);
-    // }
+        }
+      });
+    } catch (err) {
+      let title = "Batch Bundle error";
+      let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
+      openNotification("error", title, msg);
+      console.log(err);
+    }
   }
 
   const onClickReset = () => {
     setERC721Number(0);
     setERC1155Number(0);
     setBundleNumber();
+    setIsJSON(false);
+    setJsonFile();
     if (assetPerBundleRef && assetPerBundleRef.current) {
       assetPerBundleRef.current.reset();
     }
@@ -428,9 +429,9 @@ const BatchBundle = () => {
               </p>
 
               <ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />
-              
+
               <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                2. Select all the assets to bundle - Native currency | ERC20 | NFTs 
+                2. Select all the assets to bundle - Native currency | ERC20 | NFTs
               </p>
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
@@ -486,15 +487,15 @@ const BatchBundle = () => {
                 </div>
               </div>
               <div style={{ margin: "auto", marginTop: "10px", width: "50%" }}>
-              <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                3. Enter the desired amount of bundles:
+                <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                  3. Enter the desired amount of bundles:
                   <Tooltip
                     title='Enter the total amount of bundles to be minted. Up to 200 bundles per Txs, up to 10,000 in total (10,000 = 50 Txs).'
                     style={{ position: "absolute", top: "35px", right: "80px" }}
                   >
                     <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
                   </Tooltip>
-                  </p>
+                </p>
                 <Input
                   style={styles.transparentInput}
                   type='number'

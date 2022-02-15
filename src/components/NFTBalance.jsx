@@ -164,26 +164,27 @@ function NFTBalance() {
 
   return (
     <div style={{ margin: "100px" }}>
-      <div style={styles.NFTs}>
-        {contractABIJson.noContractDeployed && (
-          <>
-            <Alert
-              message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'
-              type='error'
-            />
-            <div style={{ marginBottom: "10px" }}></div>
-          </>
-        )}
+      {contractABIJson.noContractDeployed && (
+        <>
+          <Alert
+            message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'
+            type='error'
+          />
+          <div style={{ marginBottom: "10px" }}></div>
+        </>
+      )}
 
-        {!fetchSuccess && (
-          <>
-            <Alert
-              message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
-              type='warning'
-            />
-            <div style={{ marginBottom: "10px" }}></div>
-          </>
-        )}
+      {!fetchSuccess && (
+        <>
+          <Alert
+            message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
+            type='warning'
+          />
+          <div style={{ marginBottom: "10px" }}></div>
+        </>
+      )}
+
+      <div style={styles.NFTs}>
         {NFTBalance &&
           NFTBalance.map((nft, index) => (
             <Card
