@@ -16,7 +16,8 @@ const styles = {
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    width: "1000px",
+    //width: "1000px",
+    width: "100%",
     gap: "10px"
   }
 };
@@ -163,7 +164,7 @@ function NFTBalance() {
   }
 
   return (
-    <div style={{ margin: "100px" }}>
+    <div style={{ margin:"100px auto", width: "100%" }}>
       {contractABIJson.noContractDeployed && (
         <>
           <Alert

@@ -13,16 +13,20 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   const [removeHoverColor, setRemoveHoverColor] = useState(DEFAULT_REMOVE_HOVER_COLOR);
 
   const handleFile = (file) => {
+    console.log(file)
     var object = [];
-    for (let i = 0; i < file.data.length; i++) {
-      object[i] = {
+    var counter = 0;
+    for (let i = 1; i < file.data.length; i++) {
+      object[counter] = {
         token_id: parseInt(file.data[i][0]),
         amount: parseInt(file.data[i][1]),
         contract_type: file.data[i][2],
         token_address: file.data[i][3].toLowerCase()
       };
+      counter++;
     }
     isJsonFile(true);
+    console.log(object)
     getJsonFile(object);
   };
 

@@ -193,7 +193,7 @@ const styles = {
     background: 'linear-gradient(to bottom, rgb(243 213 232), rgb(22 0 110))',
     borderRadius: 20,
     display: 'flex',
-    height: 100,
+    height: "auto",
     width: "80%",
     position: 'relative',
     zIndex: 10,
@@ -204,8 +204,7 @@ const styles = {
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',
-    paddingLeft: 10,
-    paddingRight: 10,
+    padding: "10px"
   },
   size: {
     backgroundColor: GREY_LIGHT,

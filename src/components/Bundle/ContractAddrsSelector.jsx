@@ -112,9 +112,9 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
       </p>
       <div style={{ display: "inline-flex", alignItems: "center" }}>
         <label style={{ fontSize: "14px", paddingRight: "10px" }}>Name:</label>
-        <Input style={styles.transparentInput} value={name} onChange={handleNameChange} />
+        <Input style={styles.transparentInput} placeholder="e.g. My Super Collection" value={name} onChange={handleNameChange} />
         <label style={{ fontSize: "14px", paddingLeft: "50px", paddingRight: "10px" }}>Symbol:</label>
-        <Input style={styles.transparentInput} value={symbol} onChange={handleSymbolChange} />
+        <Input style={styles.transparentInput} placeholder="e.g. MSC" value={symbol} onChange={handleSymbolChange} />
       </div>
       <div style={{ marginTop: "20px" }}>
         <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
