@@ -278,7 +278,6 @@ const BatchBundle = () => {
   }
 
   async function handleMultipleBundle() {
-    console.log(isJSON);
     if (!isJSON) {
       let title = "No CSV submitted";
       let msg =

@@ -33,16 +33,27 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
     }
   }));
 
+  const text = () => {
+    return (
+      <p>
+        <br />
+        Make a copy of the attached template and edit your data. When all set,
+        simply save your file as ".csv". <br />
+        Required info: <br />
+        1. Token Id <br />
+        2. Amount (if ERC1155, else leave blank) <br />
+        3. Contract type (ERC721 or ERC1155) <br />
+        4. Contract Address
+      </p>
+    );
+  };
+
   return (
     <div style={styles.uploadBox}>
       <div>
         <p style={{ fontSize: "16px", letterSpacing: "1px", fontWeight: "300" }}>
           Import some infos about the NFTs that you wish to bundle.
-          <Tooltip
-            title='Make a copy of the attached template and use Excel/Google Sheet/OpenOffice to edit your data. When all set, simply save your file as ".csv".
-            Required info: Token Id | Amount (if ERC1155, else 0) | Contract type (ERC721 or ERC1155) | Contract Address'
-            style={{ position: "absolute", top: "35px", right: "80px" }}
-          >
+          <Tooltip style={{ position: "absolute", top: "35px", right: "80px" }} title={text}>
             <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
           </Tooltip>
         </p>
@@ -53,7 +64,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
             rel='noreferrer noopener'
             style={{ fontSize: "16px", marginBottom: "12px" }}
           >
-            Click to check the template.
+            Click to open the template.
           </a>
         </p>
         <CSVReader
