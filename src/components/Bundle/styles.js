@@ -1,6 +1,10 @@
 import buttonImg from "../../assets/buttonImg.svg";
 /*eslint no-dupe-keys: "Off"*/
 
+const GREY = '#CCC';
+const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';
+const GREY_DIM = '#686868';
+
 const styles = {
   content: {
     width: "75vw",
@@ -85,6 +89,7 @@ const styles = {
   transparentContainerInside: {
     borderRadius: "15px",
     margin: "30px",
+    marginTop: "15px",
     background: "rgba(240, 248, 255, 0.10)",
     background:
       "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
@@ -167,6 +172,73 @@ const styles = {
     marginBottom: "20px",
     color: "white",
     fontSize: "15px"
+  },
+  zone: {
+    alignItems: 'center',
+    marginTop: "10px",
+    marginBottom: "15px",
+    borderWidth: 2,
+    borderStyle: 'dashed',
+    borderColor: "#6d3ef7",
+    backgroundColor:"white",
+    color: "black",
+    borderRadius: 20,
+    display: 'flex',
+    flexDirection: 'column',
+    height: '100%',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  file: {
+    background: 'linear-gradient(to bottom, rgb(243 213 232), rgb(22 0 110))',
+    borderRadius: 20,
+    display: 'flex',
+    height: 100,
+    width: "80%",
+    position: 'relative',
+    zIndex: 10,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  },
+  info: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  size: {
+    backgroundColor: GREY_LIGHT,
+    borderRadius: 3,
+    marginBottom: '0.5em',
+    justifyContent: 'center',
+    display: 'flex',
+  },
+  name: {
+    backgroundColor: GREY_LIGHT,
+    borderRadius: 3,
+    fontSize: 18,
+    marginBottom: '0.5em',
+  },
+  progressBar: {
+    bottom: 14,
+    position: 'absolute',
+    width: '100%',
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  zoneHover: {
+    borderColor: GREY_DIM,
+  },
+  default: {
+    borderColor: GREY,
+  },
+  remove: {
+    height: 23,
+    position: 'absolute',
+    right: 6,
+    top: 6,
+    width: 23,
   },
   contentGrid: {
     marginBottom: "30px",

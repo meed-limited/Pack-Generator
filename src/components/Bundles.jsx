@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Button, Input, Tabs, Tooltip } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
-import ModalNFT from "./Bundle/ModalNFT";
 import cloneDeep from "lodash/cloneDeep";
+import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Bundle/Approval";
+import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Bundle/ArraySorting";
+import AssetPerBundle from "./Bundle/AssetPerBundle";
+import ContractAddrsSelector from "./Bundle/ContractAddrsSelector";
+import ModalNFT from "./Bundle/ModalNFT";
+import Uploader from "./Bundle/Uploader";
 import BundleClaim from "./Bundle/BundleClaim";
 import { openNotification } from "./Notification";
-import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Bundle/ArraySorting";
-import Uploader from "./Bundle/Uploader";
-import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Bundle/Approval";
-import AssetPerBundle from "./Bundle/AssetPerBundle";
-import styles from "./Bundle/styles";
-import { getEllipsisTxt } from "helpers/formatters";
-import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
-import ContractAddrsSelector from "./Bundle/ContractAddrsSelector";
+import { getEllipsisTxt } from "helpers/formatters";
+import { Button, Input, Tabs, Tooltip } from "antd";
+import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import styles from "./Bundle/styles";
 const { TabPane } = Tabs;
 
 const BatchBundle = () => {
@@ -28,10 +28,9 @@ const BatchBundle = () => {
     assemblyABI
   } = useMoralisDapp();
   const contractABIJson = JSON.parse(assemblyABI);
-
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [isJSON, setIsJSON] = useState(false);
-  const [ipfsHash, setIpfsHash] = useState("");
+  const [jsonFile, setJsonFile] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [NFTsArr, setNFTsArr] = useState([]);
@@ -91,33 +90,22 @@ const BatchBundle = () => {
     setBundleNumber(e.target.value);
   };
 
-  const getIpfsHash = (hash) => {
-    setIpfsHash(hash);
+  const getJsonFile = (file) => {
+    console.log(file)
+    setJsonFile(file);
   };
 
-  const isFile = (bool) => {
+  const isJsonFile = (bool) => {
     setIsJSON(bool);
   };
 
-  const fetchIpfs = async () => {
-    if (isJSON && ipfsHash) {
-      const url = `https://ipfs.moralis.io:2053/ipfs/${ipfsHash}`;
-      const response = await fetch(url).then((res) => res.json());
-      return response;
-    } else {
-      let title = "No JSON submited";
-      let msg = "You haven't submitted any JSON file. Your bundles won't contain any NFTs.";
-      openNotification("warning", title, msg);
-    }
-  };
-
-  useEffect(() => {
-    if (ipfsHash && ipfsHash.length > 0) {
-      let title = "File processed!";
-      let msg = "Your file has been processed. You can now batch-mint your bundles!";
-      openNotification("success", title, msg);
-    }
-  }, [ipfsHash]);
+  // useEffect(() => {
+  //   if (jsonFile && jsonFile.length > 0) {
+  //     let title = "File processed!";
+  //     let msg = "Your file has been processed. You can now batch-mint your bundles!";
+  //     openNotification("success", title, msg);
+  //   }
+  // }, [jsonFile]);
 
   async function getSingleBundleArrays() {
     let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
@@ -298,15 +286,16 @@ const BatchBundle = () => {
   }
 
   async function handleMultipleBundle() {
-    if (!isJSON || (isJSON && ipfsHash)) {
+    console.log(isJSON)
+
+    // if (!isJSON || (isJSON && isJsonValid(jsonFile))) {
       const BUNDLE_LIMIT = 200;
       const contractAddress = getContractAddress();
       try {
-        const fetchIpfsFile = await fetchIpfs();
-        const sortedData = await getMultipleBundleArrays(fetchIpfsFile);
+        const sortedData = await getMultipleBundleArrays(jsonFile);
         const assetsArray = sortedData[0];
         const numbersArray = sortedData[1];
-        const contractNumbersArray = await updateTokenIdsInArray(fetchIpfsFile, numbersArray, bundleNumber);
+        const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, bundleNumber);
 
         /*SMART-CONTRACT CALL:
          **********************/
@@ -330,11 +319,11 @@ const BatchBundle = () => {
         openNotification("error", title, msg);
         console.log(err);
       }
-    } else {
-      let title = "Processing file...";
-      let msg = "Please be patient while we're preparing your bundles! It won't take long.";
-      openNotification("warning", title, msg);
-    }
+    // } else {
+    //   let title = "Processing file...";
+    //   let msg = "Please be patient while we're preparing your bundles! It won't take long.";
+    //   openNotification("warning", title, msg);
+    // }
   }
 
   const onClickReset = () => {
@@ -434,16 +423,19 @@ const BatchBundle = () => {
           <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
-              <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
-                Select all the assets to bundle
+              <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                1. Create a brand new ERC721 bundle collection (Optional)
               </p>
 
               <ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />
-
+              
+              <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                2. Select all the assets to bundle - Native currency | ERC20 | NFTs 
+              </p>
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
-                    <Uploader getIpfsHash={getIpfsHash} isFile={isFile} />
+                    <Uploader getJsonFile={getJsonFile} isJsonFile={isJsonFile} />
                     <p style={{ fontSize: "15px" }}>
                       Number of ERC721 per bundle:
                       <Tooltip
@@ -494,15 +486,15 @@ const BatchBundle = () => {
                 </div>
               </div>
               <div style={{ margin: "auto", marginTop: "10px", width: "50%" }}>
-                <label style={{ fontSize: "17px" }}>
-                  Enter the desired amount of bundles:
+              <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                3. Enter the desired amount of bundles:
                   <Tooltip
-                    title='Enter the total amount of bundles to be minted (up to 10,000, with 250 bundles per Tx).'
+                    title='Enter the total amount of bundles to be minted. Up to 200 bundles per Txs, up to 10,000 in total (10,000 = 50 Txs).'
                     style={{ position: "absolute", top: "35px", right: "80px" }}
                   >
                     <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
                   </Tooltip>
-                </label>
+                  </p>
                 <Input
                   style={styles.transparentInput}
                   type='number'

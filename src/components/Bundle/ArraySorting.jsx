@@ -165,7 +165,6 @@ export function updateTokenIdsInArray(importedJson, multiNumArr, bundleNum) {
       for (let j = firstNFTIndex; j < arr.length; j++) {
         var value = importedJson[k].token_id;
         arr[j] = value;
-
         if (importedJson[k].contract_type === "ERC1155") {
           var amount = importedJson[k].amount;
           arr[j + 1] = amount;

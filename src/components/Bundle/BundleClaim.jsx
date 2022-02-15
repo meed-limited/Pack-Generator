@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import { Button, Input, Tooltip } from "antd";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
-import styles from "./styles";
-import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { getExplorer } from "helpers/networks";
 import ModalL3PBOnly from "./ModalL3PBOnly";
 import { useAssemblyEvent } from "hooks/useAssemblyEvent";
 import { useContractAddress } from "hooks/useContractAddress";
+import { Button, Input, Tooltip } from "antd";
+import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import styles from "./styles";
 
 const BundleClaim = () => {
   const { walletAddress, chainId, assemblyABI } = useMoralisDapp();
