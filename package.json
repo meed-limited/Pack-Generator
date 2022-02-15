@@ -2,6 +2,7 @@
   "name": "nft-bundle-webapp",
   "version": "0.1.0",
   "private": true,
+  "author": "Pedrojok01",
   "dependencies": {
     "@ant-design/icons": "4.7.0",
     "@openzeppelin/contracts": "4.4.2",

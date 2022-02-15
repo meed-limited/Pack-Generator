@@ -1,13 +1,13 @@
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
-import React, { useState } from "react";
 import { useCSVReader, lightenDarkenColor, formatFileSize } from "react-papaparse";
 import styles from "./styles";
 
 const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
 const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(DEFAULT_REMOVE_HOVER_COLOR, 40);
 
-const Uploader = ({ getJsonFile, isJsonFile }) => {
+const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   const { CSVReader } = useCSVReader();
   const [zoneHover, setZoneHover] = useState(false);
   const [removeHoverColor, setRemoveHoverColor] = useState(DEFAULT_REMOVE_HOVER_COLOR);
@@ -25,6 +25,13 @@ const Uploader = ({ getJsonFile, isJsonFile }) => {
     isJsonFile(true);
     getJsonFile(object);
   };
+
+  useImperativeHandle(ref, () => ({
+    reset() {
+      getJsonFile();
+      isJsonFile(false);
+    }
+  }));
 
   return (
     <div style={styles.uploadBox}>
@@ -102,6 +109,6 @@ const Uploader = ({ getJsonFile, isJsonFile }) => {
       </div>
     </div>
   );
-};
+});
 
 export default Uploader;

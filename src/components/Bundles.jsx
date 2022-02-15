@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import cloneDeep from "lodash/cloneDeep";
@@ -40,6 +40,7 @@ const BatchBundle = () => {
   const assetPerBundleRef = React.useRef();
   const assetModalRef = React.useRef();
   const customContractAddrsRef = React.useRef();
+  const uploaderRef = React.useRef();
   const [customAddrs, setCustomAddrs] = useState();
 
   const customContractAddrs = (addrs) => {
@@ -91,21 +92,12 @@ const BatchBundle = () => {
   };
 
   const getJsonFile = (file) => {
-    console.log(file);
     setJsonFile(file);
   };
 
   const isJsonFile = (bool) => {
     setIsJSON(bool);
   };
-
-  // useEffect(() => {
-  //   if (jsonFile && jsonFile.length > 0) {
-  //     let title = "File processed!";
-  //     let msg = "Your file has been processed. You can now batch-mint your bundles!";
-  //     openNotification("success", title, msg);
-  //   }
-  // }, [jsonFile]);
 
   async function getSingleBundleArrays() {
     let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
@@ -340,6 +332,9 @@ const BatchBundle = () => {
     if (customContractAddrsRef && customContractAddrsRef.current) {
       customContractAddrsRef.current.reset();
     }
+    if (uploaderRef && uploaderRef.current) {
+      uploaderRef.current.reset();
+    }
   };
 
   return (
@@ -436,7 +431,7 @@ const BatchBundle = () => {
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
-                    <Uploader getJsonFile={getJsonFile} isJsonFile={isJsonFile} />
+                    <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
                     <p style={{ fontSize: "15px" }}>
                       Number of ERC721 per bundle:
                       <Tooltip
