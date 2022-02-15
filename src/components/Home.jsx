@@ -49,7 +49,7 @@ const styles = {
 };
 
 const Home = () => {
-  const text = `Pack and unpack NFTs with other digital assets. \nMintone or mint a batch. \nIt's like DLC for blockchain.`;
+  const text = `Pack and unpack NFTs with other digital assets. \nMint one or mint a batch. \nIt's like DLC for blockchain.`;
 
   return (
     <div style={styles.grid}>

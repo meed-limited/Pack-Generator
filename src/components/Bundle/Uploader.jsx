@@ -13,7 +13,6 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   const [removeHoverColor, setRemoveHoverColor] = useState(DEFAULT_REMOVE_HOVER_COLOR);
 
   const handleFile = (file) => {
-    console.log(file)
     var object = [];
     var counter = 0;
     for (let i = 1; i < file.data.length; i++) {
@@ -26,7 +25,6 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
       counter++;
     }
     isJsonFile(true);
-    console.log(object)
     getJsonFile(object);
   };
 
