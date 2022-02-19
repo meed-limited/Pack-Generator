@@ -4,14 +4,14 @@ import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from 
 import Account from "components/Account";
 import Chains from "components/Chains";
 import NFTBalance from "components/NFTBalance";
-import NFTTokenIds from "components/NFTTokenIds";
+import NFTMarketplace from "components/NFTMarketplace";
 import { Menu, Layout, AutoComplete } from "antd";
 //import SearchCollections from "components/SearchCollections";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
-import NFTMarketTransactions from "components/NFTMarketTransactions";
+import NFTTransactions from "components/NFTTransactions";
 import BatchBundle from "components/Bundles";
 //import BatchMinter from "components/BatchMinter";
 import Home from "components/Home";
@@ -37,13 +37,15 @@ const styles = {
     //flexDirection: "column",
     justifyContent: "top",
     flex: "auto",
-    width: "inherit",
+    width: "60%",
+    height: "fit-content",
     //display: "flex",
-    marginTop: "30px",
-    fontFamily: "Roboto, sans-serif",
+    
+    fontFamily: "Sora, sans-serif",
     margin: "auto",
-    marginBottom: "20px",
-    transform: "scale(80%)"
+    marginTop: "75px",
+    marginBottom: "100px",
+    //transform: "scale(80%)"
   },
   header: {
     backgroundImage: `url(${headerBackground})`,
@@ -152,13 +154,13 @@ const App = () => {
               <BatchBundle />
             </Route>
             <Route exact path='/MarketPlace'>
-              <NFTTokenIds inputValue={inputValue} setInputValue={setInputValue} />
+              <NFTMarketplace inputValue={inputValue} setInputValue={setInputValue} />
             </Route>
             <Route exact path='/YourNFTs'>
               <NFTBalance />
             </Route>
             <Route exact path='/Transactions'>
-              <NFTMarketTransactions />
+              <NFTTransactions />
             </Route>
           </Switch>
           <Redirect to='/Home' />

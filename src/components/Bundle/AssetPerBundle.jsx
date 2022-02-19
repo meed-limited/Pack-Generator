@@ -55,15 +55,15 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
         handleAssetCancel={handleAssetCancel}
       />
 
-      <div style={{ color: "white", fontSize: "16px" }}>
-        <p style={{ marginBottom: "10px" }}>{nativeName} to Bundle: </p>
+      <div style={{ color: "white", fontSize: "13px" }}>
+        <p style={{ marginBottom: "10px" }}>{nativeName} to bundle: </p>
         {ethAmount && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
             {ethAmount.toFixed(4)} {nativeName}
           </p>
         )}
         <div>
-          <p style={{ marginTop: "30px", marginBottom: "10px" }}>Tokens to bundle:</p>
+          <p style={{ marginTop: "30px", marginBottom: "10px" }}>TOKENS to bundle:</p>
           {selectedTokens &&
             selectedTokens.length > 0 &&
             selectedTokens.map((selectedToken, key) => (

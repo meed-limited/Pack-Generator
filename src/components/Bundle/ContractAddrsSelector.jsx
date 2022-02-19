@@ -7,6 +7,7 @@ import { getExplorer } from "helpers/networks";
 import { openNotification } from "components/Notification";
 import "../../style.css";
 import styles from "./styles";
+//import { useContractEvents } from "hooks/useContractEvents";
 
 const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
   const contractProcessor = useWeb3ExecuteFunction();
@@ -15,6 +16,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
   const [name, setName] = useState();
   const [symbol, setSymbol] = useState();
   const [customAddress, setCustomAddress] = useState();
+  //const { newCollectionListener } = useContractEvents();
 
   const getContractAddress = () => {
     if (chainId === "0x1") {
@@ -77,6 +79,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
 
         openNotification("success", title, msg);
         console.log("Collection created");
+        //await newCollectionListener(contractAddr);
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -101,7 +104,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
 
   return (
     <div style={styles.transparentContainerInside}>
-      <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
+      <p style={{ fontSize: "13px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
         Fill the fields below to create a new bundle collection:
         <Tooltip
           title='Enter a collection name and symbol to generate a new ERC721 contract and get your very own bundle collection! Leave blanck to use our default L3PB collection.'
@@ -111,9 +114,9 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
         </Tooltip>
       </p>
       <div style={{ display: "inline-flex", alignItems: "center" }}>
-        <label style={{ fontSize: "14px", paddingRight: "10px" }}>Name:</label>
+        <label style={{ fontSize: "11px", paddingRight: "10px" }}>Name:</label>
         <Input style={styles.transparentInput} placeholder="e.g. My Super Collection" value={name} onChange={handleNameChange} />
-        <label style={{ fontSize: "14px", paddingLeft: "50px", paddingRight: "10px" }}>Symbol:</label>
+        <label style={{ fontSize: "11px", paddingLeft: "50px", paddingRight: "10px" }}>Symbol:</label>
         <Input style={styles.transparentInput} placeholder="e.g. MSC" value={symbol} onChange={handleSymbolChange} />
       </div>
       <div style={{ marginTop: "20px" }}>
@@ -123,12 +126,12 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
       </div>
       {customAddress && customAddress.length > 0 && (
         <div style={styles.transparentContainerInside}>
-          <p style={{ padding: "20px 10px 0px 10px", fontSize: "17px" }}>
+          <p style={{ padding: "20px 10px 0px 10px", fontSize: "14px" }}>
             Here is the smart-contract address of your new bundle collection:
             <br></br>
-            <span style={{ fontSize: "19px", color: "yellow" }}>{customAddress}</span>
+            <span style={{ fontSize: "13px", color: "yellow" }}>{customAddress}</span>
             <br></br>
-            Make sure to keep it somewhere! To start minting your first bundles, scroll down and prepare your bundles.
+            To start minting your bundles, scroll down and prepare them.
           </p>
         </div>
       )}
@@ -136,8 +139,8 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
       <div style={{ fontSize: "12px", margin: "20px", justifyContent: "center" }}>
         <p>OR</p>
       </div>
-      <p style={{ fontSize: "16px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
-        Select the collection contract address:
+      <p style={{ fontSize: "13px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
+        Select an existing collection:
         <Tooltip
           title='Enter the collection contract address that you created via our factory, or leave the field blank to use our L3PB collection.'
           style={{ position: "absolute", top: "35px", right: "80px" }}
@@ -151,7 +154,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
         value={customAddress}
         onChange={handleCustomAddress}
       />
-      <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+      <p style={{ fontSize: "11px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
         *Just leave everything blank if you do not want to create a new collection and simply use our integrated L3PB
         collection.
       </p>

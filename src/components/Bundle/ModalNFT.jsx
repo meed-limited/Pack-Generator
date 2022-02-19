@@ -1,5 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
-import { Card, Image, Alert, Modal } from "antd";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import { Card, Image, Alert, Modal, Button, Spin } from "antd";
 import { useNFTBalance } from "hooks/useNFTBalance";
 const { Meta } = Card;
 
@@ -10,8 +10,19 @@ const styles = {
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    maxWidth: "1000px",
-    gap: "20px"
+    maxWidth: "1000px"
+  },
+  loadMoreButton: {
+    margin: "auto",
+    borderRadius: "8px",
+    background: "#d020ba",
+    background: "-moz-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
+    background: "-webkit-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
+    background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
+    color: "yellow",
+    border: "0.5px solid white",
+    fontSize: "15px",
+    cursor: "pointer"
   }
 };
 
@@ -19,6 +30,30 @@ const ModalNFT = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
     const { NFTBalance, fetchSuccess } = useNFTBalance();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
+    const [next, setNext] = useState(0);
+    const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
+    const [allBalances, setAllBalances] = useState([]);
+    const [isNFTloading, setIsNFTLoading] = useState(true);
+    const [hasError, setHasError] = useState(false);
+    const nftsPerPage = 20;
+
+    useEffect(() => {
+      if (updatedNFTBalance && !updatedNFTBalance) {
+        setHasError(true);
+      }
+    }, [updatedNFTBalance]);
+
+    useEffect(() => {
+      if (updatedNFTBalance.start > allBalances.length) {
+        setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
+      }
+      setIsNFTLoading(false);
+    }, [updatedNFTBalance, allBalances]);
+
+    const handleLoadMore = () => {
+      setIsNFTLoading(true);
+      setNext(next + nftsPerPage);
+    };
 
     const handleClickCard = (nftItem) => {
       if (isMultiple) {
@@ -72,22 +107,26 @@ const ModalNFT = forwardRef(
           onCancel={handleNFTCancel}
         >
           {!fetchSuccess && (
-            <>
+            <div style={{ width: "70%", textAlign: "center", margin: "auto" }}>
               <Alert
                 message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
                 type='warning'
+                showIcon
+                closable
               />
               <div style={{ marginBottom: "10px" }}></div>
-            </>
+            </div>
           )}
           <div style={styles.NFTs}>
-            {NFTBalance &&
-              NFTBalance.map((nft, index) => {
+            {allBalances &&
+              allBalances.map((nft, index) => {
                 return (
                   <Card
                     hoverable
+                    size='small'
                     style={{
                       width: 240,
+                      transform: "scale(0.9)",
                       border: selectedNFTs.some(
                         (nftItem) =>
                           `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
@@ -117,6 +156,14 @@ const ModalNFT = forwardRef(
                   </Card>
                 );
               })}
+          </div>
+          <div style={{ margin: "20px auto", textAlign: "center" }}>
+            {isNFTloading && <Spin size='large'></Spin>}
+            {!isNFTloading && (
+              <Button style={styles.loadMoreButton} onClick={handleLoadMore}>
+                ... Load more
+              </Button>
+            )}
           </div>
         </Modal>
       </>

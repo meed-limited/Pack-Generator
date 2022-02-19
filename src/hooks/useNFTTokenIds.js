@@ -7,11 +7,11 @@ export const useNFTTokenIds = (addr) => {
   const { token } = useMoralisWeb3Api();
   const { chainId } = useMoralisDapp();
   const { resolveLink } = useIPFS();
-  const [NFTTokenIds, setNFTTokenIds] = useState([]);
+  const [NFTMarketplace, setNFTMarketplace] = useState([]);
   const [totalNFTs, setTotalNFTs] = useState();
   const [fetchSuccess, setFetchSuccess] = useState(true);
   const {
-    fetch: getNFTTokenIds,
+    fetch: getNFTMarketplace,
     data,
     error,
     isLoading
@@ -43,7 +43,7 @@ export const useNFTTokenIds = (addr) => {
             }
           }
         }
-        setNFTTokenIds(NFTs);
+        setNFTMarketplace(NFTs);
       }
     }
 
@@ -51,8 +51,8 @@ export const useNFTTokenIds = (addr) => {
   }, [data, resolveLink]);
 
   return {
-    getNFTTokenIds,
-    NFTTokenIds,
+    getNFTMarketplace,
+    NFTMarketplace,
     totalNFTs,
     fetchSuccess,
     error,

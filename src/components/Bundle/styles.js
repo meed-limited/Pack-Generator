@@ -7,7 +7,6 @@ const GREY_DIM = '#686868';
 
 const styles = {
   content: {
-    width: "75vw",
     height: "auto",
     margin: "auto",
     marginTop: "30px",
@@ -17,7 +16,7 @@ const styles = {
     textAlign: "center",
     display: "block",
     color: "white",
-    fontSize: "15px"
+    fontSize: "12px"
   },
   transparentInput: {
     textAlign: "center",
@@ -35,6 +34,7 @@ const styles = {
   },
   selectButton: {
     width: "55%",
+    fontSize: "12px",
     margin: "30px auto 30px 35px",
     textAlign: "center",
     backgroundImage: `url(${buttonImg})`,
@@ -50,7 +50,7 @@ const styles = {
     background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     color: "yellow",
     border: "0.5px solid white",
-    fontSize: "15px",
+    fontSize: "12px",
     cursor: "pointer"
   },
   runFunctionButton: {
@@ -64,7 +64,7 @@ const styles = {
     color: "yellow",
     border: "0.5px solid white",
     padding: "8px",
-    fontSize: "20px",
+    fontSize: "16px",
     cursor: "pointer",
     borderRadius: "25px",
     fontWeight: "600",
@@ -83,7 +83,7 @@ const styles = {
     textAlign: "center",
     paddingTop: "30px",
     paddingBottom: "20px",
-    fontSize: "25px",
+    fontSize: "18px",
     color: "white"
   },
   transparentContainerInside: {
@@ -101,7 +101,7 @@ const styles = {
     textAlign: "center",
     paddingBottom: "20px",
     marginBottom: "0",
-    fontSize: "25px",
+    fontSize: "15px",
     color: "white"
   },
   displayAssets: {
@@ -171,7 +171,7 @@ const styles = {
     opacity: "0.9",
     marginBottom: "20px",
     color: "white",
-    fontSize: "15px"
+    fontSize: "12px"
   },
   zone: {
     alignItems: 'center',
@@ -216,7 +216,7 @@ const styles = {
   name: {
     backgroundColor: GREY_LIGHT,
     borderRadius: 3,
-    fontSize: 18,
+    fontSize: 15,
     marginBottom: '0.5em',
   },
   progressBar: {
@@ -244,7 +244,7 @@ const styles = {
     margin: "auto",
     display: "grid",
     gridTemplateColumns: "49% 2% 49%",
-    fontSize: "15px"
+    fontSize: "12px"
   },
 
   // Claim tab
@@ -255,14 +255,14 @@ const styles = {
     backgroundColor: "white",
     color: "black",
     opacity: "0.8",
-    fontSize: "16px",
+    fontSize: "13px",
     width: "40%"
   },
 
   // MARKETPLACE:
   table: {
     margin: "0 auto",
-    width: "1000px"
+    width: "700px"
   }
 };
 

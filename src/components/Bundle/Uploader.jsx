@@ -53,7 +53,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   return (
     <div style={styles.uploadBox}>
       <div>
-        <p style={{ fontSize: "16px", letterSpacing: "1px", fontWeight: "300" }}>
+        <p style={{ fontSize: "13px", letterSpacing: "1px", fontWeight: "300" }}>
           Import some infos about the NFTs that you wish to bundle.
           <Tooltip style={{ position: "absolute", top: "35px", right: "80px" }} title={text}>
             <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -64,7 +64,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
             href='https://docs.google.com/spreadsheets/d/1kbv-1nI3Nt51bLE8Nt_8zWlLDwVyIhTo66uZBvWS5Cw/edit#gid=0'
             target='_blank'
             rel='noreferrer noopener'
-            style={{ fontSize: "16px", marginBottom: "12px" }}
+            style={{ fontSize: "13px", marginBottom: "12px" }}
           >
             Click to open the template.
           </a>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Input, Alert, Spin, Button } from "antd";
 import { useNFTBalance } from "hooks/useNFTBalance";
@@ -11,29 +11,67 @@ const { Meta } = Card;
 const styles = {
   NFTs: {
     display: "flex",
-    position: "absolute",
+    height: "fit-content",
     flexWrap: "wrap",
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    //width: "1000px",
     width: "100%",
-    gap: "10px"
+  },
+  loadMoreButton: {
+    margin: "auto",
+    borderRadius: "8px",
+    background: "#d020ba",
+    background: "-moz-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
+    background: "-webkit-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
+    background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
+    color: "yellow",
+    border: "0.5px solid white",
+    fontSize: "15px",
+    cursor: "pointer"
   }
 };
 
 function NFTBalance() {
-  const { NFTBalance, fetchSuccess } = useNFTBalance();
+  const [next, setNext] = useState(0);
+  const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
+  const [allBalances, setAllBalances] = useState([]);
+  const [hasError, setHasError] = useState(false);
   const { chainId, marketAddressMumbai, contractABI } = useMoralisDapp();
   const { Moralis } = useMoralis();
   const [visible, setVisibility] = useState(false);
   const [nftToSend, setNftToSend] = useState(null);
   const [price, setPrice] = useState(1);
   const [loading, setLoading] = useState(false);
+
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(contractABI);
   const listItemFunction = "createMarketItem";
   const ItemImage = Moralis.Object.extend("ItemImages");
+  const nftsPerPage = 20;
+  const [isNFTloading, setIsNFTLoading] = useState(true);
+
+  useEffect(() => {
+    if (updatedNFTBalance && !updatedNFTBalance) {
+      setHasError(true);
+    }
+  }, [updatedNFTBalance]);
+
+  useEffect(() => {
+    if (updatedNFTBalance.start > allBalances.length) {
+      setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
+    }
+    setIsNFTLoading(false);
+  }, [updatedNFTBalance, allBalances]);
+
+  const handleLoadMore = () => {
+    setIsNFTLoading(true);
+    setNext(next + nftsPerPage);
+  };
+
+  // const handleLoadMore = () => {
+  //   setNext(next + nftsPerPage);
+  // };
 
   async function list(nft, listPrice) {
     setLoading(true);
@@ -164,7 +202,7 @@ function NFTBalance() {
   }
 
   return (
-    <div style={{ margin:"100px auto", width: "100%" }}>
+    <>
       {contractABIJson.noContractDeployed && (
         <>
           <Alert
@@ -175,21 +213,24 @@ function NFTBalance() {
         </>
       )}
 
-      {!fetchSuccess && (
-        <>
+      {!hasError && (
+        <div style={{ width: "70%", textAlign: "center", margin: "auto", height: "fit-content" }}>
           <Alert
             message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
             type='warning'
+            showIcon
+            closable
           />
           <div style={{ marginBottom: "10px" }}></div>
-        </>
+        </div>
       )}
 
-      <div style={styles.NFTs}>
-        {NFTBalance &&
-          NFTBalance.map((nft, index) => (
+      <div style={styles.NFTs} nftstorender={allBalances}>
+        {allBalances &&
+          allBalances.map((nft, index) => (
             <Card
               hoverable
+              size="small"
               actions={[
                 <Tooltip title='View On Blockexplorer'>
                   <FileSearchOutlined
@@ -200,7 +241,7 @@ function NFTBalance() {
                   <ShoppingCartOutlined onClick={() => handleSellClick(nft)} />
                 </Tooltip>
               ]}
-              style={{ width: 240, border: "2px solid #e7eaf3" }}
+              style={{ transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
               cover={
                 <Image
                   preview={false}
@@ -247,7 +288,16 @@ function NFTBalance() {
           <Input autoFocus placeholder='Listing Price in MATIC' onChange={(e) => setPrice(e.target.value)} />
         </Spin>
       </Modal>
-    </div>
+
+      <div style={{ margin: "20px auto", textAlign: "center" }}>
+        {isNFTloading && <Spin size='large'></Spin>}
+        {!isNFTloading && (
+          <Button style={styles.loadMoreButton} onClick={handleLoadMore}>
+            ... Load more
+          </Button>
+        )}
+      </div>
+    </>
   );
 }
 

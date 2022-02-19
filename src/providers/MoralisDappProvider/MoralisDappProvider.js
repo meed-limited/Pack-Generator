@@ -18,7 +18,7 @@ function MoralisDappProvider({ children }) {
 
   // eslint-disable-next-line max-len
   const [factoryABI, setFactoryABI] = useState(
-    '[{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"newCustomCollection","type":"address"},{"indexed":true,"internalType":"string","name":"newNFT","type":"string"},{"indexed":true,"internalType":"string","name":"newNFTsymbol","type":"string"},{"indexed":false,"internalType":"uint256","name":"customCollection_id","type":"uint256"}],"name":"NewCustomCollectionCreated","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"customCollectionList","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"getCustomCollection","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"}],"name":"createCustomCollection","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"_NftSymbol","type":"string"}],"name":"getCustomCollectionAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"numberOfCustomCollections","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true}]'
+    '[{"anonymous":false,"inputs":[{"indexed":false,"internalType":"address","name":"owner","type":"address"},{"indexed":true,"internalType":"address","name":"newCustomCollection","type":"address"},{"indexed":true,"internalType":"string","name":"newNFT","type":"string"},{"indexed":true,"internalType":"string","name":"newNFTsymbol","type":"string"},{"indexed":false,"internalType":"uint256","name":"customCollection_id","type":"uint256"}],"name":"NewCustomCollectionCreated","type":"event"},{"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"customCollectionList","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"string","name":"","type":"string"}],"name":"getCustomCollection","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[{"internalType":"string","name":"_name","type":"string"},{"internalType":"string","name":"_symbol","type":"string"}],"name":"createCustomCollection","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"string","name":"_NftSymbol","type":"string"}],"name":"getCustomCollectionAddress","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function","constant":true},{"inputs":[],"name":"numberOfCustomCollections","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function","constant":true}]'
   );
 
   // Contracts deployed on Ethereum
@@ -34,9 +34,11 @@ function MoralisDappProvider({ children }) {
   // Contracts deployed on Mumbaï
   const assemblyAddressMumbai = "0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98";
   const marketAddressMumbai = "0x44De79625cAd8A91F1BA8e0f93ffa37Ac95A7025";
-  const factoryAddressMumbai = "0xcc2A04eF122fB40b3Bf5b0c86601579786ca8F0A";
+  const factoryAddressMumbai = "0x90a2B9C93E65BFa9E60929F599d65f6DC213d111";
+  
 
   // OLD wihtout batch function: "0xBc779cE41259Cd7107ed2C36E00258b6234111bD"
+  // OLD with batch function: "0xcc2A04eF122fB40b3Bf5b0c86601579786ca8F0A"
 
   useEffect(() => {
     Moralis.onChainChanged(function (chain) {

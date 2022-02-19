@@ -1,13 +1,16 @@
 import React from "react";
-import { useMoralisQuery } from "react-moralis";
+import { useMoralis, useMoralisQuery } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+import { useContractEvents } from "hooks/useContractEvents";
 import { Table, Tag, Space } from "antd";
 import { PolygonCurrency } from "./Chains/Logos";
 import moment from "moment";
 import styles from "./Bundle/styles";
 
-function NFTMarketTransactions() {
-  const { walletAddress } = useMoralisDapp();
+function NFTTransactions() {
+  const { Moralis } = useMoralis();
+  const { walletAddress, chainId, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useMoralisDapp();
+  const { retrieveCreatedAssemblyEvent } = useContractEvents();
   const queryItemImages = useMoralisQuery("ItemImages");
   const fetchItemImages = JSON.parse(JSON.stringify(queryItemImages.data, ["nftContract", "tokenId", "name", "image"]));
   const queryMarketItems = useMoralisQuery("MarketItems");
@@ -35,6 +38,40 @@ function NFTMarketTransactions() {
     const nme = fetchItemImages.find((element) => element.nftContract === addrs && element.tokenId === id);
     return nme?.name;
   }
+
+  // const getCreatedBundle = async (bundleId) => {
+  //   const contractAddress = getContractAddress();
+  //   const data = await retrieveCreatedAssemblyEvent(bundleId, contractAddress);
+  // };
+
+  const getFactoryAddress = () => {
+    if (chainId === "0x1") {
+      return factoryAddressEthereum;
+    } else if (chainId === "0x89") {
+      return factoryAddressPolygon;
+    } else if (chainId === "0x13881") {
+      return factoryAddressMumbai;
+    }
+  };
+
+  // const getCreatedCollection = async () => {
+  //   const contractAddress = getFactoryAddress();
+  //   const data = await retrieveCreatedAssemblyEvent(contractAddress);
+  // };
+
+  const getCreatedCollection = async () => {
+    const CreatedCollections = Moralis.Object.extend("CreatedCollections");
+    const query = new Moralis.Query(CreatedCollections);
+    query.equalTo("owner", walletAddress);
+    const res = await query.find();
+    console.log(res);
+    return res;
+};
+
+// 
+
+
+
 
   const columns = [
     {
@@ -113,7 +150,7 @@ function NFTMarketTransactions() {
 
   return (
     <>
-      <div style={{margin:"100px"}}>
+      <div style={{ marginTop: "100px" }}>
         <div style={styles.table}>
           <Table columns={columns} dataSource={data} />
         </div>
@@ -122,4 +159,4 @@ function NFTMarketTransactions() {
   );
 }
 
-export default NFTMarketTransactions;
+export default NFTTransactions;

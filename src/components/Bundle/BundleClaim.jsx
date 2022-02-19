@@ -5,7 +5,7 @@ import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
 import { getExplorer } from "helpers/networks";
 import ModalL3PBOnly from "./ModalL3PBOnly";
-import { useAssemblyEvent } from "hooks/useAssemblyEvent";
+import { useContractEvents } from "hooks/useContractEvents";
 import { useContractAddress } from "hooks/useContractAddress";
 import { Button, Input, Tooltip } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
@@ -13,7 +13,7 @@ import styles from "./styles";
 
 const BundleClaim = () => {
   const { walletAddress, chainId, assemblyABI } = useMoralisDapp();
-  const { retrieveAssemblyEvent } = useAssemblyEvent();
+  const { retrieveCreatedAssemblyEvent } = useContractEvents();
   const { getAssemblyAddress } = useContractAddress();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -49,17 +49,17 @@ const BundleClaim = () => {
   };
 
   const getContractAddress = () => {
-    const defaultFactoryAddress = getAssemblyAddress();
-    if (selectedBundle && selectedBundle[0].token_address !== defaultFactoryAddress) {
+    const defaultAssemblyAddress = getAssemblyAddress();
+    if (selectedBundle && selectedBundle[0].token_address !== defaultAssemblyAddress) {
       return selectedBundle[0].token_address;
     } else {
-      return defaultFactoryAddress;
+      return defaultAssemblyAddress;
     }
   };
 
   const claimBundle = async () => {
     const contractAddress = getContractAddress();
-    const data = await retrieveAssemblyEvent(selectedBundle, contractAddress);
+    const data = await retrieveCreatedAssemblyEvent(selectedBundle, contractAddress);
     try {
       const ops = {
         contractAddress: contractAddress,
@@ -134,7 +134,7 @@ const BundleClaim = () => {
             isMultiple={false}
             confirmLoading={confirmLoading}
           />
-          <p style={{ margin: "auto", marginBottom: "25px", fontSize: "16px" }}>or</p>
+          <p style={{ margin: "auto", marginBottom: "25px", fontSize: "14px" }}>or</p>
           <label style={styles.label}>ENTER BUNDLE ID</label>
           <Input
             style={styles.transparentInput}

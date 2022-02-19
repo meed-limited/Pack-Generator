@@ -9,9 +9,9 @@ const styles = {
   grid: {
     display: "grid",
     gridTemplateColumns: "60% 40%",
-    width: "90vw",
+    marginLeft: "30px",
     height: "-webkit-fill-available",
-    paddingTop: "100px"
+    paddingTop: "70px"
   },
   homeButton: {
     width: "193px",
@@ -24,10 +24,10 @@ const styles = {
     fontSize: "20px",
   },
   title: {
-    marginTop: "20px",
+    marginTop: "10px",
     letterSpacing: "6px",
     color: "white",
-    fontSize: "40px",
+    fontSize: "35px",
     fontWeight: "370"
   },
   text: {
@@ -40,9 +40,8 @@ const styles = {
     whiteSpace: "pre-wrap"
   },
   imageDLC: {
-    transform: "scale(1)",
-    marginTop: "0",
     margin: "auto",
+    marginTop: "0",
     paddingTop: "0",
     width: "100%"
   }
@@ -72,7 +71,7 @@ const Home = () => {
         <img
           src={pack}
           alt=''
-          style={{ transform: "scale(1.2)", margin: "auto", paddingTop: "70px", paddingLeft: "50px" }}
+          style={{ transform: "scale(1.1)", margin: "auto", paddingTop: "70px", paddingLeft: "50px" }}
         />
       </div>
     </div>

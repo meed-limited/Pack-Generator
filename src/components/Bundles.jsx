@@ -10,9 +10,9 @@ import ModalNFT from "./Bundle/ModalNFT";
 import Uploader from "./Bundle/Uploader";
 import BundleClaim from "./Bundle/BundleClaim";
 import { openNotification } from "./Notification";
-import { getExplorer } from "helpers/networks";
+import { getExplorer, getNativeByChain } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
-import { Button, Input, Tabs, Tooltip } from "antd";
+import { Button, Input, Switch, Tabs, Tooltip } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./Bundle/styles";
 const { TabPane } = Tabs;
@@ -29,6 +29,7 @@ const BatchBundle = () => {
   } = useMoralisDapp();
   const contractABIJson = JSON.parse(assemblyABI);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
+  const nativeName = getNativeByChain(chainId);
   const [isJSON, setIsJSON] = useState(false);
   const [jsonFile, setJsonFile] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
@@ -42,6 +43,7 @@ const BatchBundle = () => {
   const customContractAddrsRef = React.useRef();
   const uploaderRef = React.useRef();
   const [customAddrs, setCustomAddrs] = useState();
+  const [displayFactory, setDisplayFactory] = useState(false);
 
   const customContractAddrs = (addrs) => {
     setCustomAddrs(addrs);
@@ -89,6 +91,10 @@ const BatchBundle = () => {
 
   const handleBundleNumber = (e) => {
     setBundleNumber(e.target.value);
+  };
+
+  const handleSwitch = () => {
+    !displayFactory ? setDisplayFactory(true) : setDisplayFactory(false);
   };
 
   const getJsonFile = (file) => {
@@ -348,7 +354,7 @@ const BatchBundle = () => {
                 <div style={styles.transparentContainerInside}>
                   <div style={{ position: "relative" }}>
                     <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
-                      Pick Some NFTs
+                      PICK SOME NFT
                     </Button>
                     <Tooltip
                       title="Select the NFT(s) that you'd like to add to the bundle."
@@ -365,7 +371,7 @@ const BatchBundle = () => {
                       isMultiple={true}
                       ref={assetModalRef}
                     />
-                    <div style={{ color: "white", fontSize: "16px" }}>
+                    <div style={{ color: "white", fontSize: "13px" }}>
                       <p>NFTs to Bundle:</p>
                       {NFTsArr &&
                         NFTsArr.length > 0 &&
@@ -392,7 +398,7 @@ const BatchBundle = () => {
                     </div>
                   </div>
                 </div>
-                <div style={{ fontSize: "12px", margin: "auto", justifyContent: "center" }}>
+                <div style={{ fontSize: "10px", margin: "auto", justifyContent: "center" }}>
                   <p>AND</p>
                   <p>/</p>
                   <p>OR</p>
@@ -418,20 +424,21 @@ const BatchBundle = () => {
           <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
-              <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                1. Create a brand new ERC721 bundle collection (Optional)
+              <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                1. Create / Select a bundle collection (Optional)
+                <Switch style={{ marginLeft: "30px"}} defaultChecked={false} onChange={handleSwitch} />
               </p>
+              { displayFactory && (<ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />)}
+              
 
-              <ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />
-
-              <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                2. Select all the assets to bundle - Native currency | ERC20 | NFTs
+              <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                2. Select the assets to bundle: {nativeName} | TOKENS | NFTs
               </p>
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
                     <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
-                    <p style={{ fontSize: "15px" }}>
+                    <p style={{ fontSize: "12px" }}>
                       Number of ERC721 per bundle:
                       <Tooltip
                         title='Enter the number of ERC721 NFT that will be contained inside each bundle (up to 50 ERC721 per bundle).'
@@ -450,7 +457,7 @@ const BatchBundle = () => {
                         onChange={handleERC721Number}
                       />
                     </p>
-                    <p style={{ fontSize: "15px", marginTop: "20px" }}>
+                    <p style={{ fontSize: "12px", marginTop: "20px" }}>
                       Number of ERC1155 per bundle:
                       <Tooltip
                         title='Enter the number of ERC1155 NFT that will be contained inside each bundle (up to 50 ERC1155 per bundle).'
@@ -471,7 +478,7 @@ const BatchBundle = () => {
                     </p>
                   </div>
                 </div>
-                <div style={{ fontSize: "12px", margin: "auto", justifyContent: "center" }}>
+                <div style={{ fontSize: "11px", margin: "auto", justifyContent: "center" }}>
                   <p>AND</p>
                   <p>/</p>
                   <p>OR</p>
@@ -481,8 +488,8 @@ const BatchBundle = () => {
                 </div>
               </div>
               <div style={{ margin: "auto", marginTop: "10px", width: "50%" }}>
-                <p style={{ fontSize: "18px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                  3. Enter the desired amount of bundles:
+                <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
+                  3. Number of bundles to mint:
                   <Tooltip
                     title='Enter the total amount of bundles to be minted. Up to 200 bundles per Txs, up to 10,000 in total (10,000 = 50 Txs).'
                     style={{ position: "absolute", top: "35px", right: "80px" }}
