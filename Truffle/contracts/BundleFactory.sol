@@ -12,6 +12,7 @@ contract BundleFactory {
     mapping(string => address) public getCustomCollection; // Map custom Collection address per token symbol
 
     event NewCustomCollectionCreated(
+        address owner,
         address indexed newCustomCollection,
         string indexed newNFT,
         string indexed newNFTsymbol,
@@ -36,8 +37,9 @@ contract BundleFactory {
 
         getCustomCollection[_symbol] = newCustomCollection;
         customCollectionList.push(newCustomCollection);
-
+        
         emit NewCustomCollectionCreated(
+            msg.sender,
             newCustomCollection,
             _name,
             _symbol,
@@ -62,4 +64,3 @@ contract BundleFactory {
         return customCollectionList.length;
     }
 }
-
