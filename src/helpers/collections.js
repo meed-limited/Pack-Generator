@@ -19,6 +19,24 @@ export const networkCollections = {
       name: "Art Abstrait",
       addrs: "0x2953399124F0cBB46d2CbACD8A89cF0599974963",
     },
+    {
+      image:
+        "https://lh3.googleusercontent.com/hFCb17umU30lOhDJJj2XiPQgD60pMKpvD-qiflRNiQwpCkzckDXYPYDSdRj8v3ImaejCqUVkCxAbZTqafRy2C9w-qaXYdC8fwFVbRQ=w600",
+      name: "LepriBundle",
+      addrs: "0x033b0ACe92C8358601b5232A229f434d97362511",
+    },
+    {
+      image:
+        "https://lh3.googleusercontent.com/hFCb17umU30lOhDJJj2XiPQgD60pMKpvD-qiflRNiQwpCkzckDXYPYDSdRj8v3ImaejCqUVkCxAbZTqafRy2C9w-qaXYdC8fwFVbRQ=w600",
+      name: "Plip_Plop",
+      addrs: "0xF94a0BC6819A82F4c664C5B054Fc8F49a565E212",
+    },
+    {
+      image:
+        "https://lh3.googleusercontent.com/hFCb17umU30lOhDJJj2XiPQgD60pMKpvD-qiflRNiQwpCkzckDXYPYDSdRj8v3ImaejCqUVkCxAbZTqafRy2C9w-qaXYdC8fwFVbRQ=w600",
+      name: "MegaSuperTest",
+      addrs: "0xa0851Edc755c0384Fbc6D8958EFD440514866D1C",
+    }
   ],
 
   "0x89": [

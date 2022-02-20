@@ -1,3 +1,4 @@
+/*eslint no-dupe-keys: "Off"*/
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Card, Image, Alert, Modal, Button, Spin } from "antd";
 import { useNFTBalance } from "hooks/useNFTBalance";

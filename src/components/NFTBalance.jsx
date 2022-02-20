@@ -1,3 +1,4 @@
+/*eslint no-dupe-keys: "Off"*/
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Card, Image, Tooltip, Modal, Input, Alert, Spin, Button } from "antd";
@@ -66,6 +67,8 @@ function NFTBalance() {
 
   const handleLoadMore = () => {
     setIsNFTLoading(true);
+    console.log(allBalances)
+
     setNext(next + nftsPerPage);
   };
 

@@ -40,11 +40,11 @@ const styles = {
     width: "60%",
     height: "fit-content",
     //display: "flex",
-    
+
     fontFamily: "Sora, sans-serif",
     margin: "auto",
     marginTop: "75px",
-    marginBottom: "100px",
+    marginBottom: "100px"
     //transform: "scale(80%)"
   },
   header: {
@@ -61,14 +61,14 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     fontFamily: "Sora, sans-serif",
-    padding: "0 10px",
+    padding: "0 10px"
   },
   headerRight: {
     display: "flex",
     gap: "20px",
     alignItems: "center",
     fontSize: "15px",
-    paddingTop:"10px",
+    paddingTop: "10px",
     fontWeight: "500"
   },
   footer: {
@@ -81,7 +81,7 @@ const styles = {
     position: "fixed",
     width: "100%",
     bottom: "0",
-    backgroundColor: "transparent",
+    backgroundColor: "transparent"
   }
 };
 const App = () => {
@@ -113,7 +113,7 @@ const App = () => {
               justifyContent: "center",
               margin: "auto",
               width: "100%",
-              paddingTop:"10px",
+              paddingTop: "10px",
               backgroundColor: "transparent"
             }}
             defaultSelectedKeys={["/Home"]}
@@ -147,6 +147,7 @@ const App = () => {
             <Route path='/Home'>
               <Home />
             </Route>
+
             {/* <Route exact path='/BatchMinter'>
               <BatchMinter />
             </Route> */}
@@ -161,6 +162,9 @@ const App = () => {
             </Route>
             <Route exact path='/Transactions'>
               <NFTTransactions />
+            </Route>
+            <Route exact path='/'>
+              <Home />
             </Route>
           </Switch>
           <Redirect to='/Home' />
@@ -179,7 +183,11 @@ const App = () => {
 };
 
 export const Logo = () => (
-  <img style={{ width: "1.25in", maxWidth: "none", margin: "30px", paddingTop:"5px" }} src={lepriconLogoWhite} alt='LepriconLogo' />
+  <img
+    style={{ width: "1.25in", maxWidth: "none", margin: "30px", paddingTop: "5px" }}
+    src={lepriconLogoWhite}
+    alt='LepriconLogo'
+  />
 );
 
 export default App;

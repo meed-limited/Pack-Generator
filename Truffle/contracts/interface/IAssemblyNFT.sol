@@ -12,6 +12,7 @@ interface IAssemblyNFT {
 
     event AssemblyAssetClaimed(
         uint256 indexed tokenId,
+        address indexed owner,
         address[] addresses,
         uint256[] numbers
     );

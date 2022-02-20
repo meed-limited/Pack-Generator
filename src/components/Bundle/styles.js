@@ -262,7 +262,19 @@ const styles = {
   // MARKETPLACE:
   table: {
     margin: "0 auto",
-    width: "700px"
+    width: "100%",
+    padding: "10px 20px 10px 20px",
+    borderRadius: "10px",
+    background: "rgba(240, 248, 255, 0.10)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "1px solid",
+    textAlign: "center",
+    color: "white"
   }
 };
 

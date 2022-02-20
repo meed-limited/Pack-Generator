@@ -28,7 +28,7 @@ export const useNFTTokenIds = (addr) => {
         setTotalNFTs(data.total);
         setFetchSuccess(true);
         for (let NFT of NFTs) {
-          if (NFT?.metadata) {
+          if (NFT?.metadata &&typeof(NFT.metadata) === "string") {
             NFT.metadata = JSON.parse(NFT.metadata);
             NFT.image = resolveLink(NFT.metadata?.image);
           } else if (NFT?.token_uri) {

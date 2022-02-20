@@ -3,6 +3,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { useCSVReader, lightenDarkenColor, formatFileSize } from "react-papaparse";
 import styles from "./styles";
+import { openNotification } from "components/Notification";
 
 const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
 const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(DEFAULT_REMOVE_HOVER_COLOR, 40);
@@ -15,17 +16,24 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   const handleFile = (file) => {
     var object = [];
     var counter = 0;
-    for (let i = 1; i < file.data.length; i++) {
-      object[counter] = {
-        token_id: parseInt(file.data[i][0]),
-        amount: parseInt(file.data[i][1]),
-        contract_type: file.data[i][2],
-        token_address: file.data[i][3].toLowerCase()
-      };
-      counter++;
+    try {
+      for (let i = 1; i < file.data.length; i++) {
+        object[counter] = {
+          token_id: parseInt(file.data[i][0]),
+          amount: parseInt(file.data[i][1]),
+          contract_type: file.data[i][2],
+          token_address: file.data[i][3].toLowerCase()
+        };
+        counter++;
+      }
+      isJsonFile(true);
+      getJsonFile(object);
+    } catch (error) {
+      console.log(error);
+      let title = "Error with CSV file";
+      let msg = "Oops, there seems to be an issue with the CSV file you submitted. Please double check your data.";
+      openNotification("error", title, msg);
     }
-    isJsonFile(true);
-    getJsonFile(object);
   };
 
   useImperativeHandle(ref, () => ({
@@ -39,8 +47,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
     return (
       <p>
         <br />
-        Make a copy of the attached template and edit your data. When all set,
-        simply save your file as ".csv". <br />
+        Make a copy of the attached template and edit your data. When all set, simply save your file as ".csv". <br />
         Required info: <br />
         1. Token Id <br />
         2. Amount (if ERC1155, else leave blank) <br />

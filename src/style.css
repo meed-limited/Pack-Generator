@@ -163,3 +163,21 @@
 input::placeholder {
   color: rgba(255, 255, 255, 0.836) !important;
 }
+
+.ant-table.ant-table-middle {
+  background-color: transparent !important;
+  font-size: 13px;
+}
+
+.ant-table-thead > tr > th {
+  background: transparent;
+  color: white;
+  letter-spacing: 1px;
+  padding-bottom: 20px !important;
+}
+
+.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+ top: 40%;
+ height: 1.4em;
+ background-color: white;
+}

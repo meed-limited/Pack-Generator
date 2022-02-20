@@ -1,16 +1,28 @@
-import React from "react";
-import { useMoralis, useMoralisQuery } from "react-moralis";
+import React, { useEffect, useState } from "react";
+import { useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useContractEvents } from "hooks/useContractEvents";
+import { getEllipsisTxt } from "helpers/formatters";
 import { Table, Tag, Space } from "antd";
-import { PolygonCurrency } from "./Chains/Logos";
 import moment from "moment";
 import styles from "./Bundle/styles";
+import { FileSearchOutlined } from "@ant-design/icons";
+import { getExplorer } from "helpers/networks";
+import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 
 function NFTTransactions() {
-  const { Moralis } = useMoralis();
-  const { walletAddress, chainId, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useMoralisDapp();
-  const { retrieveCreatedAssemblyEvent } = useContractEvents();
+  const contractProcessor = useWeb3ExecuteFunction();
+  const { walletAddress, chainId, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } =
+    useMoralisDapp();
+  //const { retrieveCreatedAssemblyEvent } = useContractEvents();
+  const { getCreatedCollectionData, getCreatedBundleData, getClaimedBundleData, parseData, parseCreatedBundleData } =
+    useQueryMoralisDb();
+  const Web3 = require("web3");
+  const web3 = new Web3(Web3.givenProvider);
+  const [fetchCollections, setFetchCollections] = useState();
+  const [fetchCreatedBundle, setFetchCreatedBundle] = useState();
+  const [fetchClaimedBundle, setFetchClaimedBundle] = useState();
+
   const queryItemImages = useMoralisQuery("ItemImages");
   const fetchItemImages = JSON.parse(JSON.stringify(queryItemImages.data, ["nftContract", "tokenId", "name", "image"]));
   const queryMarketItems = useMoralisQuery("MarketItems");
@@ -39,120 +51,265 @@ function NFTTransactions() {
     return nme?.name;
   }
 
-  // const getCreatedBundle = async (bundleId) => {
-  //   const contractAddress = getContractAddress();
-  //   const data = await retrieveCreatedAssemblyEvent(bundleId, contractAddress);
-  // };
+  const getCollections = async () => {
+    const res = await getCreatedCollectionData(walletAddress);
+    const parsedcollections = await parseData(res, walletAddress);
 
-  const getFactoryAddress = () => {
-    if (chainId === "0x1") {
-      return factoryAddressEthereum;
-    } else if (chainId === "0x89") {
-      return factoryAddressPolygon;
-    } else if (chainId === "0x13881") {
-      return factoryAddressMumbai;
+    for (let i = 0; i < parsedcollections.length; i++) {
+      const ops = {
+        contractAddress: parsedcollections[i].newCustomCollection,
+        functionName: "name",
+        abi: [
+          {
+            inputs: [],
+            name: "name",
+            outputs: [
+              {
+                internalType: "string",
+                name: "_name",
+                type: "string"
+              }
+            ],
+            stateMutability: "view",
+            type: "function"
+          }
+        ],
+        params: {}
+      };
+
+      await contractProcessor.fetch({
+        params: ops,
+        onSuccess: async (response) => {
+          parsedcollections[i].collectionName = response;
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+      setFetchCollections(parsedcollections);
     }
   };
 
-  // const getCreatedCollection = async () => {
-  //   const contractAddress = getFactoryAddress();
-  //   const data = await retrieveCreatedAssemblyEvent(contractAddress);
-  // };
+  const getCreatedBundle = async () => {
+    const res = await getCreatedBundleData(walletAddress);
+    const parsedCreatedBundle = await parseCreatedBundleData(res, walletAddress);
+    let sliced = parsedCreatedBundle.slice(0, 50);
 
-  const getCreatedCollection = async () => {
-    const CreatedCollections = Moralis.Object.extend("CreatedCollections");
-    const query = new Moralis.Query(CreatedCollections);
-    query.equalTo("owner", walletAddress);
-    const res = await query.find();
-    console.log(res);
-    return res;
-};
+    for (let i = 0; i < sliced.length; i++) {
+      const ops = {
+        contractAddress: sliced[i].address,
+        functionName: "name",
+        abi: [
+          {
+            inputs: [],
+            name: "name",
+            outputs: [
+              {
+                internalType: "string",
+                name: "_name",
+                type: "string"
+              }
+            ],
+            stateMutability: "view",
+            type: "function"
+          }
+        ],
+        params: {}
+      };
 
-// 
+      await contractProcessor.fetch({
+        params: ops,
+        onSuccess: async (response) => {
+          sliced[i].collectionName = response;
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+    }
 
+    setFetchCreatedBundle(sliced);
+  };
 
+  const getClaimedBundle = async () => {
+    const res = await getClaimedBundleData(walletAddress);
+    const parsedClaimedBundle = await parseData(res, walletAddress);
 
+    for (let i = 0; i < parsedClaimedBundle.length; i++) {
+      const ops = {
+        contractAddress: parsedClaimedBundle[i].address,
+        functionName: "name",
+        abi: [
+          {
+            inputs: [],
+            name: "name",
+            outputs: [
+              {
+                internalType: "string",
+                name: "_name",
+                type: "string"
+              }
+            ],
+            stateMutability: "view",
+            type: "function"
+          }
+        ],
+        params: {}
+      };
+
+      await contractProcessor.fetch({
+        params: ops,
+        onSuccess: async (response) => {
+          parsedClaimedBundle[i].collectionName = response;
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+    }
+    setFetchClaimedBundle(parsedClaimedBundle);
+  };
+
+  useEffect(() => {
+    if (!fetchCollections) {
+      getCollections();
+    }
+  }, [fetchCollections]);
+
+  useEffect(() => {
+    if (!fetchCollections) {
+      getCreatedBundle();
+    }
+  }, [fetchCreatedBundle]);
+
+  useEffect(() => {
+    if (!fetchClaimedBundle) {
+      getClaimedBundle();
+    }
+  }, [fetchClaimedBundle]);
 
   const columns = [
     {
-      title: "Date",
-      dataIndex: "date",
-      key: "date"
+      title: "DATE",
+      key: "date",
+      dataIndex: "date"
     },
     {
-      title: "Item",
+      title: "ITEM / SYMBOL",
       key: "item",
-      render: (text, record) => (
-        <Space size='middle'>
-          <img src={getImage(record.collection, record.item)} alt='' style={{ width: "40px", borderRadius: "4px" }} />
-          <span>#{record.item}</span>
-        </Space>
-      )
+      dataIndex: "item"
+      //   // render: (text, record) => (
+      //   //   <Space size='middle'>
+      //   //     <img src={getImage(record.collection, record.item)} alt='' style={{ width: "40px", borderRadius: "4px" }} />
+      //   //     <span>#{record.item}</span>
+      //   //   </Space>
+      //   // )
     },
+    // {
+    //   title: "Collection",
+    //   key: "collection",
+    //   render: (text, record) => (
+    //     <Space size='middle'>
+    //       <span>{getName(record.collection, record.item)}</span>
+    //     </Space>
+    //   )
+    // },
     {
-      title: "Collection",
+      title: "COLLECTION",
       key: "collection",
-      render: (text, record) => (
-        <Space size='middle'>
-          <span>{getName(record.collection, record.item)}</span>
-        </Space>
-      )
+      dataIndex: "collection",
+      // render: (e, f) => (
+      //   <a href={`${getExplorer(chainId)}tx/${f}`} target='_blank' rel='noreferrer noopener'>
+      //     {e}
+      //   </a>
+      // )
     },
     {
-      title: "Transaction Status",
+      title: "TXs TYPE",
       key: "tags",
-      dataIndex: "tags",
-      render: (tags) => (
-        <>
-          {tags.map((tag) => {
-            let color = "geekblue";
-            let status = "BUY";
-            if (tag === false) {
-              color = "volcano";
-              status = "waiting";
-            } else if (tag === true) {
-              color = "green";
-              status = "confirmed";
-            }
-            if (tag === walletAddress) {
-              status = "SELL";
-            }
-            return (
-              <Tag color={color} key={tag}>
-                {status.toUpperCase()}
-              </Tag>
-            );
-          })}
-        </>
-      )
+      dataIndex: "tags"
+      // render: (tags) => (
+      //   <>
+      //     {tags.map((tag) => {
+      //       let color = "geekblue";
+      //       let status = "BUY";
+      //       if (tag === false) {
+      //         color = "volcano";
+      //         status = "waiting";
+      //       } else if (tag === true) {
+      //         color = "green";
+      //         status = "confirmed";
+      //       }
+      //       if (tag === walletAddress) {
+      //         status = "SELL";
+      //       }
+      //       return (
+      //         <Tag color={color} key={tag}>
+      //           {status.toUpperCase()}
+      //         </Tag>
+      //       );
+      //     })}
+      //   </>
+      // )
     },
     {
-      title: "Price",
-      key: "price",
-      dataIndex: "price",
+      title: "TXs HASH",
+      key: "link",
+      dataIndex: "link",
       render: (e) => (
-        <Space size='middle'>
-          <PolygonCurrency />
-          <span>{e}</span>
-        </Space>
+        <a href={`${getExplorer(chainId)}tx/${e}`} target='_blank' rel='noreferrer noopener'>
+          View in explorer: &nbsp;
+          <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
+        </a>
       )
     }
   ];
 
-  const data = fetchMarketItems?.map((item, index) => ({
+  // const marketData = fetchMarketItems?.map((item, index) => ({
+  //   key: index,
+  //   date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+  //   collection: item.nftContract,
+  //   item: item.tokenId,
+  //   tags: [item.seller, item.sold]
+  //   //price: item.price / ("1e" + 18)
+  // }));
+
+  const collectionData = fetchCollections?.map((item, index) => ({
     key: index,
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
-    collection: item.nftContract,
-    item: item.tokenId,
-    tags: [item.seller, item.sold],
-    price: item.price / ("1e" + 18)
+    collection: item.collectionName,
+    item: getEllipsisTxt(item.newNFTsymbol, 6),
+    tags: "Collection Created",
+    link: item.transaction_hash
   }));
+
+  const createdBundleData = fetchCreatedBundle?.map((item, index) => ({
+    key: item.objectId,
+    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    collection: item.collectionName,
+    item: getEllipsisTxt(item.tokenId, 6),
+    tags: "Bundle Created",
+    link: item.transaction_hash
+  }));
+
+  const claimedBundleData = fetchClaimedBundle?.map((item, index) => ({
+    key: item.customCollection_id,
+    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    collection: item.collectionName,
+    item: getEllipsisTxt(item.tokenId, 6),
+    tags: "Bundle Claimed",
+    link: item.transaction_hash
+  }));
+
+  var data = [];
+  data = data.concat(collectionData, createdBundleData, claimedBundleData);
+  data = data.sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
 
   return (
     <>
-      <div style={{ marginTop: "100px" }}>
+      <div style={{ marginTop: "60px" }}>
         <div style={styles.table}>
-          <Table columns={columns} dataSource={data} />
+          <Table size='middle' columns={columns} dataSource={data} />
         </div>
       </div>
     </>

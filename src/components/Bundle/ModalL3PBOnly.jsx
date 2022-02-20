@@ -30,6 +30,7 @@ const styles = {
     backgroundSize: "cover",
     border: "2px solid yellow"
   },
+  /*eslint no-dupe-keys: "Off"*/
   loadMoreButton: {
     margin: "auto",
     borderRadius: "8px",
@@ -161,7 +162,9 @@ const ModalL3PBOnly = forwardRef(
       }
       collectionAddressArray = collectionAddressArray.concat(
         contractAddress,
-        "0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98"
+        "0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98", // Add default address
+        "0xcc2A04eF122fB40b3Bf5b0c86601579786ca8F0A",
+        "0x033b0ACe92C8358601b5232A229f434d97362511"
       );
       return collectionAddressArray;
     };
@@ -174,8 +177,15 @@ const ModalL3PBOnly = forwardRef(
       setCustomArrayFetched(true);
     };
 
-    React.useEffect(async () => {
-      await getCustomArray();
+    // useEffect( async () => {
+    //   await getCustomArray();
+    // }, []);
+
+    useEffect(() => {
+      async function waitForArray() {
+        await getCustomArray();
+      };
+      waitForArray();
     }, []);
 
     const L3PBundleBalance = allBalances.filter((results) => {
