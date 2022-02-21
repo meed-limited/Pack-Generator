@@ -12,8 +12,6 @@ import "./interface/IAssemblyNFT.sol";
 contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
     using SafeERC20 for IERC20;
 
-    uint256 public maxBundleSupply;
-
     function supportsInterface(bytes4 interfaceId)
         public
         view
@@ -26,10 +24,17 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
             ERC1155Receiver.supportsInterface(interfaceId);
     }
 
+    uint256 public maxBundleSupply;
     uint256 nonce;
 
-    constructor(string memory _name, string memory _symbol) ERC721(_name, _symbol) {}
+    event BatchAssemblyAsset(
+        address indexed firstHolder,
+        uint256 amountOfBundles
+    );
 
+    constructor(string memory _name, string memory _symbol)
+        ERC721(_name, _symbol)
+    {}
 
     /**
      * layout of _addresses:
@@ -250,5 +255,7 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         for (uint256 i = 0; i < _amountOfBundles; i++) {
             _batchMint(_to, _addresses, _arrayOfNumbers[i]);
         }
+
+        emit BatchAssemblyAsset(_to, _amountOfBundles);
     }
 }
