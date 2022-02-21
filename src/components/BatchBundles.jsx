@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
+import { useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import cloneDeep from "lodash/cloneDeep";
 import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Bundle/Approval";
 import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Bundle/ArraySorting";
@@ -27,6 +27,8 @@ const BatchBundle = () => {
     assemblyAddressMumbai,
     assemblyABI
   } = useMoralisDapp();
+  const { Moralis } = useMoralis();
+  const [nameAndSymbol, setNameAndSymbol] = useState([]);
   const contractABIJson = JSON.parse(assemblyABI);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const nativeName = getNativeByChain(chainId);
@@ -95,6 +97,11 @@ const BatchBundle = () => {
 
   const handleSwitch = () => {
     !displayFactory ? setDisplayFactory(true) : setDisplayFactory(false);
+  };
+
+  const passNameAndSymbol = (data) => {
+    console.log("in passNameAndSymbol", data);
+    setNameAndSymbol(data);
   };
 
   const getJsonFile = (file) => {
@@ -237,6 +244,7 @@ const BatchBundle = () => {
 
   async function multipleBundleMint(assetContracts, assetNumbers, bundleNum, contractAddr) {
     const addressArr = cloneDeep(assetContracts);
+    var txHash;
     const ops = {
       contractAddress: contractAddr,
       functionName: "batchMint",
@@ -253,6 +261,7 @@ const BatchBundle = () => {
     await contractProcessor.fetch({
       params: ops,
       onSuccess: (response) => {
+        txHash = response.transactionHash;
         let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
         let title = `Bundles minted!`;
         let msg = (
@@ -267,6 +276,22 @@ const BatchBundle = () => {
         );
         openNotification("success", title, msg);
         console.log(`${bundleNum} bundles have been minted`);
+
+        const CreatedBatchBundle = Moralis.Object.extend("CreatedBatchBundle");
+        const createdBatchBundle = new CreatedBatchBundle();
+
+        createdBatchBundle.set("address", contractAddr);
+        createdBatchBundle.set("owner", walletAddress);
+        createdBatchBundle.set("amountOfBundle", bundleNumber);
+        createdBatchBundle.set("transaction_hash", txHash);
+        createdBatchBundle.set("collectionName", nameAndSymbol[0] ? nameAndSymbol[0] : "LepriBundle");
+        createdBatchBundle.set("collectionSymbol", nameAndSymbol[1] ? nameAndSymbol[1] : "L3P");
+
+        try {
+          createdBatchBundle.save();
+        } catch (error) {
+          console.log(error);
+        }
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -304,6 +329,8 @@ const BatchBundle = () => {
       await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
         let counter = contractNumbersArray.length / BUNDLE_LIMIT;
         counter = Math.ceil(counter);
+
+        var txHash = [];
 
         for (let i = 0; i < counter; i++) {
           if (contractNumbersArray.length > BUNDLE_LIMIT) {
@@ -426,10 +453,18 @@ const BatchBundle = () => {
               <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
               <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
                 1. Create / Select a bundle collection (Optional)
-                <Switch style={{ marginLeft: "30px"}} defaultChecked={false} onChange={handleSwitch} />
+                <Switch style={{ marginLeft: "30px" }} defaultChecked={false} onChange={handleSwitch} />
               </p>
-              { displayFactory && (<ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />)}
-              
+              {/* {displayFactory && (
+                <ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />
+              )} */}
+              {displayFactory && (
+                <ContractAddrsSelector
+                  customContractAddrs={customContractAddrs}
+                  ref={customContractAddrsRef}
+                  passNameAndSymbol={passNameAndSymbol}
+                />
+              )}
 
               <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
                 2. Select the assets to bundle: {nativeName} | TOKENS | NFTs

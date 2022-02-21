@@ -1,28 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useContractEvents } from "hooks/useContractEvents";
+import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import { getEllipsisTxt } from "helpers/formatters";
-import { Table, Tag, Space } from "antd";
+import { getExplorer } from "helpers/networks";
+import { Table, Tag, Space, Spin } from "antd";
 import moment from "moment";
 import styles from "./Bundle/styles";
 import { FileSearchOutlined } from "@ant-design/icons";
-import { getExplorer } from "helpers/networks";
-import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 
 function NFTTransactions() {
   const contractProcessor = useWeb3ExecuteFunction();
-  const { walletAddress, chainId, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } =
-    useMoralisDapp();
-  //const { retrieveCreatedAssemblyEvent } = useContractEvents();
-  const { getCreatedCollectionData, getCreatedBundleData, getClaimedBundleData, parseData, parseCreatedBundleData } =
-    useQueryMoralisDb();
-  const Web3 = require("web3");
-  const web3 = new Web3(Web3.givenProvider);
+  const { walletAddress, chainId } = useMoralisDapp();
+  const {
+    getCreatedCollectionData,
+    getCreatedBundleData,
+    getCreatedBatchBundleData,
+    getClaimedBundleData,
+    parseData,
+    parseCreatedBundleData
+  } = useQueryMoralisDb();
   const [fetchCollections, setFetchCollections] = useState();
   const [fetchCreatedBundle, setFetchCreatedBundle] = useState();
+  const [fetchCreatedBatchBundle, setFetchCreatedBatchBundle] = useState();
   const [fetchClaimedBundle, setFetchClaimedBundle] = useState();
-
   const queryItemImages = useMoralisQuery("ItemImages");
   const fetchItemImages = JSON.parse(JSON.stringify(queryItemImages.data, ["nftContract", "tokenId", "name", "image"]));
   const queryMarketItems = useMoralisQuery("MarketItems");
@@ -41,6 +42,17 @@ function NFTTransactions() {
     .filter((item) => item.seller === walletAddress || item.owner === walletAddress)
     .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : b.updatedAt < a.updatedAt ? -1 : 0));
 
+  // eslint-disable-next-line max-len
+  const fetchNameABI = [
+    {
+      inputs: [],
+      name: "name",
+      outputs: [{ internalType: "string", name: "_name", type: "string" }],
+      stateMutability: "view",
+      type: "function"
+    }
+  ];
+
   function getImage(addrs, id) {
     const img = fetchItemImages.find((element) => element.nftContract === addrs && element.tokenId === id);
     return img?.image;
@@ -55,38 +67,26 @@ function NFTTransactions() {
     const res = await getCreatedCollectionData(walletAddress);
     const parsedcollections = await parseData(res, walletAddress);
 
-    for (let i = 0; i < parsedcollections.length; i++) {
-      const ops = {
-        contractAddress: parsedcollections[i].newCustomCollection,
-        functionName: "name",
-        abi: [
-          {
-            inputs: [],
-            name: "name",
-            outputs: [
-              {
-                internalType: "string",
-                name: "_name",
-                type: "string"
-              }
-            ],
-            stateMutability: "view",
-            type: "function"
-          }
-        ],
-        params: {}
-      };
+    if (parsedcollections.length > 0) {
+      for (let i = 0; i < parsedcollections.length; i++) {
+        const ops = {
+          contractAddress: parsedcollections[i].newCustomCollection,
+          functionName: "name",
+          abi: fetchNameABI,
+          params: {}
+        };
 
-      await contractProcessor.fetch({
-        params: ops,
-        onSuccess: async (response) => {
-          parsedcollections[i].collectionName = response;
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
-      setFetchCollections(parsedcollections);
+        await contractProcessor.fetch({
+          params: ops,
+          onSuccess: async (response) => {
+            parsedcollections[i].collectionName = response;
+          },
+          onError: (error) => {
+            console.log(error);
+          }
+        });
+        setFetchCollections(parsedcollections);
+      }
     }
   };
 
@@ -95,79 +95,63 @@ function NFTTransactions() {
     const parsedCreatedBundle = await parseCreatedBundleData(res, walletAddress);
     let sliced = parsedCreatedBundle.slice(0, 50);
 
-    for (let i = 0; i < sliced.length; i++) {
-      const ops = {
-        contractAddress: sliced[i].address,
-        functionName: "name",
-        abi: [
-          {
-            inputs: [],
-            name: "name",
-            outputs: [
-              {
-                internalType: "string",
-                name: "_name",
-                type: "string"
-              }
-            ],
-            stateMutability: "view",
-            type: "function"
+    if (sliced.length > 0) {
+      for (let i = 0; i < sliced.length; i++) {
+        const ops = {
+          contractAddress: sliced[i].address,
+          functionName: "name",
+          abi: fetchNameABI,
+          params: {}
+        };
+
+        await contractProcessor.fetch({
+          params: ops,
+          onSuccess: async (response) => {
+            sliced[i].collectionName = response;
+          },
+          onError: (error) => {
+            console.log(error);
           }
-        ],
-        params: {}
-      };
-
-      await contractProcessor.fetch({
-        params: ops,
-        onSuccess: async (response) => {
-          sliced[i].collectionName = response;
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
+        });
+      }
+      setFetchCreatedBundle(sliced);
     }
-
-    setFetchCreatedBundle(sliced);
   };
 
   const getClaimedBundle = async () => {
     const res = await getClaimedBundleData(walletAddress);
     const parsedClaimedBundle = await parseData(res, walletAddress);
 
-    for (let i = 0; i < parsedClaimedBundle.length; i++) {
-      const ops = {
-        contractAddress: parsedClaimedBundle[i].address,
-        functionName: "name",
-        abi: [
-          {
-            inputs: [],
-            name: "name",
-            outputs: [
-              {
-                internalType: "string",
-                name: "_name",
-                type: "string"
-              }
-            ],
-            stateMutability: "view",
-            type: "function"
-          }
-        ],
-        params: {}
-      };
+    if (parsedClaimedBundle.length > 0) {
+      for (let i = 0; i < parsedClaimedBundle.length; i++) {
+        const ops = {
+          contractAddress: parsedClaimedBundle[i].address,
+          functionName: "name",
+          abi: fetchNameABI,
+          params: {}
+        };
 
-      await contractProcessor.fetch({
-        params: ops,
-        onSuccess: async (response) => {
-          parsedClaimedBundle[i].collectionName = response;
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
+        await contractProcessor.fetch({
+          params: ops,
+          onSuccess: async (response) => {
+            parsedClaimedBundle[i].collectionName = response;
+          },
+          onError: (error) => {
+            console.log(error);
+          }
+        });
+      }
+      setFetchClaimedBundle(parsedClaimedBundle);
     }
-    setFetchClaimedBundle(parsedClaimedBundle);
+  };
+
+  const getCreatedBatchBundle = async () => {
+    const res = await getCreatedBatchBundleData(walletAddress);
+    const parsedCreatedBatchBundle = await parseData(res, walletAddress);
+    let sliced = parsedCreatedBatchBundle.slice(0, 100);
+    if (sliced.length > 0) {
+      setFetchCreatedBatchBundle(sliced);
+    }
   };
 
   useEffect(() => {
@@ -183,6 +167,12 @@ function NFTTransactions() {
   }, [fetchCreatedBundle]);
 
   useEffect(() => {
+    if (!fetchCreatedBatchBundle) {
+      getCreatedBatchBundle();
+    }
+  }, [fetchCreatedBatchBundle]);
+
+  useEffect(() => {
     if (!fetchClaimedBundle) {
       getClaimedBundle();
     }
@@ -196,7 +186,7 @@ function NFTTransactions() {
     },
     {
       title: "ITEM / SYMBOL",
-      key: "item",
+      key: "key",
       dataIndex: "item"
       //   // render: (text, record) => (
       //   //   <Space size='middle'>
@@ -216,17 +206,19 @@ function NFTTransactions() {
     // },
     {
       title: "COLLECTION",
-      key: "collection",
-      dataIndex: "collection",
-      // render: (e, f) => (
-      //   <a href={`${getExplorer(chainId)}tx/${f}`} target='_blank' rel='noreferrer noopener'>
-      //     {e}
-      //   </a>
-      // )
+      key: "key",
+      dataIndex: "collection"
+      // render: (collection) => {
+      //   if (collection && collection.length > 0) {
+      //     <a href={`${getExplorer(chainId)}address/${collection[1]}`} target='_blank' rel='noreferrer noopener'>
+      //       {collection[0]}
+      //     </a>;
+      //   }
+      // }
     },
     {
-      title: "TXs TYPE",
-      key: "tags",
+      title: "TYPE",
+      key: "key",
       dataIndex: "tags"
       // render: (tags) => (
       //   <>
@@ -275,7 +267,6 @@ function NFTTransactions() {
   // }));
 
   const collectionData = fetchCollections?.map((item, index) => ({
-    key: index,
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.newNFTsymbol, 6),
@@ -284,7 +275,6 @@ function NFTTransactions() {
   }));
 
   const createdBundleData = fetchCreatedBundle?.map((item, index) => ({
-    key: item.objectId,
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 6),
@@ -292,8 +282,15 @@ function NFTTransactions() {
     link: item.transaction_hash
   }));
 
+  const createBatchBundleData = fetchCreatedBatchBundle?.map((item, index) => ({
+    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    collection: item.collectionName,
+    item: item.collectionSymbol,
+    tags: `Batch-Bundle x${item.amountOfBundle} Created`,
+    link: item.transaction_hash
+  }));
+
   const claimedBundleData = fetchClaimedBundle?.map((item, index) => ({
-    key: item.customCollection_id,
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 6),
@@ -302,14 +299,20 @@ function NFTTransactions() {
   }));
 
   var data = [];
-  data = data.concat(collectionData, createdBundleData, claimedBundleData);
+  data = data.concat(collectionData, createdBundleData, createBatchBundleData, claimedBundleData);
   data = data.sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
+  data = data.map((item, index) => ({
+    ...item,
+    key: index
+  }));
 
   return (
     <>
       <div style={{ marginTop: "60px" }}>
         <div style={styles.table}>
-          <Table size='middle' columns={columns} dataSource={data} />
+          <Spin size='large' spinning={!fetchClaimedBundle || !fetchCollections || !fetchCreatedBundle || !fetchCreatedBatchBundle}>
+            <Table size='middle' columns={columns} dataSource={data} />
+          </Spin>
         </div>
       </div>
     </>

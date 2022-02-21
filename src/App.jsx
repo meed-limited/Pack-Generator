@@ -12,7 +12,7 @@ import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
 import NFTTransactions from "components/NFTTransactions";
-import BatchBundle from "components/Bundles";
+import BatchBundle from "components/BatchBundles";
 //import BatchMinter from "components/BatchMinter";
 import Home from "components/Home";
 import background from "./assets/background.jpg";
@@ -147,7 +147,6 @@ const App = () => {
             <Route path='/Home'>
               <Home />
             </Route>
-
             {/* <Route exact path='/BatchMinter'>
               <BatchMinter />
             </Route> */}
@@ -162,9 +161,6 @@ const App = () => {
             </Route>
             <Route exact path='/Transactions'>
               <NFTTransactions />
-            </Route>
-            <Route exact path='/'>
-              <Home />
             </Route>
           </Switch>
           <Redirect to='/Home' />

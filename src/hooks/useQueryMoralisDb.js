@@ -19,6 +19,14 @@ export const useQueryMoralisDb = () => {
     return res;
   };
 
+  const getCreatedBatchBundleData = async (owner) => {
+    const CreatedBatchBundle = Moralis.Object.extend("CreatedBatchBundle");
+    const query = new Moralis.Query(CreatedBatchBundle);
+    query.equalTo("owner", owner);
+    const res = await query.find();
+    return res;
+  };
+
   const getClaimedBundleData = async (owner) => {
     const BundleClaimed = Moralis.Object.extend("BundleClaimed");
     const query = new Moralis.Query(BundleClaimed);
@@ -37,5 +45,5 @@ export const useQueryMoralisDb = () => {
     return parsedData;
   };
 
-  return { getCreatedCollectionData, getCreatedBundleData, getClaimedBundleData, parseData, parseCreatedBundleData };
+  return { getCreatedCollectionData, getCreatedBundleData, getCreatedBatchBundleData, getClaimedBundleData, parseData, parseCreatedBundleData };
 };

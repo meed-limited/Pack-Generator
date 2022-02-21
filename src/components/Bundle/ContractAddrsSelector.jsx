@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
@@ -7,16 +7,14 @@ import { getExplorer } from "helpers/networks";
 import { openNotification } from "components/Notification";
 import "../../style.css";
 import styles from "./styles";
-//import { useContractEvents } from "hooks/useContractEvents";
 
-const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
+const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymbol }, ref) => {
   const contractProcessor = useWeb3ExecuteFunction();
   const { chainId, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useMoralisDapp();
   const factoryABIJson = JSON.parse(factoryABI);
   const [name, setName] = useState();
   const [symbol, setSymbol] = useState();
   const [customAddress, setCustomAddress] = useState();
-  //const { newCollectionListener } = useContractEvents();
 
   const getContractAddress = () => {
     if (chainId === "0x1") {
@@ -79,7 +77,6 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
 
         openNotification("success", title, msg);
         console.log("Collection created");
-        //await newCollectionListener(contractAddr);
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -92,6 +89,10 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
     setCustomAddress(newAddress);
     customContractAddrs(newAddress);
   };
+
+  useEffect(() => {
+    passNameAndSymbol([name, symbol]);
+  }, [name, symbol]);
 
   useImperativeHandle(ref, () => ({
     reset() {
@@ -115,9 +116,14 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs }, ref) => {
       </p>
       <div style={{ display: "inline-flex", alignItems: "center" }}>
         <label style={{ fontSize: "11px", paddingRight: "10px" }}>Name:</label>
-        <Input style={styles.transparentInput} placeholder="e.g. My Super Collection" value={name} onChange={handleNameChange} />
+        <Input
+          style={styles.transparentInput}
+          placeholder='e.g. My Super Collection'
+          value={name}
+          onChange={handleNameChange}
+        />
         <label style={{ fontSize: "11px", paddingLeft: "50px", paddingRight: "10px" }}>Symbol:</label>
-        <Input style={styles.transparentInput} placeholder="e.g. MSC" value={symbol} onChange={handleSymbolChange} />
+        <Input style={styles.transparentInput} placeholder='e.g. MSC' value={symbol} onChange={handleSymbolChange} />
       </div>
       <div style={{ marginTop: "20px" }}>
         <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>

@@ -32,7 +32,7 @@ const styles = {
   },
   text: {
     position: "absolute",
-    bottom: "60px",
+    bottom: "30px",
     color: "white",
     fontSize: "15px",
     fontWeight: "350",

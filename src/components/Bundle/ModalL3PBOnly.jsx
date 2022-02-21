@@ -177,10 +177,6 @@ const ModalL3PBOnly = forwardRef(
       setCustomArrayFetched(true);
     };
 
-    // useEffect( async () => {
-    //   await getCustomArray();
-    // }, []);
-
     useEffect(() => {
       async function waitForArray() {
         await getCustomArray();
@@ -220,11 +216,6 @@ const ModalL3PBOnly = forwardRef(
           onCancel={handleNFTCancel}
           afterClose={handleClickOk}
         >
-          <div style={{ display: "flex" }}>
-            {/* <Button type='primary' style={{ marginTop: "10px" }} onClick={handleClickOk}>
-              OK
-            </Button> */}
-          </div>
           {!fetchSuccess && (
             <div style={{ width: "70%", textAlign: "center", margin: "auto" }}>
               <Alert
