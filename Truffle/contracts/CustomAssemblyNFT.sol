@@ -7,9 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interface/IAssemblyNFT.sol";
 
-contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
+contract CustomAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT, Ownable {
     using SafeERC20 for IERC20;
 
     function supportsInterface(bytes4 interfaceId)
@@ -35,9 +36,11 @@ contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT 
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 _maxBundleSupply
+        uint256 _maxBundleSupply,
+        address _owner
     ) ERC721(_name, _symbol) {
         maxBundleSupply = _maxBundleSupply;
+        transferOwnership(_owner);
     }
 
     /**
@@ -68,7 +71,7 @@ contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT 
         address _to,
         address[] memory _addresses,
         uint256[] memory _numbers
-    ) external payable override returns (uint256 tokenId) {
+    ) external payable override onlyOwner returns (uint256 tokenId) {
         require(_to != address(0), "can't mint to address(0)");
         require(msg.value == _numbers[0], "value not match");
         require(
@@ -118,7 +121,7 @@ contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT 
         address _to,
         address[] memory _addresses,
         uint256[] memory _numbers
-    ) external payable override returns (uint256 tokenId) {
+    ) external payable override onlyOwner returns (uint256 tokenId) {
         require(_to != address(0), "can't mint to address(0)");
         require(msg.value == _numbers[0], "value not match");
         require(
@@ -211,7 +214,7 @@ contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT 
         address _to,
         address[] memory _addresses,
         uint256[] memory _numbers
-    ) public payable returns (uint256 tokenId) {
+    ) public payable onlyOwner returns (uint256 tokenId) {
         require(
             _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],
             "2 array length not match"
@@ -257,7 +260,7 @@ contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT 
         address[] memory _addresses,
         uint256[][] memory _arrayOfNumbers,
         uint256 _amountOfBundles
-    ) external payable {
+    ) external payable onlyOwner {
         require(_to != address(0), "can't mint to address(0)");
         uint256 totalEth = _arrayOfNumbers[0][0] * _amountOfBundles;
         require(msg.value == totalEth, "value not match");

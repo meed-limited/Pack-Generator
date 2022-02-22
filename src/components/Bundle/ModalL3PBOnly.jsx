@@ -68,17 +68,25 @@ const ModalL3PBOnly = forwardRef(
     const [isNFTloading, setIsNFTLoading] = useState(true);
 
     useEffect(() => {
-      if (updatedNFTBalance && !updatedNFTBalance) {
+      if (!updatedNFTBalance) {
         setHasError(true);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updatedNFTBalance]);
 
     useEffect(() => {
       if (updatedNFTBalance.start > allBalances.length) {
         setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
       }
-      setIsNFTLoading(false);
-    }, [updatedNFTBalance, allBalances]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [updatedNFTBalance.NFTBalance]);
+
+    useEffect(() => {
+      if (allBalances.length > 0) {
+        setIsNFTLoading(false);
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [allBalances]);
 
     const handleLoadMore = () => {
       setIsNFTLoading(true);
@@ -180,8 +188,9 @@ const ModalL3PBOnly = forwardRef(
     useEffect(() => {
       async function waitForArray() {
         await getCustomArray();
-      };
+      }
       waitForArray();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const L3PBundleBalance = allBalances.filter((results) => {
@@ -196,6 +205,7 @@ const ModalL3PBOnly = forwardRef(
           )
         );
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [customArray, customArrayFetched]);
 
     useImperativeHandle(ref, () => ({

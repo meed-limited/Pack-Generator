@@ -5,7 +5,7 @@ import { Card, Image, Tooltip, Modal, Input, Alert, Spin, Button } from "antd";
 import { useNFTBalance } from "hooks/useNFTBalance";
 import { FileSearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { getExplorer } from "helpers/networks";
+import { getExplorer, getNativeByChain } from "helpers/networks";
 import { useWeb3ExecuteFunction } from "react-moralis";
 const { Meta } = Card;
 
@@ -44,7 +44,7 @@ function NFTBalance() {
   const [nftToSend, setNftToSend] = useState(null);
   const [price, setPrice] = useState(1);
   const [loading, setLoading] = useState(false);
-
+  const nativeName = getNativeByChain(chainId);
   const contractProcessor = useWeb3ExecuteFunction();
   const contractABIJson = JSON.parse(contractABI);
   const listItemFunction = "createMarketItem";
@@ -53,28 +53,29 @@ function NFTBalance() {
   const [isNFTloading, setIsNFTLoading] = useState(true);
 
   useEffect(() => {
-    if (updatedNFTBalance && !updatedNFTBalance) {
-      setHasError(true);
-    }
-  }, [updatedNFTBalance]);
+      if (!updatedNFTBalance) {
+        setHasError(true);
+      }
+    }, [updatedNFTBalance]);
 
   useEffect(() => {
     if (updatedNFTBalance.start > allBalances.length) {
       setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
     }
-    setIsNFTLoading(false);
-  }, [updatedNFTBalance, allBalances]);
+// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [updatedNFTBalance.NFTBalance]);
+
+  useEffect(() => {
+    if (allBalances.length > 0) {
+      setIsNFTLoading(false);
+    }
+// eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allBalances]);
 
   const handleLoadMore = () => {
     setIsNFTLoading(true);
-    console.log(allBalances)
-
     setNext(next + nftsPerPage);
   };
-
-  // const handleLoadMore = () => {
-  //   setNext(next + nftsPerPage);
-  // };
 
   async function list(nft, listPrice) {
     setLoading(true);
@@ -288,7 +289,7 @@ function NFTBalance() {
               marginBottom: "15px"
             }}
           />
-          <Input autoFocus placeholder='Listing Price in MATIC' onChange={(e) => setPrice(e.target.value)} />
+          <Input autoFocus placeholder="Listing price in {nativeName}" onChange={(e) => setPrice(e.target.value)} />
         </Spin>
       </Modal>
 

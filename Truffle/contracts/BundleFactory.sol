@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.11;
 
-import "./AssemblyNFT.sol";
+import "./CustomAssemblyNFT.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 /// @author Pedrojok01
@@ -24,7 +24,7 @@ contract BundleFactory {
      @param _name The name of the new collection. Can be chosen by user input.
      @param _symbol The symbol of the new collection. Can be chosen by user input.
     */
-    function createCustomCollection(string memory _name, string memory _symbol)
+    function createCustomCollection(string memory _name, string memory _symbol, uint _maxSupply)
         public
         returns (address)
     {
@@ -33,7 +33,7 @@ contract BundleFactory {
             "Collection exist already"
         );
 
-        address newCustomCollection = address(new AssemblyNFT(_name, _symbol)); // call the ERC721 constructor to create a new custom collection
+        address newCustomCollection = address(new CustomAssemblyNFT(_name, _symbol, _maxSupply, msg.sender)); // call the ERC721 constructor to create a new custom collection
 
         getCustomCollection[_symbol] = newCustomCollection;
         customCollectionList.push(newCustomCollection);

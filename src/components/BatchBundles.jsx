@@ -100,7 +100,6 @@ const BatchBundle = () => {
   };
 
   const passNameAndSymbol = (data) => {
-    console.log("in passNameAndSymbol", data);
     setNameAndSymbol(data);
   };
 
@@ -455,9 +454,6 @@ const BatchBundle = () => {
                 1. Create / Select a bundle collection (Optional)
                 <Switch style={{ marginLeft: "30px" }} defaultChecked={false} onChange={handleSwitch} />
               </p>
-              {/* {displayFactory && (
-                <ContractAddrsSelector customContractAddrs={customContractAddrs} ref={customContractAddrsRef} />
-              )} */}
               {displayFactory && (
                 <ContractAddrsSelector
                   customContractAddrs={customContractAddrs}

@@ -42,7 +42,6 @@ function NFTTransactions() {
     .filter((item) => item.seller === walletAddress || item.owner === walletAddress)
     .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : b.updatedAt < a.updatedAt ? -1 : 0));
 
-  // eslint-disable-next-line max-len
   const fetchNameABI = [
     {
       inputs: [],
@@ -158,24 +157,28 @@ function NFTTransactions() {
     if (!fetchCollections) {
       getCollections();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCollections]);
 
   useEffect(() => {
     if (!fetchCollections) {
       getCreatedBundle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedBundle]);
 
   useEffect(() => {
     if (!fetchCreatedBatchBundle) {
       getCreatedBatchBundle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedBatchBundle]);
 
   useEffect(() => {
     if (!fetchClaimedBundle) {
       getClaimedBundle();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchClaimedBundle]);
 
   const columns = [
@@ -310,7 +313,10 @@ function NFTTransactions() {
     <>
       <div style={{ marginTop: "60px" }}>
         <div style={styles.table}>
-          <Spin size='large' spinning={!fetchClaimedBundle || !fetchCollections || !fetchCreatedBundle || !fetchCreatedBatchBundle}>
+          <Spin
+            size='large'
+            spinning={!fetchClaimedBundle || !fetchCollections || !fetchCreatedBundle || !fetchCreatedBatchBundle}
+          >
             <Table size='middle' columns={columns} dataSource={data} />
           </Spin>
         </div>

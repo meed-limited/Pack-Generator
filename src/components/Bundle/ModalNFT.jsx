@@ -48,8 +48,14 @@ const ModalNFT = forwardRef(
       if (updatedNFTBalance.start > allBalances.length) {
         setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
       }
-      setIsNFTLoading(false);
-    }, [updatedNFTBalance, allBalances]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [updatedNFTBalance.NFTBalance]);
+
+    useEffect(() => {
+      if (allBalances.length > 0) {
+        setIsNFTLoading(false);
+      }
+    }, [allBalances]);
 
     const handleLoadMore = () => {
       setIsNFTLoading(true);

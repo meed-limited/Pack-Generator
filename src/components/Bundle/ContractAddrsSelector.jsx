@@ -14,6 +14,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
   const factoryABIJson = JSON.parse(factoryABI);
   const [name, setName] = useState();
   const [symbol, setSymbol] = useState();
+  const [supply, setSupply] = useState(0);
   const [customAddress, setCustomAddress] = useState();
 
   const getContractAddress = () => {
@@ -34,6 +35,10 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
     setSymbol(e.target.value);
   };
 
+  const handleSupplyChange = (e) => {
+    setSupply(e.target.value);
+  };
+
   const handleCustomAddress = async (e) => {
     setCustomAddress(e.target.value);
     customContractAddrs(e.target.value);
@@ -52,7 +57,8 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
       abi: factoryABIJson,
       params: {
         _name: name,
-        _symbol: symbol
+        _symbol: symbol,
+        _maxSupply: supply
       }
     };
 
@@ -92,6 +98,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
 
   useEffect(() => {
     passNameAndSymbol([name, symbol]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, symbol]);
 
   useImperativeHandle(ref, () => ({
@@ -124,6 +131,8 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
         />
         <label style={{ fontSize: "11px", paddingLeft: "50px", paddingRight: "10px" }}>Symbol:</label>
         <Input style={styles.transparentInput} placeholder='e.g. MSC' value={symbol} onChange={handleSymbolChange} />
+        <label style={{ fontSize: "11px", paddingLeft: "50px", paddingRight: "10px" }}>Max Supply:</label>
+        <Input style={styles.transparentInput} value={supply} onChange={handleSupplyChange} />
       </div>
       <div style={{ marginTop: "20px" }}>
         <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
