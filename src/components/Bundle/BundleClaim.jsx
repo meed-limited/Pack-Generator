@@ -18,7 +18,7 @@ const BundleClaim = () => {
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
-  const contractABIJson = JSON.parse(assemblyABI);
+  const assemblyABIJson = JSON.parse(assemblyABI);
   const [selectedBundle, setSelectedBundle] = useState({});
   const [bundleId, setBundleId] = useState();
 
@@ -64,7 +64,7 @@ const BundleClaim = () => {
       const ops = {
         contractAddress: contractAddress,
         functionName: "burn",
-        abi: contractABIJson,
+        abi: assemblyABIJson,
         params: {
           _to: walletAddress,
           _tokenId: selectedBundle[0].token_id,

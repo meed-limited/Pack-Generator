@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { useWeb3ExecuteFunction } from "react-moralis";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Input, Tooltip } from "antd";
@@ -10,7 +10,8 @@ import styles from "./styles";
 
 const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymbol }, ref) => {
   const contractProcessor = useWeb3ExecuteFunction();
-  const { chainId, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useMoralisDapp();
+  const { chainId, walletAddress, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useMoralisDapp();
+  const { Moralis } = useMoralis();
   const factoryABIJson = JSON.parse(factoryABI);
   const [name, setName] = useState();
   const [symbol, setSymbol] = useState();
@@ -48,6 +49,22 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
     createNewContract(name, symbol);
   };
 
+  const sendCollectionMetadataToMoralis = (collectionAddress) => {
+    const CustomCollections = Moralis.Object.extend("CustomCollections")
+    const customCollections = new CustomCollections();
+    customCollections.set("owner", walletAddress);
+    customCollections.set("name", name ? name : "LepriBundle");
+    customCollections.set("symbol", symbol ? symbol : "L3P");
+    customCollections.set("maxSupply", supply);
+    customCollections.set("collectionAdress", collectionAddress);
+
+    try {
+      customCollections.save();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   const createNewContract = async (name, symbol) => {
     var contractAddr = getContractAddress();
     var newAddress;
@@ -83,6 +100,8 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
 
         openNotification("success", title, msg);
         console.log("Collection created");
+
+        sendCollectionMetadataToMoralis(newAddress);
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -97,9 +116,9 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
   };
 
   useEffect(() => {
-    passNameAndSymbol([name, symbol]);
+    passNameAndSymbol([name, symbol, supply]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, symbol]);
+  }, [name, symbol, supply]);
 
   useImperativeHandle(ref, () => ({
     reset() {

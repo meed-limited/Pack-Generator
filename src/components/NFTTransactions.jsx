@@ -161,7 +161,7 @@ function NFTTransactions() {
   }, [fetchCollections]);
 
   useEffect(() => {
-    if (!fetchCollections) {
+    if (!fetchCreatedBundle) {
       getCreatedBundle();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -269,7 +269,7 @@ function NFTTransactions() {
   //   //price: item.price / ("1e" + 18)
   // }));
 
-  const collectionData = fetchCollections?.map((item, index) => ({
+  const collectionData = fetchCollections?.map((item) => ({
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.newNFTsymbol, 6),
@@ -277,7 +277,7 @@ function NFTTransactions() {
     link: item.transaction_hash
   }));
 
-  const createdBundleData = fetchCreatedBundle?.map((item, index) => ({
+  const createdBundleData = fetchCreatedBundle?.map((item) => ({
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 6),
@@ -285,7 +285,7 @@ function NFTTransactions() {
     link: item.transaction_hash
   }));
 
-  const createBatchBundleData = fetchCreatedBatchBundle?.map((item, index) => ({
+  const createBatchBundleData = fetchCreatedBatchBundle?.map((item) => ({
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: item.collectionSymbol,
@@ -293,7 +293,7 @@ function NFTTransactions() {
     link: item.transaction_hash
   }));
 
-  const claimedBundleData = fetchClaimedBundle?.map((item, index) => ({
+  const claimedBundleData = fetchClaimedBundle?.map((item) => ({
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 6),
@@ -315,7 +315,7 @@ function NFTTransactions() {
         <div style={styles.table}>
           <Spin
             size='large'
-            spinning={!fetchClaimedBundle || !fetchCollections || !fetchCreatedBundle || !fetchCreatedBatchBundle}
+            spinning={!fetchCollections || !fetchCreatedBundle || !fetchCreatedBatchBundle || !fetchClaimedBundle}
           >
             <Table size='middle' columns={columns} dataSource={data} />
           </Spin>

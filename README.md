@@ -15,7 +15,7 @@ REACT_APP_MORALIS_SERVER_URL = https://xxxxxx.grandmoralis.com:2053/server
 
 🔎 Locate the MoralisDappProvider in `src/providers/MoralisDappProvider/MoralisDappProvider.js` and paste the deployed marketplace smart contract address and ABI
 ```jsx
-const [contractABI, setContractABI] = useState();
+const [marketABI, setMarketABI] = useState();
 const [marketAddressMumbai, setMarketAddressMumbai] = useState();
 ```
 

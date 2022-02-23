@@ -12,8 +12,8 @@ export const useQueryMoralisDb = () => {
   };
 
   const getCreatedBundleData = async (owner) => {
-    const CreatedBundle = Moralis.Object.extend("CreatedBundle");
-    const query = new Moralis.Query(CreatedBundle);
+    const CreatedSingleBundle = Moralis.Object.extend("CreatedSingleBundle");
+    const query = new Moralis.Query(CreatedSingleBundle);
     query.equalTo("firstHolder", owner);
     const res = await query.find();
     return res;
@@ -28,8 +28,8 @@ export const useQueryMoralisDb = () => {
   };
 
   const getClaimedBundleData = async (owner) => {
-    const BundleClaimed = Moralis.Object.extend("BundleClaimed");
-    const query = new Moralis.Query(BundleClaimed);
+    const ClaimedBundle = Moralis.Object.extend("ClaimedBundle");
+    const query = new Moralis.Query(ClaimedBundle);
     query.equalTo("owner", owner);
     const res = await query.find();
     return res;

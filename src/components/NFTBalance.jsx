@@ -38,7 +38,7 @@ function NFTBalance() {
   const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
   const [allBalances, setAllBalances] = useState([]);
   const [hasError, setHasError] = useState(false);
-  const { chainId, marketAddressMumbai, contractABI } = useMoralisDapp();
+  const { chainId, marketAddressMumbai, marketABI } = useMoralisDapp();
   const { Moralis } = useMoralis();
   const [visible, setVisibility] = useState(false);
   const [nftToSend, setNftToSend] = useState(null);
@@ -46,7 +46,7 @@ function NFTBalance() {
   const [loading, setLoading] = useState(false);
   const nativeName = getNativeByChain(chainId);
   const contractProcessor = useWeb3ExecuteFunction();
-  const contractABIJson = JSON.parse(contractABI);
+  const marketABIJson = JSON.parse(marketABI);
   const listItemFunction = "createMarketItem";
   const ItemImage = Moralis.Object.extend("ItemImages");
   const nftsPerPage = 20;
@@ -83,7 +83,7 @@ function NFTBalance() {
     const ops = {
       contractAddress: marketAddressMumbai,
       functionName: listItemFunction,
-      abi: contractABIJson,
+      abi: marketABIJson,
       params: {
         nftContract: nft.token_address,
         tokenId: nft.token_id,
@@ -207,7 +207,7 @@ function NFTBalance() {
 
   return (
     <>
-      {contractABIJson.noContractDeployed && (
+      {marketABIJson.noContractDeployed && (
         <>
           <Alert
             message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'

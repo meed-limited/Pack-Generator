@@ -47,13 +47,12 @@ const styles = {
 
 const ModalL3PBOnly = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
+    const { chainId, assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai } = useMoralisDapp();
     const { NFTBalance, fetchSuccess } = useNFTBalance({});
-
     const [next, setNext] = useState(0);
     const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
     const [allBalances, setAllBalances] = useState([]);
     const [hasError, setHasError] = useState(false);
-
     const contractProcessor = useWeb3ExecuteFunction();
     const { factoryABI } = useMoralisDapp();
     const factoryABIJson = JSON.parse(factoryABI);
@@ -66,6 +65,16 @@ const ModalL3PBOnly = forwardRef(
     const [customArrayFetched, setCustomArrayFetched] = useState(false);
     const nftsPerPage = 20;
     const [isNFTloading, setIsNFTLoading] = useState(true);
+
+    const getAssemblyAddress = () => {
+      if (chainId === "0x1") {
+        return assemblyAddressEthereum;
+      } else if (chainId === "0x89") {
+        return assemblyAddressPolygon;
+      } else if (chainId === "0x13881") {
+        return assemblyAddressMumbai;
+      }
+    };
 
     useEffect(() => {
       if (!updatedNFTBalance) {
@@ -169,10 +178,7 @@ const ModalL3PBOnly = forwardRef(
         });
       }
       collectionAddressArray = collectionAddressArray.concat(
-        contractAddress,
-        "0x8019748eD0B33651B30F049CDDA1dc89A8b1Bc98", // Add default address
-        "0xcc2A04eF122fB40b3Bf5b0c86601579786ca8F0A",
-        "0x033b0ACe92C8358601b5232A229f434d97362511"
+        getAssemblyAddress()
       );
       return collectionAddressArray;
     };

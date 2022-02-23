@@ -24,6 +24,7 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const handleAssetOk = (eth, selectedItems) => {
     setEthAmount(eth);
     setSelectedTokens(selectedItems);
+    console.log(selectedItems)
     setIsModalNFTVisible(false);
     getAssetValues(eth, selectedItems);
   };

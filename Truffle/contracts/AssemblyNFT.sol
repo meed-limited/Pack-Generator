@@ -9,7 +9,7 @@ import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "./interface/IAssemblyNFT.sol";
 
-contract customAssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
+contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
     using SafeERC20 for IERC20;
 
     function supportsInterface(bytes4 interfaceId)

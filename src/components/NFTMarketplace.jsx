@@ -52,9 +52,9 @@ function NFTMarketplace({ inputValue, setInputValue }) {
   const [nftToBuy, setNftToBuy] = useState(null);
   const [loading, setLoading] = useState(false);
   const contractProcessor = useWeb3ExecuteFunction();
-  const { chainId, marketAddressMumbai, contractABI, walletAddress } = useMoralisDapp();
+  const { chainId, marketAddressMumbai, marketABI, walletAddress } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
-  const contractABIJson = JSON.parse(contractABI);
+  const marketABIJson = JSON.parse(marketABI);
   const { Moralis } = useMoralis();
   const queryMarketItems = useMoralisQuery("MarketItems");
   const fetchMarketItems = JSON.parse(
@@ -83,7 +83,7 @@ function NFTMarketplace({ inputValue, setInputValue }) {
     const ops = {
       contractAddress: marketAddressMumbai,
       functionName: purchaseItemFunction,
-      abi: contractABIJson,
+      abi: marketABIJson,
       params: {
         nftContract: nftToBuy.token_address,
         itemId: itemID
@@ -157,7 +157,7 @@ function NFTMarketplace({ inputValue, setInputValue }) {
   return (
     <>
       <div style={{ marginTop: "100px" }}>
-        {contractABIJson.noContractDeployed && (
+        {marketABIJson.noContractDeployed && (
           <>
             <Alert
               message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'

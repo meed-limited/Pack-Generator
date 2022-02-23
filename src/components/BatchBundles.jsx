@@ -12,7 +12,7 @@ import BundleClaim from "./Bundle/BundleClaim";
 import { openNotification } from "./Notification";
 import { getExplorer, getNativeByChain } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
-import { Button, Input, Switch, Tabs, Tooltip } from "antd";
+import { Button, Input, Switch, Tabs, Tooltip, Modal } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./Bundle/styles";
 const { TabPane } = Tabs;
@@ -28,8 +28,9 @@ const BatchBundle = () => {
     assemblyABI
   } = useMoralisDapp();
   const { Moralis } = useMoralis();
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [nameAndSymbol, setNameAndSymbol] = useState([]);
-  const contractABIJson = JSON.parse(assemblyABI);
+  const assemblyABIJson = JSON.parse(assemblyABI);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const nativeName = getNativeByChain(chainId);
   const [isJSON, setIsJSON] = useState(false);
@@ -78,6 +79,19 @@ const BatchBundle = () => {
     setIsModalNFTVisible(false);
   };
 
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleModalOk = () => {
+    setIsModalVisible(false);
+    handleSingleBundle();
+  };
+
+  const handleModalCancel = () => {
+    setIsModalVisible(false);
+  };
+
   const getAssetValues = (ethAmt, Erc20) => {
     setEthAmount(ethAmt);
     setSelectedTokens(Erc20);
@@ -122,22 +136,23 @@ const BatchBundle = () => {
   }
 
   async function singleApproveAll(address, numbers, contractAddr) {
+    const addressArr = cloneDeep(address);
     const currentApproval = await checkMultipleAssetsApproval(
-      address,
+      addressArr,
       numbers,
       walletAddress,
       contractAddr,
       contractProcessor
     );
-
+    
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
-        let toAllow = numbers[count];
+        let toAllow = numbers[count].toString();
         if (parseInt(currentApproval[i]) < parseInt(toAllow)) {
-          await approveERC20contract(ERC20add[i], toAllow.toString(), contractAddr, contractProcessor);
+          await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
           count++;
         }
       }
@@ -194,50 +209,46 @@ const BatchBundle = () => {
   }
 
   async function singleBundleMint(assetContracts, assetNumbers, contractAddr) {
-    const addressArr = cloneDeep(assetContracts);
+    const ops = {
+      contractAddress: contractAddr,
+      functionName: "mint",
+      abi: assemblyABIJson,
+      msgValue: assetNumbers[0],
+      params: {
+        _to: walletAddress,
+        _addresses: assetContracts,
+        _numbers: assetNumbers
+      }
+    };
 
-    await singleApproveAll(addressArr, assetNumbers, contractAddr).then(() => {
-      const ops = {
-        contractAddress: contractAddr,
-        functionName: "mint",
-        abi: contractABIJson,
-        msgValue: assetNumbers[0],
-        params: {
-          _to: walletAddress,
-          _addresses: assetContracts,
-          _numbers: assetNumbers
-        }
-      };
+    await contractProcessor.fetch({
+      params: ops,
+      onSuccess: (response) => {
+        let asset = response.events.AssemblyAsset.returnValues;
+        let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
+        let title = "Bundle created!";
+        let msg = (
+          <div>
+            Your bundle has been succesfully created!
+            <br></br>
+            Token id: {getEllipsisTxt(asset.tokenId, 6)}
+            <br></br>
+            <a href={link} target='_blank' rel='noreferrer noopener'>
+              View in explorer: &nbsp;
+              <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
+            </a>
+          </div>
+        );
 
-      contractProcessor.fetch({
-        params: ops,
-        onSuccess: async (response) => {
-          let asset = response.events.AssemblyAsset.returnValues;
-          let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-          let title = "Bundle created!";
-          let msg = (
-            <div>
-              Your bundle has been succesfully created!
-              <br></br>
-              Token id: {getEllipsisTxt(asset.tokenId, 6)}
-              <br></br>
-              <a href={link} target='_blank' rel='noreferrer noopener'>
-                View in explorer: &nbsp;
-                <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
-              </a>
-            </div>
-          );
-
-          openNotification("success", title, msg);
-          console.log("Bundle created");
-        },
-        onError: (error) => {
-          let title = "Unexpected error";
-          let msg = "Oops, something went wrong while creating your bundle!";
-          openNotification("error", title, msg);
-          console.log(error);
-        }
-      });
+        openNotification("success", title, msg);
+        console.log("Bundle created");
+      },
+      onError: (error) => {
+        let title = "Unexpected error";
+        let msg = "Oops, something went wrong while creating your bundle!";
+        openNotification("error", title, msg);
+        console.log(error);
+      }
     });
   }
 
@@ -247,7 +258,7 @@ const BatchBundle = () => {
     const ops = {
       contractAddress: contractAddr,
       functionName: "batchMint",
-      abi: contractABIJson,
+      abi: assemblyABIJson,
       msgValue: parseInt(assetNumbers[0]) * parseInt(bundleNum),
       params: {
         _to: walletAddress,
@@ -285,6 +296,7 @@ const BatchBundle = () => {
         createdBatchBundle.set("transaction_hash", txHash);
         createdBatchBundle.set("collectionName", nameAndSymbol[0] ? nameAndSymbol[0] : "LepriBundle");
         createdBatchBundle.set("collectionSymbol", nameAndSymbol[1] ? nameAndSymbol[1] : "L3P");
+        createdBatchBundle.set("collectionSupply", nameAndSymbol[2]);
 
         try {
           createdBatchBundle.save();
@@ -303,8 +315,22 @@ const BatchBundle = () => {
 
   async function handleSingleBundle() {
     const contractAddress = getContractAddress();
-    let result = await getSingleBundleArrays();
-    singleBundleMint(result[0], result[1], contractAddress);
+    const result = await getSingleBundleArrays();
+
+    try {
+      const addressArr = result[0];
+      const assetNumbers = result[1];
+      const clonedArray = cloneDeep(addressArr);
+
+      await singleApproveAll(clonedArray, assetNumbers, contractAddress).then(() => {
+        singleBundleMint(addressArr, assetNumbers, contractAddress);
+      });
+    } catch (err) {
+      let title = "Single Bundle error";
+      let msg = "Something went wrong while doing your bundle. Please check your inputs.";
+      openNotification("error", title, msg);
+      console.log(err);
+    }
   }
 
   async function handleMultipleBundle() {
@@ -320,16 +346,14 @@ const BatchBundle = () => {
       const sortedData = await getMultipleBundleArrays(jsonFile);
       const assetsArray = sortedData[0];
       const numbersArray = sortedData[1];
-      const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, bundleNumber);
-
+      const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, bundleNumber, ERC1155Number);
+      console.log(contractNumbersArray);
       /*SMART-CONTRACT CALL:
        **********************/
       const clonedArray = cloneDeep(assetsArray);
       await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
         let counter = contractNumbersArray.length / BUNDLE_LIMIT;
         counter = Math.ceil(counter);
-
-        var txHash = [];
 
         for (let i = 0; i < counter; i++) {
           if (contractNumbersArray.length > BUNDLE_LIMIT) {
@@ -410,7 +434,7 @@ const BatchBundle = () => {
                               color: "black",
                               opacity: "0.8"
                             }}
-                            key={` ${nftItem.name} - ${nftItem.token_id} - ${nftItem.contract_type}`}
+                            key={key}
                           >
                             {nftItem.token_id.length > 6 ? (
                               <p>{` ${nftItem.name} - Id: ${getEllipsisTxt(nftItem.token_id, 3)} - ${
@@ -441,7 +465,46 @@ const BatchBundle = () => {
                 </Button>
               </div>
             </div>
-            <Button shape='round' style={styles.runFunctionButton} onClick={handleSingleBundle}>
+            <Modal
+              title={"Confirm items to bundle"}
+              visible={isModalVisible}
+              onOk={handleModalOk}
+              onCancel={handleModalCancel}
+            >
+              {NFTsArr && NFTsArr.length > 0 && (
+                <p>
+                  <b>NFTs:</b>
+                </p>
+              )}
+              {NFTsArr &&
+                NFTsArr.length > 0 &&
+                NFTsArr.map((item, key) => (
+                  <p key={key}>
+                    <em>{item.contract_type}</em> {item.name} {item.symbol} ID:{" "}
+                    {item.token_id.length > 8 ? getEllipsisTxt(item.token_id, 4) : item.token_id}
+                    {item.contract_type === "ERC1155" ? " - Amount: " + item.amount : ""}
+                  </p>
+                ))}
+              {ethAmount > 0 && (
+                <p>
+                  <b>ETH amount: </b>
+                  {ethAmount}
+                </p>
+              )}
+              {selectedTokens.length > 0 && (
+                <p>
+                  <b>ERC20 tokens: </b>
+                </p>
+              )}
+              {selectedTokens.length > 0 &&
+                selectedTokens.map((item, key) => (
+                  <p key={key}>
+                  
+                    <em>{item.data.symbol}</em> {item.data.name} : {item.value}
+                  </p>
+                ))}
+            </Modal>
+            <Button shape='round' style={styles.runFunctionButton} onClick={showModal}>
               BUNDLE
             </Button>
           </div>
