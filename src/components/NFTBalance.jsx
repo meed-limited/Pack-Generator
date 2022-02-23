@@ -17,7 +17,7 @@ const styles = {
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    width: "100%",
+    width: "100%"
   },
   loadMoreButton: {
     margin: "auto",
@@ -53,23 +53,23 @@ function NFTBalance() {
   const [isNFTloading, setIsNFTLoading] = useState(true);
 
   useEffect(() => {
-      if (!updatedNFTBalance) {
-        setHasError(true);
-      }
-    }, [updatedNFTBalance]);
+    if (!updatedNFTBalance) {
+      setHasError(true);
+    }
+  }, [updatedNFTBalance]);
 
   useEffect(() => {
     if (updatedNFTBalance.start > allBalances.length) {
       setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
     }
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [updatedNFTBalance.NFTBalance]);
 
   useEffect(() => {
     if (allBalances.length > 0) {
       setIsNFTLoading(false);
     }
-// eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allBalances]);
 
   const handleLoadMore = () => {
@@ -234,7 +234,7 @@ function NFTBalance() {
           allBalances.map((nft, index) => (
             <Card
               hoverable
-              size="small"
+              size='small'
               actions={[
                 <Tooltip title='View On Blockexplorer'>
                   <FileSearchOutlined
@@ -245,7 +245,7 @@ function NFTBalance() {
                   <ShoppingCartOutlined onClick={() => handleSellClick(nft)} />
                 </Tooltip>
               ]}
-              style={{ transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
+              style={{ width: 240, transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
               cover={
                 <Image
                   preview={false}
@@ -257,7 +257,10 @@ function NFTBalance() {
               }
               key={index}
             >
-              <Meta title={nft.name} description={nft.contract_type} />
+              <Meta
+                title={nft.name}
+                description={nft.contract_type}
+              />
             </Card>
           ))}
       </div>
@@ -289,7 +292,7 @@ function NFTBalance() {
               marginBottom: "15px"
             }}
           />
-          <Input autoFocus placeholder="Listing price in {nativeName}" onChange={(e) => setPrice(e.target.value)} />
+          <Input autoFocus placeholder='Listing price in {nativeName}' onChange={(e) => setPrice(e.target.value)} />
         </Spin>
       </Modal>
 
