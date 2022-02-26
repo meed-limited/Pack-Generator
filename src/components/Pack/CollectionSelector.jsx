@@ -11,9 +11,9 @@ import "../../style.css";
 import styles from "./styles";
 
 
-const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymbol }, ref) => {
+const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol }, ref) => {
   const contractProcessor = useWeb3ExecuteFunction();
-  const { chainId, walletAddress, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI, customAssemblyABI } =
+  const { chainId, walletAddress, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } =
     useMoralisDapp();
   const { Moralis } = useMoralis();
   const factoryABIJson = JSON.parse(factoryABI);
@@ -287,7 +287,7 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
               beforeUpload={beforeUpload}
               onChange={handleImageChange}
             >
-              {imageURL ? <img src={imageURL} alt='image' style={{ width: "100%" }} /> : uploadButton}
+              {imageURL ? <img src={imageURL} alt='' style={{ width: "100%" }} /> : uploadButton}
             </Upload>
 
             <div>
@@ -362,4 +362,4 @@ const ContractAddrsSelector = forwardRef(({ customContractAddrs, passNameAndSymb
     </div>
   );
 });
-export default ContractAddrsSelector;
+export default CollectionSelector;

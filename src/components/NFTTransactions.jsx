@@ -14,6 +14,7 @@ function NFTTransactions() {
   const { walletAddress, chainId } = useMoralisDapp();
   const {
     getCreatedCollectionData,
+    getCustomCollectionData,
     getCreatedPackData,
     getCreatedBatchPackData,
     getClaimedPackData,
@@ -64,30 +65,9 @@ function NFTTransactions() {
   }
 
   const getCollections = async () => {
-    const res = await getCreatedCollectionData(walletAddress);
+    const res = await getCustomCollectionData(walletAddress);
     const parsedcollections = await parseData(res, walletAddress);
-
-    if (parsedcollections.length > 0) {
-      for (let i = 0; i < parsedcollections.length; i++) {
-        const ops = {
-          contractAddress: parsedcollections[i].newCustomCollection,
-          functionName: "name",
-          abi: fetchNameABI,
-          params: {}
-        };
-
-        await contractProcessor.fetch({
-          params: ops,
-          onSuccess: async (response) => {
-            parsedcollections[i].collectionName = response;
-          },
-          onError: (error) => {
-            console.log(error);
-          }
-        });
-        setFetchCollections(parsedcollections);
-      }
-    }
+    setFetchCollections(parsedcollections);
   };
 
   const getCreatedPack = async () => {
@@ -114,8 +94,8 @@ function NFTTransactions() {
           }
         });
       }
-      setFetchCreatedPack(sliced);
     }
+    setFetchCreatedPack(sliced);
   };
 
   const getClaimedPack = async () => {
@@ -141,17 +121,15 @@ function NFTTransactions() {
           }
         });
       }
-      setFetchClaimedPack(parsedClaimedPack);
     }
+    setFetchClaimedPack(parsedClaimedPack);
   };
 
   const getCreatedBatchPack = async () => {
     const res = await getCreatedBatchPackData(walletAddress);
     const parsedCreatedBatchPack = await parseData(res, walletAddress);
     let sliced = parsedCreatedBatchPack.slice(0, 100);
-    if (sliced.length > 0) {
-      setFetchCreatedBatchPack(sliced);
-    }
+    setFetchCreatedBatchPack(sliced);
   };
 
   useEffect(() => {
@@ -272,8 +250,8 @@ function NFTTransactions() {
 
   const collectionData = fetchCollections?.map((item) => ({
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
-    collection: item.collectionName,
-    item: getEllipsisTxt(item.newNFTsymbol, 6),
+    collection: item.name,
+    item: item.symbol,
     tags: "Collection Created",
     link: item.transaction_hash
   }));
@@ -316,7 +294,7 @@ function NFTTransactions() {
         <div style={styles.table}>
           <Spin
             size='large'
-            spinning={!fetchCollections || !fetchCreatedPack || !fetchCreatedBatchPack || !fetchClaimedPack}
+            spinning={fetchCollections === undefined || fetchCreatedPack === undefined || fetchCreatedBatchPack === undefined || fetchClaimedPack === undefined}
           >
             <Table size='middle' columns={columns} dataSource={data} />
           </Spin>

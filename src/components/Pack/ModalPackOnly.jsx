@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Card, Image, Alert, Modal, Button, Spin } from "antd";
+import { Card, Image, Modal, Button, Spin } from "antd";
 import { useContractAddress } from "hooks/useContractAddress";
 import { useNFTBalance } from "hooks/useNFTBalance";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
@@ -45,13 +45,12 @@ const styles = {
   }
 };
 
-const ModalL3PBOnly = forwardRef(
+const ModalPackOnly = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, isMultiple = false }, ref) => {
     const { chainId, assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai } = useMoralisDapp();
     const [next, setNext] = useState(0);
     const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
     const [allBalances, setAllBalances] = useState([]);
-    const [hasError, setHasError] = useState(false);
     const contractProcessor = useWeb3ExecuteFunction();
     const { factoryABI } = useMoralisDapp();
     const factoryABIJson = JSON.parse(factoryABI);
@@ -74,13 +73,6 @@ const ModalL3PBOnly = forwardRef(
         return assemblyAddressMumbai;
       }
     };
-
-    useEffect(() => {
-      if (!updatedNFTBalance) {
-        setHasError(true);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updatedNFTBalance]);
 
     useEffect(() => {
       if (updatedNFTBalance.start > allBalances.length) {
@@ -176,9 +168,7 @@ const ModalL3PBOnly = forwardRef(
           }
         });
       }
-      collectionAddressArray = collectionAddressArray.concat(
-        getAssemblyAddress()
-      );
+      collectionAddressArray = collectionAddressArray.concat(getAssemblyAddress());
       return collectionAddressArray;
     };
 
@@ -231,18 +221,6 @@ const ModalL3PBOnly = forwardRef(
           onCancel={handleNFTCancel}
           afterClose={handleClickOk}
         >
-          {!hasError && (
-            <div style={{ width: "70%", textAlign: "center", margin: "auto" }}>
-              <Alert
-                message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
-                type='warning'
-                showIcon
-                closable
-              />
-              <div style={{ marginBottom: "10px" }}></div>
-            </div>
-          )}
-
           <div style={styles.NFTs}>
             {packToClaim() &&
               packToClaim().map((nft, index) => {
@@ -296,4 +274,4 @@ const ModalL3PBOnly = forwardRef(
   }
 );
 
-export default ModalL3PBOnly;
+export default ModalPackOnly;

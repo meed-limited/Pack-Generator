@@ -37,7 +37,6 @@ function NFTBalance() {
   const [next, setNext] = useState(0);
   const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
   const [allBalances, setAllBalances] = useState([]);
-  const [hasError, setHasError] = useState(false);
   const { chainId, marketAddressMumbai, marketABI } = useMoralisDapp();
   const { Moralis } = useMoralis();
   const [visible, setVisibility] = useState(false);
@@ -52,12 +51,6 @@ function NFTBalance() {
   const [isNFTloading, setIsNFTLoading] = useState(true);
 
   useEffect(() => {
-    if (!updatedNFTBalance) {
-      setHasError(true);
-    }
-  }, [updatedNFTBalance]);
-
-  useEffect(() => {
     if (updatedNFTBalance.start > allBalances.length) {
       setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
     }
@@ -66,7 +59,7 @@ function NFTBalance() {
 
   useEffect(() => {
     if (allBalances.length > 0) {
-      console.log(allBalances)
+      console.log(allBalances);
       setIsNFTLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -217,18 +210,6 @@ function NFTBalance() {
         </>
       )}
 
-      {!hasError && (
-        <div style={{ width: "70%", textAlign: "center", margin: "auto", height: "fit-content" }}>
-          <Alert
-            message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
-            type='warning'
-            showIcon
-            closable
-          />
-          <div style={{ marginBottom: "10px" }}></div>
-        </div>
-      )}
-
       <div style={styles.NFTs} nftstorender={allBalances}>
         {allBalances &&
           allBalances.map((nft, index) => (
@@ -258,11 +239,7 @@ function NFTBalance() {
                 />
               }
             >
-              <Meta
-                title={nft.name}
-                description={nft.contract_type}
-                key={index}
-              />
+              <Meta title={nft.name} description={nft.contract_type} key={index} />
             </Card>
           ))}
       </div>

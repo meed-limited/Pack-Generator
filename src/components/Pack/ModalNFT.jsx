@@ -1,6 +1,6 @@
 /*eslint no-dupe-keys: "Off"*/
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Card, Image, Alert, Modal, Button, Spin } from "antd";
+import { Card, Image, Modal, Button, Spin } from "antd";
 import { useNFTBalance } from "hooks/useNFTBalance";
 const { Meta } = Card;
 
@@ -29,20 +29,12 @@ const styles = {
 
 const ModalNFT = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
-    //const { NFTBalance, fetchSuccess } = useNFTBalance();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
     const [next, setNext] = useState(0);
     const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
     const [allBalances, setAllBalances] = useState([]);
     const [isNFTloading, setIsNFTLoading] = useState(true);
-    const [hasError, setHasError] = useState(false);
     const nftsPerPage = 20;
-
-    useEffect(() => {
-      if (updatedNFTBalance && !updatedNFTBalance) {
-        setHasError(true);
-      }
-    }, [updatedNFTBalance]);
 
     useEffect(() => {
       if (updatedNFTBalance.start > allBalances.length) {
@@ -113,17 +105,6 @@ const ModalNFT = forwardRef(
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
         >
-          {!hasError && (
-            <div style={{ width: "70%", textAlign: "center", margin: "auto" }}>
-              <Alert
-                message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
-                type='warning'
-                showIcon
-                closable
-              />
-              <div style={{ marginBottom: "10px" }}></div>
-            </div>
-          )}
           <div style={styles.NFTs}>
             {allBalances &&
               allBalances.map((nft, index) => {

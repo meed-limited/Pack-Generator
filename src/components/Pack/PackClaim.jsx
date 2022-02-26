@@ -4,7 +4,7 @@ import { useWeb3ExecuteFunction } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
 import { openNotification } from "../Notification";
 import { getExplorer } from "helpers/networks";
-import ModalL3PBOnly from "./ModalL3PBOnly";
+import ModalPackOnly from "./ModalPackOnly";
 import { useContractEvents } from "hooks/useContractEvents";
 import { useContractAddress } from "hooks/useContractAddress";
 import { Button, Input, Tooltip } from "antd";
@@ -127,7 +127,7 @@ const PackClaim = () => {
               />
             </Tooltip>
           </div>
-          <ModalL3PBOnly
+          <ModalPackOnly
             handleNFTCancel={handleNFTCancel}
             isModalNFTVisible={isModalNFTVisible}
             handleNFTOk={handleNFTOk}
@@ -145,7 +145,7 @@ const PackClaim = () => {
           />
 
           {selectedPack && selectedPack.length > 0 && (
-            <div style={styles.displaySelected}>{`Packs Id: ${getEllipsisTxt(packId, 5)}`}</div>
+            <div style={styles.displaySelected}>{`Pack Id: ${getEllipsisTxt(packId, 5)}`}</div>
           )}
         </div>
       </div>

@@ -76,6 +76,7 @@ const PackConfirm = ({
       console.log("addr", contract_address);
       getContractName(contract_address);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csv]);
 
   const generateBatchNFTdata = () => {

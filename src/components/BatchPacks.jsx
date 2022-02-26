@@ -5,7 +5,7 @@ import cloneDeep from "lodash/cloneDeep";
 import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Pack/Approval";
 import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Pack/ArraySorting";
 import AssetPerPack from "./Pack/AssetPerPack";
-import ContractAddrsSelector from "./Pack/ContractAddrsSelector";
+import CollectionSelector from "./Pack/CollectionSelector";
 import ModalNFT from "./Pack/ModalNFT";
 import Uploader from "./Pack/Uploader";
 import PackClaim from "./Pack/PackClaim";
@@ -511,7 +511,7 @@ const BatchPack = () => {
                 <Switch style={{ marginLeft: "30px" }} defaultChecked={false} onChange={handleSwitch} />
               </p>
               {displayFactory && (
-                <ContractAddrsSelector
+                <CollectionSelector
                   customContractAddrs={customContractAddrs}
                   ref={customContractAddrsRef}
                   passNameAndSymbol={passNameAndSymbol}
