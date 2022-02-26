@@ -59,7 +59,6 @@ function NFTBalance() {
 
   useEffect(() => {
     if (allBalances.length > 0) {
-      console.log(allBalances);
       setIsNFTLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

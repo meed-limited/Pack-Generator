@@ -4,12 +4,11 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { getExplorer } from "helpers/networks";
 import { openNotification } from "components/Notification";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
-import { Button, Input, Tooltip, Select, Upload, message, Space } from "antd";
+import { Button, Input, Tooltip, Select, Upload, message, Space, Switch } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
 import "../../style.css";
 import styles from "./styles";
-
 
 const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol }, ref) => {
   const contractProcessor = useWeb3ExecuteFunction();
@@ -28,6 +27,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   const [imageURL, setImageURL] = useState();
   const [imageURI, setImageURI] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
+  const [displayFactory, setDisplayFactory] = useState(false);
   const { Option } = Select;
 
   const getContractAddress = () => {
@@ -205,7 +205,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
       setName(valueArr[1]);
       setDescription(valueArr[4]);
       setImageURI(valueArr[5]);
-      console.log(valueArr);
     }
   }
 
@@ -216,6 +215,10 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     setName();
     setDescription();
     setImageURI();
+  };
+
+  const handleSwitch = () => {
+    !displayFactory ? setDisplayFactory(true) : setDisplayFactory(false);
   };
 
   useImperativeHandle(ref, () => ({
@@ -233,102 +236,16 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   const uploadButton = (
     <div>
       {isImageLoading ? <LoadingOutlined /> : <PlusOutlined />}
-      <div style={{ marginTop: 8 }}>Upload</div>
+      <div style={{ marginTop: 8 }}>Upload Picture</div>
     </div>
   );
 
   return (
     <div style={styles.transparentContainerInside}>
-      {!isExistingCollection && (
-        <div>
-          <p style={{ fontSize: "13px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
-            Fill the fields below to create a new pack collection:
-            <Tooltip
-              title='Enter a collection name and symbol to generate a new ERC721 contract and get your very own pack collection! Leave blanck to use our default L3PB collection.'
-              style={{ position: "absolute", top: "35px", right: "80px" }}
-            >
-              <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
-            </Tooltip>
-          </p>
-
-          <div style={{ display: "grid", gridTemplateColumns: "50% 25% 25%", textAlign: "center", margin: "auto" }}>
-            <div>
-              <label style={{ fontSize: "11px" }}>Name:</label>
-              <Input
-                style={styles.transparentInput}
-                placeholder='e.g. My Super Collection'
-                value={name}
-                onChange={handleNameChange}
-              />
-            </div>
-            <div>
-              <label style={{ fontSize: "11px" }}>Symbol:</label>
-              <Input
-                style={styles.transparentInput}
-                placeholder='e.g. MSC'
-                value={symbol}
-                onChange={handleSymbolChange}
-              />
-            </div>
-            <div>
-              <label style={{ fontSize: "11px" }}>Max Supply:</label>
-              <Input style={styles.transparentInput} value={supply} onChange={handleSupplyChange} />
-            </div>
-          </div>
-
-          <div style={{ marginTop: "20px", display: "inline-flex" }}>
-            <Upload
-              style={{ width: "128px", height: "128px" }}
-              type='file'
-              maxCount='1'
-              name='image'
-              listType='picture-card'
-              showUploadList={false}
-              beforeUpload={beforeUpload}
-              onChange={handleImageChange}
-            >
-              {imageURL ? <img src={imageURL} alt='' style={{ width: "100%" }} /> : uploadButton}
-            </Upload>
-
-            <div>
-              <label style={{ fontSize: "11px" }}>Description:</label>
-              <TextArea
-                style={styles.transparentInput}
-                placeholder='e.g. This is a great collection.'
-                value={description}
-                onChange={handleDescriptionChange}
-              />
-            </div>
-          </div>
-
-          <div style={{ marginTop: "20px" }}>
-            <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
-              CREATE NEW COLLECTION
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {customAddress && customAddress.length > 0 && (
-        <div style={styles.transparentContainerInside}>
-          <p style={{ padding: "20px 10px 0px 10px", fontSize: "14px" }}>
-            Here is the smart-contract address of your pack collection:
-            <br></br>
-            <span style={{ fontSize: "13px", color: "yellow" }}>{customAddress}</span>
-            <br></br>
-            To start minting your packs, scroll down and prepare them.
-          </p>
-        </div>
-      )}
-
-      <div style={{ fontSize: "12px", margin: "20px", justifyContent: "center" }}>
-        <p>OR</p>
-      </div>
-
       <Select
         showSearch
         allowClear={true}
-        style={{ width: "70%" }}
+        style={{ width: "70%", marginTop: "20px" }}
         placeholder='Pick an existing collection'
         optionFilterProp='children'
         onChange={onCollectionChange}
@@ -354,6 +271,119 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
             </Option>
           ))}
       </Select>
+
+      {!isExistingCollection && (
+        <>
+          <div style={{ fontSize: "12px", margin: "20px", justifyContent: "center" }}>
+            <p>OR</p>
+          </div>
+          <div style={{ fontSize: "17px", margin: "20px", justifyContent: "center" }}>
+            <span>Create a new collection: </span>
+            <Tooltip
+              title='Create your very own pack collection from scratch ! Define the name, symbol, supply (0 for infinite) and description. Leave blanck to use our default collection.'
+              style={{ position: "absolute", top: "35px", right: "80px" }}
+            >
+              <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
+            </Tooltip>
+            <Switch style={{ marginLeft: "30px" }} size='small' defaultChecked={false} onChange={handleSwitch} />
+          </div>
+
+          {displayFactory && (
+            <>
+              <div style={styles.transparentContainerInside}>
+                <p style={{ fontSize: "13px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
+                  Fill the fields below to create a new pack collection:
+                </p>
+
+                <div style={{ display: "grid", gridTemplateColumns: "65% 35%", textAlign: "center", margin: "auto" }}>
+                  <div>
+                    <div style={{ display: "column-flex" }}>
+                      <label style={{ fontSize: "11px" }}>Collection Name:</label>
+                      <Input
+                        style={styles.transparentInput}
+                        placeholder='e.g. My Super Collection'
+                        value={name}
+                        onChange={handleNameChange}
+                      />
+                    </div>
+
+                    <div
+                      style={{ display: "grid", gridTemplateColumns: "50% 50%", textAlign: "center", margin: "auto" }}
+                    >
+                      <div style={{ display: "column-flex" }}>
+                        <label style={{ fontSize: "11px" }}>Collection Symbol:</label>
+                        <Input
+                          style={styles.transparentInputSmaller}
+                          placeholder='e.g. MSC'
+                          value={symbol}
+                          onChange={handleSymbolChange}
+                        />
+                      </div>
+
+                      <div style={{ display: "column-flex" }}>
+                        <label style={{ fontSize: "11px" }}>Max Supply:</label>
+                        <Input style={styles.transparentInputSmaller} value={supply} onChange={handleSupplyChange} />
+                      </div>
+                    </div>
+
+                    <div style={{ display: "column-flex" }}>
+                      <label style={{ fontSize: "11px" }}>Collection Description:</label>
+                      <TextArea
+                        style={styles.transparentInput}
+                        placeholder='e.g. This is a great collection.'
+                        maxLength={250}
+                        showCount
+                        value={description}
+                        onChange={handleDescriptionChange}
+                      />
+                    </div>
+                  </div>
+                  <div style={{ alignItems: "center", margin: "auto" }}>
+                    <Upload
+                      //style={{ width: "256px", height: "256px", }}
+                      type='file'
+                      maxCount='1'
+                      name='image'
+                      listType='picture-card'
+                      showUploadList={false}
+                      beforeUpload={beforeUpload}
+                      onChange={handleImageChange}
+                    >
+                      {imageURL ? <img src={imageURL} alt='' style={{ width: "100%" }} /> : uploadButton}
+                    </Upload>
+                  </div>
+                </div>
+
+                {/* <div style={{ marginTop: "20px", display: "inline-flex" }}>
+                
+
+                <div>
+                  
+                </div>
+              </div> */}
+
+                <div style={{ marginTop: "20px" }}>
+                  <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
+                    CREATE NEW COLLECTION
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </>
+      )}
+
+      {customAddress && customAddress.length > 0 && (
+        <div style={styles.transparentContainerInside}>
+          <p style={{ padding: "20px 10px 0px 10px", fontSize: "14px" }}>
+            Here is the smart-contract address of your pack collection:
+            <br></br>
+            <span style={{ fontSize: "13px", color: "yellow" }}>{customAddress}</span>
+            <br></br>
+            To start minting your packs, scroll down and prepare them.
+          </p>
+        </div>
+      )}
 
       <p style={{ fontSize: "11px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
         *Just leave everything blank if you do not want to create a new collection and simply use our integrated L3PB

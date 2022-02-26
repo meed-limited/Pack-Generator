@@ -45,6 +45,7 @@ const PackClaim = () => {
   };
 
   const resetOnClaim = () => {
+    setSelectedPack();
     setPackId();
   };
 
@@ -77,7 +78,13 @@ const PackClaim = () => {
       await contractProcessor.fetch({
         params: ops,
         onSuccess: (response) => {
-          let asset = response.events.Transfer.returnValues;
+          var asset;
+          if (response.events.Transfer.length > 0) {
+            asset = response.events.Transfer[0].returnValues;
+          } else {
+            asset = response.events.Transfer.returnValues;
+          }
+
           let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
           let title = "Pack claimed!";
           let msg = (
@@ -119,7 +126,7 @@ const PackClaim = () => {
             </Button>
 
             <Tooltip
-              title="Pick the L3P pack that you'd like to unpack."
+              title="Pick the pack that you'd like to unpack."
               style={{ position: "absolute", top: "35px", right: "80px" }}
             >
               <QuestionCircleOutlined
@@ -136,7 +143,7 @@ const PackClaim = () => {
           />
 
           {selectedPack && selectedPack.length > 0 && (
-            <div style={styles.displaySelected}>{`Pack Id: ${getEllipsisTxt(packId, 5)}`}</div>
+            <div style={styles.displaySelected}>{`Selected Pack Id: ${getEllipsisTxt(packId, 5)}`}</div>
           )}
         </div>
       </div>

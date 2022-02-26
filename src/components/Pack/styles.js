@@ -33,6 +33,20 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
   },
+  transparentInputSmaller: {
+    textAlign: "center",
+    width: "80%",
+    margin: "auto",
+    color: "white",
+    border: "none", // border or no border ???
+    background: "rgba(240, 248, 255, 0.10)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
+  },
   selectButton: {
     width: "55%",
     fontSize: "12px",
@@ -273,13 +287,13 @@ const styles = {
   // Claim tab
   displaySelected: {
     margin: "auto",
-    marginTop: "50px",
+    marginTop: "20px",
     borderRadius: "8px",
     backgroundColor: "white",
     color: "black",
     opacity: "0.8",
-    fontSize: "13px",
-    width: "40%"
+    fontSize: "15px",
+    width: "60%"
   },
 
   // MARKETPLACE:

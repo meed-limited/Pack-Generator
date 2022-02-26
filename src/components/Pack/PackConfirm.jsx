@@ -166,7 +166,7 @@ const PackConfirm = ({
   ];
 
   const headerText = isBatch
-    ? `You will create ${packNumber} packs, each one containing:`
+    ? `You are about to create ${packNumber} packs, each one containing:`
     : "Your pack will contain the following:";
 
   return (

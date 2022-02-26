@@ -187,3 +187,14 @@ input::placeholder {
 .ant-table {
   background: transparent !important;
 }
+
+.ant-upload.ant-upload-select-picture-card {
+  width: 150px;
+  height: 150px;
+}
+
+.ant-upload-picture-card-wrapper {
+  height: 100%;
+  margin: auto;
+  align-items: center;
+}
