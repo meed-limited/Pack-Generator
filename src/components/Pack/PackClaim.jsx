@@ -7,7 +7,7 @@ import { getExplorer } from "helpers/networks";
 import ModalPackOnly from "./ModalPackOnly";
 import { useContractEvents } from "hooks/useContractEvents";
 import { useContractAddress } from "hooks/useContractAddress";
-import { Button, Input, Tooltip } from "antd";
+import { Button, Tooltip } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./styles";
 
@@ -111,11 +111,11 @@ const PackClaim = () => {
   return (
     <div style={{ height: "auto" }}>
       <div style={styles.transparentContainer}>
-        <label style={{ letterSpacing: "1px" }}>Unpack your Pack</label>
+        <label style={{ letterSpacing: "1px" }}>Select a Pack to reveal his content:</label>
         <div style={{ display: "grid", margin: "auto", width: "70%" }}>
           <div style={{ width: "70%", margin: "auto", position: "relative" }}>
             <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
-              PICK AN NFT
+              PICK A PACK
             </Button>
 
             <Tooltip
@@ -133,15 +133,6 @@ const PackClaim = () => {
             handleNFTOk={handleNFTOk}
             isMultiple={false}
             confirmLoading={confirmLoading}
-          />
-          <p style={{ margin: "auto", marginBottom: "25px", fontSize: "14px" }}>or</p>
-          <label style={styles.label}>ENTER PACK ID</label>
-          <Input
-            style={styles.transparentInput}
-            type='number'
-            min='0'
-            value={packId}
-            onChange={(e) => setPackId(e.target.value)}
           />
 
           {selectedPack && selectedPack.length > 0 && (
