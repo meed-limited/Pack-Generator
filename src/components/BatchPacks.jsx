@@ -101,7 +101,7 @@ const BatchPack = () => {
   };
 
   const handleBatchConfirmOk = () => {
-    handleMultiplePack()
+    handleMultiplePack();
     setIsBatchPackConfirmVisible(false);
   };
 
@@ -175,12 +175,14 @@ const BatchPack = () => {
       }
 
       var pointerNFT = numbers[1];
-      for (let i = 0; i < address.length; i++) {
+      let uniqueAddrs = [ ...new Set(address)]
+      for (let i = 0; i < uniqueAddrs.length; i++) {
         if (currentApproval[pointerNFT] === false) {
-          await approveNFTcontract(address[i], contractAddr, contractProcessor);
+          await approveNFTcontract(uniqueAddrs[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
       }
+
     } catch (error) {
       let title = "Approval error";
       let msg = "Oops, something went wrong while approving some of your pack's assets!";
@@ -211,12 +213,14 @@ const BatchPack = () => {
       }
 
       var pointerNFT = numbers[1];
-      for (let i = 0; i < address.length; i++) {
+      let uniqueAddrs = [ ...new Set(address)];
+      for (let i = 0; i < uniqueAddrs.length; i++) {
         if (currentMultipleApproval[pointerNFT] === false) {
-          await approveNFTcontract(address[i], contractAddr, contractProcessor);
+          await approveNFTcontract(uniqueAddrs[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
       }
+
     } catch (error) {
       let title = "Approval error";
       let msg = "Oops, something went wrong while approving some of your packs's assets!";
@@ -282,7 +286,7 @@ const BatchPack = () => {
         _to: walletAddress,
         _addresses: addressArr,
         _arrayOfNumbers: assetNumbers,
-        _amountOfPacks: packNum,
+        _amountOfPacks: packNum
       }
     };
 
@@ -596,7 +600,7 @@ const BatchPack = () => {
               </div>
             </div>
             <div>
-            <PackConfirm
+              <PackConfirm
                 isVisible={isBatchPackConfirmVisible}
                 onCancel={handleBatchConfirmCancel}
                 onOk={handleBatchConfirmOk}
