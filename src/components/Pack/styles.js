@@ -1,4 +1,5 @@
 import buttonImg from "../../assets/buttonImg.svg";
+import background from "../../assets/background.jpg";
 /*eslint no-dupe-keys: "Off"*/
 
 const GREY = '#CCC';
@@ -104,6 +105,28 @@ const styles = {
     fontSize: "15px",
     color: "white"
   },
+  ConfirmModal: {
+    backgroundImage: `url(${background})`,
+  },
+  transparentContainerConfirmModal: {
+    display: "flex",
+    flexDirection: "row",
+    borderRadius: "20px",
+    background: "rgba(240, 248, 255, 0.10)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "1px solid",
+    textAlign: "center",
+    paddingTop: "30px",
+    paddingBottom: "20px",
+    fontSize: "18px",
+    color: "white",
+    justifyContent: "center"
+  },
   displayAssets: {
     alignSelf: "center",
     maxWidth: "50%",
@@ -154,7 +177,7 @@ const styles = {
     display: "block"
   },
 
-  // Bundle tab
+  // Pack tab
   uploadBox: {
     display: "flex-grid",
     marginTop: "40px",

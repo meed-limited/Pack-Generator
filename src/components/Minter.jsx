@@ -1,7 +1,7 @@
 import { Input } from "antd";
 import React, { useState } from "react";
 //import { useMoralis, useMoralisQuery } from "react-moralis";
-import styles from "./Bundle/styles";
+import styles from "./Pack/styles";
 
 const BatchMinter = () => {
   const [nftName, setNftName] = useState("");

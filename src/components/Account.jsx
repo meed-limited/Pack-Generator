@@ -51,7 +51,7 @@ function Account() {
 
   if (!isAuthenticated) {
     return (
-      <div style={styles.account} onClick={() => authenticate({ signingMessage: "Welcome to Lepricon Bundle!" })}>
+      <div style={styles.account} onClick={() => authenticate({ signingMessage: "Welcome to Lepricon Pack!" })}>
         <p style={styles.text}>Authenticate</p>
       </div>
     );

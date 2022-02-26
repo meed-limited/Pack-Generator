@@ -5,14 +5,13 @@ import Account from "components/Account";
 import Chains from "components/Chains";
 import NFTBalance from "components/NFTBalance";
 import NFTMarketplace from "components/NFTMarketplace";
-import { Menu, Layout, AutoComplete } from "antd";
-//import SearchCollections from "components/SearchCollections";
+import { Menu, Layout } from "antd";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
 import NFTTransactions from "components/NFTTransactions";
-import BatchBundle from "components/BatchBundles";
+import BatchPack from "components/BatchPacks";
 //import BatchMinter from "components/BatchMinter";
 import Home from "components/Home";
 import background from "./assets/background.jpg";
@@ -33,25 +32,18 @@ const styles = {
     overflow: "auto"
   },
   pageContent: {
-    //minHeight: "100vh",
-    //flexDirection: "column",
     justifyContent: "top",
     flex: "auto",
     width: "60%",
     height: "fit-content",
-    //display: "flex",
-
     fontFamily: "Sora, sans-serif",
     margin: "auto",
     marginTop: "75px",
     marginBottom: "100px"
-    //transform: "scale(80%)"
   },
   header: {
     backgroundImage: `url(${headerBackground})`,
-    //backgroundPosition: "center",
     backgroundSize: "cover",
-    //backgroundRepeat: "no-repeat",
     height: "70px",
     position: "fixed",
     zIndex: 1,
@@ -75,7 +67,6 @@ const styles = {
     backgroundImage: `url(${footerBackground})`,
     backgroundSize: "cover",
     height: "70px",
-    //borderTop: "2px solid rgba(0, 0, 0, 0.06)",
     textAlign: "center",
     marginTop: "30px",
     position: "fixed",
@@ -100,7 +91,6 @@ const App = () => {
           <Link to='/Home'>
             <Logo />
           </Link>
-          {/* <SearchCollections setInputValue={setInputValue} /> */}
           <Menu
             mode='horizontal'
             style={{
@@ -122,8 +112,8 @@ const App = () => {
             {/* <Menu.Item key='batchMinter'>
               <NavLink to='/BatchMinter'>Minter</NavLink>
             </Menu.Item> */}
-            <Menu.Item key='batchBundle'>
-              <NavLink to='/Bundles'>Bundles</NavLink>
+            <Menu.Item key='batchPack'>
+              <NavLink to='/Packs'>Packs</NavLink>
             </Menu.Item>
             <Menu.Item key='nftMarket' onClick={() => setInputValue("explore")}>
               <NavLink to='/MarketPlace'>MarketPlace</NavLink>
@@ -150,8 +140,8 @@ const App = () => {
             {/* <Route exact path='/BatchMinter'>
               <BatchMinter />
             </Route> */}
-            <Route exact path='/Bundles'>
-              <BatchBundle />
+            <Route exact path='/Packs'>
+              <BatchPack />
             </Route>
             <Route exact path='/MarketPlace'>
               <NFTMarketplace inputValue={inputValue} setInputValue={setInputValue} />

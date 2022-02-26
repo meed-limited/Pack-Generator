@@ -2,22 +2,23 @@ import React, { useState } from "react";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useWeb3ExecuteFunction, useMoralis } from "react-moralis";
 import cloneDeep from "lodash/cloneDeep";
-import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Bundle/Approval";
-import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Bundle/ArraySorting";
-import AssetPerBundle from "./Bundle/AssetPerBundle";
-import ContractAddrsSelector from "./Bundle/ContractAddrsSelector";
-import ModalNFT from "./Bundle/ModalNFT";
-import Uploader from "./Bundle/Uploader";
-import BundleClaim from "./Bundle/BundleClaim";
+import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./Pack/Approval";
+import { sortSingleArrays, sortMultipleArrays, updateTokenIdsInArray } from "./Pack/ArraySorting";
+import AssetPerPack from "./Pack/AssetPerPack";
+import ContractAddrsSelector from "./Pack/ContractAddrsSelector";
+import ModalNFT from "./Pack/ModalNFT";
+import Uploader from "./Pack/Uploader";
+import PackClaim from "./Pack/PackClaim";
+import PackConfirm from "./Pack/PackConfirm";
 import { openNotification } from "./Notification";
 import { getExplorer, getNativeByChain } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
-import { Button, Input, Switch, Tabs, Tooltip, Modal } from "antd";
+import { Button, Input, Switch, Tabs, Tooltip } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import styles from "./Bundle/styles";
+import styles from "./Pack/styles";
 const { TabPane } = Tabs;
 
-const BatchBundle = () => {
+const BatchPack = () => {
   const contractProcessor = useWeb3ExecuteFunction();
   const {
     walletAddress,
@@ -25,12 +26,15 @@ const BatchBundle = () => {
     assemblyAddressEthereum,
     assemblyAddressPolygon,
     assemblyAddressMumbai,
-    assemblyABI
+    assemblyABI,
+    customAssemblyABI
   } = useMoralisDapp();
   const { Moralis } = useMoralis();
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isSinglePackConfirmVisible, setIsSinglePackConfirmVisible] = useState(false);
+  const [isBatchPackConfirmVisible, setIsBatchPackConfirmVisible] = useState(false);
   const [nameAndSymbol, setNameAndSymbol] = useState([]);
   const assemblyABIJson = JSON.parse(assemblyABI);
+  const customAssemblyABIJson = JSON.parse(customAssemblyABI);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const nativeName = getNativeByChain(chainId);
   const [isJSON, setIsJSON] = useState(false);
@@ -40,8 +44,8 @@ const BatchBundle = () => {
   const [NFTsArr, setNFTsArr] = useState([]);
   const [ERC721Number, setERC721Number] = useState(0);
   const [ERC1155Number, setERC1155Number] = useState(0);
-  const [bundleNumber, setBundleNumber] = useState();
-  const assetPerBundleRef = React.useRef();
+  const [packNumber, setPackNumber] = useState();
+  const assetPerPackRef = React.useRef();
   const assetModalRef = React.useRef();
   const customContractAddrsRef = React.useRef();
   const uploaderRef = React.useRef();
@@ -79,17 +83,30 @@ const BatchBundle = () => {
     setIsModalNFTVisible(false);
   };
 
-  const showModal = () => {
-    setIsModalVisible(true);
+  const showSingleConfirm = () => {
+    setIsSinglePackConfirmVisible(true);
   };
 
-  const handleModalOk = () => {
-    setIsModalVisible(false);
-    handleSingleBundle();
+  const handleSingleConfirmOk = () => {
+    setIsSinglePackConfirmVisible(false);
+    handleSinglePack();
   };
 
-  const handleModalCancel = () => {
-    setIsModalVisible(false);
+  const handleSingleConfirmCancel = () => {
+    setIsSinglePackConfirmVisible(false);
+  };
+
+  const showBatchConfirm = () => {
+    setIsBatchPackConfirmVisible(true);
+  };
+
+  const handleBatchConfirmOk = () => {
+    handleMultiplePack()
+    setIsBatchPackConfirmVisible(false);
+  };
+
+  const handleBatchConfirmCancel = () => {
+    setIsBatchPackConfirmVisible(false);
   };
 
   const getAssetValues = (ethAmt, Erc20) => {
@@ -105,8 +122,8 @@ const BatchBundle = () => {
     setERC1155Number(e.target.value);
   };
 
-  const handleBundleNumber = (e) => {
-    setBundleNumber(e.target.value);
+  const handlePackNumber = (e) => {
+    setPackNumber(e.target.value);
   };
 
   const handleSwitch = () => {
@@ -125,12 +142,12 @@ const BatchBundle = () => {
     setIsJSON(bool);
   };
 
-  async function getSingleBundleArrays() {
+  async function getSinglePackArrays() {
     let data = await sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
     return [data[0], data[1]];
   }
 
-  async function getMultipleBundleArrays(fileContent) {
+  async function getMultiplePackArrays(fileContent) {
     let data = await sortMultipleArrays(ethAmount, selectedTokens, fileContent, ERC721Number, ERC1155Number);
     return [data[0], data[1]];
   }
@@ -144,7 +161,7 @@ const BatchBundle = () => {
       contractAddr,
       contractProcessor
     );
-    
+
     var ERC20add = [];
     var count = 4;
     ERC20add = address.splice(0, numbers[1]);
@@ -166,7 +183,7 @@ const BatchBundle = () => {
       }
     } catch (error) {
       let title = "Approval error";
-      let msg = "Oops, something went wrong while approving some of your bundle's assets!";
+      let msg = "Oops, something went wrong while approving some of your pack's assets!";
       openNotification("error", title, msg);
       console.log(error);
     }
@@ -186,7 +203,7 @@ const BatchBundle = () => {
     ERC20add = address.splice(0, numbers[1]);
     try {
       for (let i = 0; i < ERC20add.length; i++) {
-        let toAllow = (numbers[count] * bundleNumber).toString();
+        let toAllow = (numbers[count] * packNumber).toString();
         if (parseInt(currentMultipleApproval[i]) < parseInt(toAllow)) {
           await approveERC20contract(ERC20add[i], toAllow, contractAddr, contractProcessor);
           count++;
@@ -202,13 +219,13 @@ const BatchBundle = () => {
       }
     } catch (error) {
       let title = "Approval error";
-      let msg = "Oops, something went wrong while approving some of your bundles's assets!";
+      let msg = "Oops, something went wrong while approving some of your packs's assets!";
       openNotification("error", title, msg);
       console.log(error);
     }
   }
 
-  async function singleBundleMint(assetContracts, assetNumbers, contractAddr) {
+  async function singlePackMint(assetContracts, assetNumbers, contractAddr) {
     const ops = {
       contractAddress: contractAddr,
       functionName: "mint",
@@ -226,10 +243,10 @@ const BatchBundle = () => {
       onSuccess: (response) => {
         let asset = response.events.AssemblyAsset.returnValues;
         let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-        let title = "Bundle created!";
+        let title = "Pack created!";
         let msg = (
           <div>
-            Your bundle has been succesfully created!
+            Your pack has been succesfully created!
             <br></br>
             Token id: {getEllipsisTxt(asset.tokenId, 6)}
             <br></br>
@@ -241,30 +258,31 @@ const BatchBundle = () => {
         );
 
         openNotification("success", title, msg);
-        console.log("Bundle created");
+        console.log("Pack created");
       },
       onError: (error) => {
         let title = "Unexpected error";
-        let msg = "Oops, something went wrong while creating your bundle!";
+        let msg = "Oops, something went wrong while creating your pack!";
         openNotification("error", title, msg);
         console.log(error);
       }
     });
   }
 
-  async function multipleBundleMint(assetContracts, assetNumbers, bundleNum, contractAddr) {
+  async function multiplePackMint(assetContracts, assetNumbers, packNum, contractAddr) {
     const addressArr = cloneDeep(assetContracts);
     var txHash;
+
     const ops = {
       contractAddress: contractAddr,
       functionName: "batchMint",
-      abi: assemblyABIJson,
-      msgValue: parseInt(assetNumbers[0]) * parseInt(bundleNum),
+      abi: customAssemblyABIJson,
+      msgValue: parseInt(assetNumbers[0]) * parseInt(packNum),
       params: {
         _to: walletAddress,
         _addresses: addressArr,
         _arrayOfNumbers: assetNumbers,
-        _amountOfBundles: bundleNum
+        _amountOfPacks: packNum,
       }
     };
 
@@ -273,10 +291,10 @@ const BatchBundle = () => {
       onSuccess: (response) => {
         txHash = response.transactionHash;
         let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-        let title = `Bundles minted!`;
+        let title = `Packs minted!`;
         let msg = (
           <div>
-            Congrats!!! {bundleNum} bundles have just been minted and sent to your wallet!
+            Congrats!!! {packNum} packs have just been minted and sent to your wallet!
             <br></br>
             <a href={link} target='_blank' rel='noreferrer noopener'>
               View in explorer: &nbsp;
@@ -285,21 +303,21 @@ const BatchBundle = () => {
           </div>
         );
         openNotification("success", title, msg);
-        console.log(`${bundleNum} bundles have been minted`);
+        console.log(`${packNum} packs have been minted`);
 
-        const CreatedBatchBundle = Moralis.Object.extend("CreatedBatchBundle");
-        const createdBatchBundle = new CreatedBatchBundle();
+        const CreatedBatchPack = Moralis.Object.extend("CreatedBatchPack");
+        const createdBatchPack = new CreatedBatchPack();
 
-        createdBatchBundle.set("address", contractAddr);
-        createdBatchBundle.set("owner", walletAddress);
-        createdBatchBundle.set("amountOfBundle", bundleNumber);
-        createdBatchBundle.set("transaction_hash", txHash);
-        createdBatchBundle.set("collectionName", nameAndSymbol[0] ? nameAndSymbol[0] : "LepriBundle");
-        createdBatchBundle.set("collectionSymbol", nameAndSymbol[1] ? nameAndSymbol[1] : "L3P");
-        createdBatchBundle.set("collectionSupply", nameAndSymbol[2]);
+        createdBatchPack.set("address", contractAddr);
+        createdBatchPack.set("owner", walletAddress);
+        createdBatchPack.set("amountOfPack", packNumber);
+        createdBatchPack.set("transaction_hash", txHash);
+        createdBatchPack.set("collectionName", nameAndSymbol[0] ? nameAndSymbol[0] : "Pack-Generator-NFT");
+        createdBatchPack.set("collectionSymbol", nameAndSymbol[1] ? nameAndSymbol[1] : "PGNFT");
+        createdBatchPack.set("collectionSupply", nameAndSymbol[2]);
 
         try {
-          createdBatchBundle.save();
+          createdBatchPack.save();
         } catch (error) {
           console.log(error);
         }
@@ -313,9 +331,9 @@ const BatchBundle = () => {
     });
   }
 
-  async function handleSingleBundle() {
+  async function handleSinglePack() {
     const contractAddress = getContractAddress();
-    const result = await getSingleBundleArrays();
+    const result = await getSinglePackArrays();
 
     try {
       const addressArr = result[0];
@@ -323,50 +341,50 @@ const BatchBundle = () => {
       const clonedArray = cloneDeep(addressArr);
 
       await singleApproveAll(clonedArray, assetNumbers, contractAddress).then(() => {
-        singleBundleMint(addressArr, assetNumbers, contractAddress);
+        singlePackMint(addressArr, assetNumbers, contractAddress);
       });
     } catch (err) {
-      let title = "Single Bundle error";
-      let msg = "Something went wrong while doing your bundle. Please check your inputs.";
+      let title = "Single Pack error";
+      let msg = "Something went wrong while doing your pack. Please check your inputs.";
       openNotification("error", title, msg);
       console.log(err);
     }
   }
 
-  async function handleMultipleBundle() {
+  async function handleMultiplePack() {
     if (!isJSON) {
       let title = "No CSV submitted";
       let msg =
-        "You haven't submitted any CSV file. Your bundles won't contain any NFTs. Reject all transactions to cancel.";
+        "You haven't submitted any CSV file. Your packs won't contain any NFTs. Reject all transactions to cancel.";
       openNotification("warning", title, msg);
     }
-    const BUNDLE_LIMIT = 200;
+    const PACK_LIMIT = 200;
     const contractAddress = getContractAddress();
     try {
-      const sortedData = await getMultipleBundleArrays(jsonFile);
+      const sortedData = await getMultiplePackArrays(jsonFile);
       const assetsArray = sortedData[0];
       const numbersArray = sortedData[1];
-      const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, bundleNumber, ERC1155Number);
+      const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, packNumber, ERC1155Number);
       console.log(contractNumbersArray);
       /*SMART-CONTRACT CALL:
        **********************/
       const clonedArray = cloneDeep(assetsArray);
       await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
-        let counter = contractNumbersArray.length / BUNDLE_LIMIT;
+        let counter = contractNumbersArray.length / PACK_LIMIT;
         counter = Math.ceil(counter);
 
         for (let i = 0; i < counter; i++) {
-          if (contractNumbersArray.length > BUNDLE_LIMIT) {
-            let temp = contractNumbersArray.splice(0, BUNDLE_LIMIT);
-            multipleBundleMint(assetsArray, temp, BUNDLE_LIMIT, contractAddress);
+          if (contractNumbersArray.length > PACK_LIMIT) {
+            let temp = contractNumbersArray.splice(0, PACK_LIMIT);
+            multiplePackMint(assetsArray, temp, PACK_LIMIT, contractAddress);
           } else {
-            multipleBundleMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
+            multiplePackMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
           }
         }
       });
     } catch (err) {
-      let title = "Batch Bundle error";
-      let msg = "Something went wrong while doing your batch bundles. Please check your inputs.";
+      let title = "Batch Pack error";
+      let msg = "Something went wrong while doing your batch packs. Please check your inputs.";
       openNotification("error", title, msg);
       console.log(err);
     }
@@ -375,11 +393,11 @@ const BatchBundle = () => {
   const onClickReset = () => {
     setERC721Number(0);
     setERC1155Number(0);
-    setBundleNumber();
+    setPackNumber();
     setIsJSON(false);
     setJsonFile();
-    if (assetPerBundleRef && assetPerBundleRef.current) {
-      assetPerBundleRef.current.reset();
+    if (assetPerPackRef && assetPerPackRef.current) {
+      assetPerPackRef.current.reset();
     }
     if (assetModalRef && assetModalRef.current) {
       assetModalRef.current.reset();
@@ -395,19 +413,19 @@ const BatchBundle = () => {
   return (
     <div style={styles.content}>
       <Tabs centered tabBarGutter='50px' onChange={onClickReset} tabBarStyle={styles.tabs} type='line'>
-        <TabPane tab='SINGLE BUNDLE' key='1'>
+        <TabPane tab='SINGLE PACK' key='1'>
           <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
-              <label style={{ letterSpacing: "1px" }}>Prepare your single Bundle</label>
+              <label style={{ letterSpacing: "1px" }}>Prepare your single Pack</label>
 
               <div style={{ display: "grid", gridTemplateColumns: "49% 2% 49%" }}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ position: "relative" }}>
                     <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
-                      PICK SOME NFT
+                      PICK SOME NFTs
                     </Button>
                     <Tooltip
-                      title="Select the NFT(s) that you'd like to add to the bundle."
+                      title="Select the NFT(s) that you'd like to add to the pack."
                       style={{ position: "absolute", top: "35px", right: "80px" }}
                     >
                       <QuestionCircleOutlined
@@ -422,7 +440,8 @@ const BatchBundle = () => {
                       ref={assetModalRef}
                     />
                     <div style={{ color: "white", fontSize: "13px" }}>
-                      <p>NFTs to Bundle:</p>
+                      {NFTsArr && NFTsArr.length > 0 && <p>NFTs to Pack:</p>}
+
                       {NFTsArr &&
                         NFTsArr.length > 0 &&
                         NFTsArr.map((nftItem, key) => (
@@ -455,7 +474,7 @@ const BatchBundle = () => {
                 </div>
                 <div style={styles.transparentContainerInside}>
                   <div>
-                    <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef} />
+                    <AssetPerPack getAssetValues={getAssetValues} ref={assetPerPackRef} />
                   </div>
                 </div>
               </div>
@@ -465,56 +484,26 @@ const BatchBundle = () => {
                 </Button>
               </div>
             </div>
-            <Modal
-              title={"Confirm items to bundle"}
-              visible={isModalVisible}
-              onOk={handleModalOk}
-              onCancel={handleModalCancel}
-            >
-              {NFTsArr && NFTsArr.length > 0 && (
-                <p>
-                  <b>NFTs:</b>
-                </p>
-              )}
-              {NFTsArr &&
-                NFTsArr.length > 0 &&
-                NFTsArr.map((item, key) => (
-                  <p key={key}>
-                    <em>{item.contract_type}</em> {item.name} {item.symbol} ID:{" "}
-                    {item.token_id.length > 8 ? getEllipsisTxt(item.token_id, 4) : item.token_id}
-                    {item.contract_type === "ERC1155" ? " - Amount: " + item.amount : ""}
-                  </p>
-                ))}
-              {ethAmount > 0 && (
-                <p>
-                  <b>ETH amount: </b>
-                  {ethAmount}
-                </p>
-              )}
-              {selectedTokens.length > 0 && (
-                <p>
-                  <b>ERC20 tokens: </b>
-                </p>
-              )}
-              {selectedTokens.length > 0 &&
-                selectedTokens.map((item, key) => (
-                  <p key={key}>
-                  
-                    <em>{item.data.symbol}</em> {item.data.name} : {item.value}
-                  </p>
-                ))}
-            </Modal>
-            <Button shape='round' style={styles.runFunctionButton} onClick={showModal}>
-              BUNDLE
+            <PackConfirm
+              onOk={handleSingleConfirmOk}
+              onCancel={handleSingleConfirmCancel}
+              isVisible={isSinglePackConfirmVisible}
+              NFTsArr={NFTsArr}
+              ethAmount={ethAmount}
+              selectedTokens={selectedTokens}
+              isBatch={false}
+            ></PackConfirm>
+            <Button shape='round' style={styles.runFunctionButton} onClick={showSingleConfirm}>
+              PACK
             </Button>
           </div>
         </TabPane>
-        <TabPane tab='BATCH BUNDLE' key='2'>
+        <TabPane tab='BATCH PACK' key='2'>
           <div style={{ height: "auto" }}>
             <div style={styles.transparentContainer}>
-              <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Bundles</label>
+              <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Packs</label>
               <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                1. Create / Select a bundle collection (Optional)
+                1. Create / Select a pack collection (Optional)
                 <Switch style={{ marginLeft: "30px" }} defaultChecked={false} onChange={handleSwitch} />
               </p>
               {displayFactory && (
@@ -526,16 +515,16 @@ const BatchBundle = () => {
               )}
 
               <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                2. Select the assets to bundle: {nativeName} | TOKENS | NFTs
+                2. Select the assets to pack: {nativeName} | TOKENS | NFTs
               </p>
               <div style={styles.contentGrid}>
                 <div style={styles.transparentContainerInside}>
                   <div style={{ margin: "auto", marginTop: "30px" }}>
                     <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
                     <p style={{ fontSize: "12px" }}>
-                      Number of ERC721 per bundle:
+                      Number of ERC721 per pack:
                       <Tooltip
-                        title='Enter the number of ERC721 NFT that will be contained inside each bundle (up to 50 ERC721 per bundle).'
+                        title='Enter the number of ERC721 NFT that will be contained inside each pack (up to 50 ERC721 per pack).'
                         style={{ position: "absolute", top: "35px", right: "80px" }}
                       >
                         <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -552,9 +541,9 @@ const BatchBundle = () => {
                       />
                     </p>
                     <p style={{ fontSize: "12px", marginTop: "20px" }}>
-                      Number of ERC1155 per bundle:
+                      Number of ERC1155 per pack:
                       <Tooltip
-                        title='Enter the number of ERC1155 NFT that will be contained inside each bundle (up to 50 ERC1155 per bundle).'
+                        title='Enter the number of ERC1155 NFT that will be contained inside each pack (up to 50 ERC1155 per pack).'
                         style={{ position: "absolute", top: "35px", right: "80px" }}
                       >
                         <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -578,14 +567,14 @@ const BatchBundle = () => {
                   <p>OR</p>
                 </div>
                 <div style={styles.transparentContainerInside}>
-                  <AssetPerBundle getAssetValues={getAssetValues} ref={assetPerBundleRef} />
+                  <AssetPerPack getAssetValues={getAssetValues} ref={assetPerPackRef} />
                 </div>
               </div>
               <div style={{ margin: "auto", marginTop: "10px", width: "50%" }}>
                 <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-                  3. Number of bundles to mint:
+                  3. Number of packs to mint:
                   <Tooltip
-                    title='Enter the total amount of bundles to be minted. Up to 200 bundles per Txs, up to 10,000 in total (10,000 = 50 Txs).'
+                    title='Enter the total amount of packs to be minted. Up to 200 packs per Txs, up to 10,000 in total (10,000 = 50 Txs).'
                     style={{ position: "absolute", top: "35px", right: "80px" }}
                   >
                     <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -596,8 +585,8 @@ const BatchBundle = () => {
                   type='number'
                   min='0'
                   max='10000'
-                  value={bundleNumber}
-                  onChange={handleBundleNumber}
+                  value={packNumber}
+                  onChange={handlePackNumber}
                 />
               </div>
               <div style={{ marginTop: "10px" }}>
@@ -607,18 +596,32 @@ const BatchBundle = () => {
               </div>
             </div>
             <div>
-              <Button shape='round' style={styles.runFunctionButton} onClick={handleMultipleBundle}>
-                BATCH BUNDLE
+            <PackConfirm
+                isVisible={isBatchPackConfirmVisible}
+                onCancel={handleBatchConfirmCancel}
+                onOk={handleBatchConfirmOk}
+                NFTsArr={[]}
+                ethAmount={ethAmount}
+                selectedTokens={selectedTokens}
+                packNumber={packNumber}
+                isBatch={true}
+                ERC721Number={ERC721Number}
+                ERC721Name={nameAndSymbol[0]}
+                ERC1155Number={ERC1155Number}
+                csv={jsonFile}
+              ></PackConfirm>
+              <Button shape='round' style={styles.runFunctionButton} onClick={showBatchConfirm}>
+                BATCH PACK
               </Button>
             </div>
           </div>
         </TabPane>
-        <TabPane tab='CLAIM BUNDLE' key='3'>
-          <BundleClaim />
+        <TabPane tab='CLAIM PACK' key='3'>
+          <PackClaim />
         </TabPane>
       </Tabs>
     </div>
   );
 };
 
-export default BatchBundle;
+export default BatchPack;

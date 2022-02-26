@@ -1,11 +1,7 @@
+/*eslint no-dupe-keys: "Off"*/
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { Card, Image, Alert, Modal, Button, Spin } from "antd";
-import { useContractAddress } from "hooks/useContractAddress";
 import { useNFTBalance } from "hooks/useNFTBalance";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
-import { useSynchronousState } from "@toolz/use-synchronous-state";
-import buttonImg from "../../assets/buttonImg.svg";
 const { Meta } = Card;
 
 const styles = {
@@ -15,22 +11,8 @@ const styles = {
     WebkitBoxPack: "start",
     justifyContent: "flex-start",
     margin: "0 auto",
-    maxWidth: "100%",
-    gap: "10px"
+    maxWidth: "1000px"
   },
-  selectButton: {
-    display: "block",
-    width: "185px",
-    height: "50px",
-    margin: "auto",
-    marginBottom: "30px",
-    color: "white",
-    textAlign: "center",
-    backgroundImage: `url(${buttonImg})`,
-    backgroundSize: "cover",
-    border: "2px solid yellow"
-  },
-  /*eslint no-dupe-keys: "Off"*/
   loadMoreButton: {
     margin: "auto",
     borderRadius: "8px",
@@ -45,56 +27,34 @@ const styles = {
   }
 };
 
-const ModalL3PBOnly = forwardRef(
+const ModalNFT = forwardRef(
   ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
-    const { chainId, assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai } = useMoralisDapp();
-    const { NFTBalance, fetchSuccess } = useNFTBalance({});
+    //const { NFTBalance, fetchSuccess } = useNFTBalance();
+    const [selectedNFTs, setSelectedNFTs] = useState([]);
     const [next, setNext] = useState(0);
     const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
     const [allBalances, setAllBalances] = useState([]);
-    const [hasError, setHasError] = useState(false);
-    const contractProcessor = useWeb3ExecuteFunction();
-    const { factoryABI } = useMoralisDapp();
-    const factoryABIJson = JSON.parse(factoryABI);
-    const [selectedNFTs, setSelectedNFTs] = useState([]);
-    const [numberOfCollection, setNumberOfCollection] = useSynchronousState(0);
-    const [customArray, setCustomArray] = useState([]);
-    const [bundleToClaim, setBundleToClaim] = useSynchronousState([]);
-    const { getFactoryAddress } = useContractAddress();
-    const contractAddress = getFactoryAddress();
-    const [customArrayFetched, setCustomArrayFetched] = useState(false);
-    const nftsPerPage = 20;
     const [isNFTloading, setIsNFTLoading] = useState(true);
-
-    const getAssemblyAddress = () => {
-      if (chainId === "0x1") {
-        return assemblyAddressEthereum;
-      } else if (chainId === "0x89") {
-        return assemblyAddressPolygon;
-      } else if (chainId === "0x13881") {
-        return assemblyAddressMumbai;
-      }
-    };
+    const [hasError, setHasError] = useState(false);
+    const nftsPerPage = 20;
 
     useEffect(() => {
-      if (!updatedNFTBalance) {
+      if (updatedNFTBalance && !updatedNFTBalance) {
         setHasError(true);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updatedNFTBalance]);
 
     useEffect(() => {
       if (updatedNFTBalance.start > allBalances.length) {
         setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updatedNFTBalance.NFTBalance]);
 
     useEffect(() => {
       if (allBalances.length > 0) {
         setIsNFTLoading(false);
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [allBalances]);
 
     const handleLoadMore = () => {
@@ -136,84 +96,6 @@ const ModalL3PBOnly = forwardRef(
       handleNFTOk(selectedNFTs);
     };
 
-    const getAmountOfCustomCollection = async () => {
-      const ops = {
-        contractAddress: contractAddress,
-        functionName: "numberOfCustomCollections",
-        abi: factoryABIJson
-      };
-
-      await contractProcessor.fetch({
-        params: ops,
-        onSuccess: (response) => {
-          setNumberOfCollection(response);
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
-    };
-
-    const getArrayOfCollectionAddresses = async (num) => {
-      var collectionAddressArray = [];
-
-      for (let i = 0; i < num; i++) {
-        const ops = {
-          contractAddress: contractAddress,
-          functionName: "customCollectionList",
-          abi: factoryABIJson,
-          params: {
-            "": [i]
-          }
-        };
-
-        await contractProcessor.fetch({
-          params: ops,
-          onSuccess: (response) => {
-            collectionAddressArray[i] = response;
-          },
-          onError: (error) => {
-            console.log(error);
-          }
-        });
-      }
-      collectionAddressArray = collectionAddressArray.concat(
-        getAssemblyAddress()
-      );
-      return collectionAddressArray;
-    };
-
-    const getCustomArray = async () => {
-      await getAmountOfCustomCollection();
-      const num = numberOfCollection();
-      const result = await getArrayOfCollectionAddresses(num);
-      setCustomArray(result);
-      setCustomArrayFetched(true);
-    };
-
-    useEffect(() => {
-      async function waitForArray() {
-        await getCustomArray();
-      }
-      waitForArray();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    const L3PBundleBalance = allBalances.filter((results) => {
-      return results.contract_type.includes("ERC721");
-    });
-
-    useEffect(() => {
-      if (customArray && customArray.length > 0 && customArrayFetched) {
-        setBundleToClaim(
-          L3PBundleBalance.filter((balance) =>
-            customArray.some((arrayItem) => arrayItem.toLowerCase() === balance.token_address.toLowerCase())
-          )
-        );
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [customArray, customArrayFetched]);
-
     useImperativeHandle(ref, () => ({
       reset() {
         setSelectedNFTs([]);
@@ -225,14 +107,13 @@ const ModalL3PBOnly = forwardRef(
       <>
         <Modal
           width={"810px"}
-          title='Select an L3PB bundle to unpack:'
+          title='Select NFTs to pack'
           visible={isModalNFTVisible}
           onOk={handleClickOk}
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
-          afterClose={handleClickOk}
         >
-          {!fetchSuccess && (
+          {!hasError && (
             <div style={{ width: "70%", textAlign: "center", margin: "auto" }}>
               <Alert
                 message='Unable to fetch all NFT metadata... We are searching for a solution, please try again later!'
@@ -243,16 +124,16 @@ const ModalL3PBOnly = forwardRef(
               <div style={{ marginBottom: "10px" }}></div>
             </div>
           )}
-
           <div style={styles.NFTs}>
-            {bundleToClaim() &&
-              bundleToClaim().map((nft, index) => {
+            {allBalances &&
+              allBalances.map((nft, index) => {
                 return (
                   <Card
                     hoverable
+                    size='small'
                     style={{
-                      transform: "scale(0.9)",
                       width: 240,
+                      transform: "scale(0.9)",
                       border: selectedNFTs.some(
                         (nftItem) =>
                           `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
@@ -264,7 +145,7 @@ const ModalL3PBOnly = forwardRef(
                           `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
                       )
                         ? "1"
-                        : "0.7"
+                        : "0.8"
                     }}
                     cover={
                       <Image
@@ -297,4 +178,4 @@ const ModalL3PBOnly = forwardRef(
   }
 );
 
-export default ModalL3PBOnly;
+export default ModalNFT;

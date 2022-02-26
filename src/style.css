@@ -20,11 +20,6 @@
   color: #ffffff !important;
 }
 
-/* .ant-menu {
-  font-size: 14px !important;
-  font-weight: 400 !important;
-} */
-
 .ant-typography {
   color: white;
 }
@@ -36,7 +31,6 @@
 .ant-modal-content {
   overflow: auto;
   border-radius: 1rem;
-  /* background: rgba(255, 255, 255, 0.938); */
   background: rgba(240, 248, 255, 0.1);
   background: -moz-linear-gradient(
     left,
@@ -180,4 +174,16 @@ input::placeholder {
  top: 40%;
  height: 1.4em;
  background-color: white;
+}
+
+.ant-modal-body {
+  background-image: url('assets/background.jpg') !important;
+  -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+}
+
+.ant-table {
+  background: transparent !important;
 }

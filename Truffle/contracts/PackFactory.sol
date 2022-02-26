@@ -5,10 +5,10 @@ import "./CustomAssemblyNFT.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 
 /// @author Pedrojok01
-/// @title An ERC721 factory contract to allow user to create custom bundle collections.
-contract BundleFactory {
+/// @title An ERC721 factory contract to allow user to create custom pack collections.
+contract PackFactory {
 
-    address[] public customCollectionList; // Array containing all created bundle collections addresses
+    address[] public customCollectionList; // Array containing all created pack collections addresses
     mapping(string => address) public getCustomCollection; // Map custom Collection address per token symbol
 
     event NewCustomCollectionCreated(
@@ -24,7 +24,7 @@ contract BundleFactory {
      @param _name The name of the new collection. Can be chosen by user input.
      @param _symbol The symbol of the new collection. Can be chosen by user input.
     */
-    function createCustomCollection(string memory _name, string memory _symbol, uint _maxSupply)
+    function createCustomCollection(string memory _name, string memory _symbol, uint _maxSupply, string memory _baseURIextended)
         public
         returns (address)
     {
@@ -33,7 +33,7 @@ contract BundleFactory {
             "Collection exist already"
         );
 
-        address newCustomCollection = address(new CustomAssemblyNFT(_name, _symbol, _maxSupply, msg.sender)); // call the ERC721 constructor to create a new custom collection
+        address newCustomCollection = address(new CustomAssemblyNFT(_name, _symbol, _maxSupply, _baseURIextended, msg.sender)); // call the ERC721 constructor to create a new custom collection
 
         getCustomCollection[_symbol] = newCustomCollection;
         customCollectionList.push(newCustomCollection);

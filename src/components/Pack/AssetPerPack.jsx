@@ -6,7 +6,7 @@ import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappP
 import ModalERC20 from "./ModalERC20";
 import styles from "./styles";
 
-const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
+const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
   const { chainId } = useMoralisDapp();
   const nativeName = getNativeByChain(chainId);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
@@ -24,7 +24,6 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   const handleAssetOk = (eth, selectedItems) => {
     setEthAmount(eth);
     setSelectedTokens(selectedItems);
-    console.log(selectedItems)
     setIsModalNFTVisible(false);
     getAssetValues(eth, selectedItems);
   };
@@ -40,10 +39,10 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   return (
     <div>
       <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalERC20}>
-        ASSETS TO BUNDLE
+        PICK SOME ASSETS
       </Button>
       <Tooltip
-        title="Select all the assets (Native and/or ERC20) that you'd like to add to the bundle(s)."
+        title="Select all the assets (Native and/or ERC20) that you'd like to add to the pack(s)."
         style={{ position: "absolute", top: "35px", right: "80px" }}
       >
         <QuestionCircleOutlined
@@ -57,14 +56,17 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
       />
 
       <div style={{ color: "white", fontSize: "13px" }}>
-        <p style={{ marginBottom: "10px" }}>{nativeName} to bundle: </p>
+        {ethAmount && ethAmount > 0 && <p style={{ marginBottom: "10px" }}>{nativeName} to pack: </p>}
         {ethAmount && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
             {ethAmount} {nativeName}
           </p>
         )}
         <div>
-          <p style={{ marginTop: "30px", marginBottom: "10px" }}>TOKENS to bundle:</p>
+          {selectedTokens && selectedTokens.length > 0 && (
+            <p style={{ marginTop: "30px", marginBottom: "10px" }}>TOKENS to pack:</p>
+          )}
+
           {selectedTokens &&
             selectedTokens.length > 0 &&
             selectedTokens.map((selectedToken, key) => (
@@ -78,4 +80,4 @@ const AssetPerBundle = forwardRef(({ getAssetValues }, ref) => {
   );
 });
 
-export default AssetPerBundle;
+export default AssetPerPack;

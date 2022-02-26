@@ -22,7 +22,7 @@ export const networkCollections = {
     {
       image:
         "https://lh3.googleusercontent.com/hFCb17umU30lOhDJJj2XiPQgD60pMKpvD-qiflRNiQwpCkzckDXYPYDSdRj8v3ImaejCqUVkCxAbZTqafRy2C9w-qaXYdC8fwFVbRQ=w600",
-      name: "LepriBundle",
+      name: "LepriPack",
       addrs: "0x033b0ACe92C8358601b5232A229f434d97362511",
     },
     {

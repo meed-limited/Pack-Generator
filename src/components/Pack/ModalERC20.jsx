@@ -49,13 +49,13 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
 
   return (
     <Modal
-      title='Select assets to bundle'
+      title='Select assets to pack'
       visible={isModalNFTVisible}
       onOk={handleClickOk}
       confirmLoading={confirmLoading}
       onCancel={handleAssetCancel}
     >
-      <Title level={5}>Amount of {nativeName} to bundle</Title>
+      <Title level={5}>Amount of {nativeName} to pack</Title>
 
       <InputNumber
         style={{ marginBottom: "80px", minWidth: "200px" }}
@@ -66,7 +66,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
         onChange={setNativeAmount}
       ></InputNumber>
 
-      <Title level={5}>Amount of ERC20 Tokens to bundle</Title>
+      <Title level={5}>Amount of ERC20 Tokens to pack</Title>
       <AssetSelector getAsset={onChangeToken} style={{ width: "auto", minWidth: "120px" }} />
       <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
         <Input

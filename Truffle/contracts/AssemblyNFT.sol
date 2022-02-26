@@ -11,6 +11,7 @@ import "./interface/IAssemblyNFT.sol";
 
 contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
     using SafeERC20 for IERC20;
+    using Strings for uint256;
 
     function supportsInterface(bytes4 interfaceId)
         public
@@ -24,20 +25,37 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
             ERC1155Receiver.supportsInterface(interfaceId);
     }
 
-    uint256 public maxBundleSupply;
+    uint256 public maxPackSupply;
     uint256 nonce;
+    string public _baseURIextended;
 
     event BatchAssemblyAsset(
         address indexed firstHolder,
-        uint256 amountOfBundles
+        uint256 amountOfPacks
     );
 
     constructor(
         string memory _name,
         string memory _symbol,
-        uint256 _maxBundleSupply
+        uint256 _maxPackSupply,
+        string memory baseURIextended
     ) ERC721(_name, _symbol) {
-        maxBundleSupply = _maxBundleSupply;
+        maxPackSupply = _maxPackSupply;
+        _baseURIextended = baseURIextended;
+    }
+
+    function tokenURI(uint256 tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
+        require(
+            _exists(tokenId),
+            "ERC721Metadata: URI query for nonexistent token"
+        );
+        return _baseURIextended;
     }
 
     /**
@@ -68,7 +86,7 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         address _to,
         address[] memory _addresses,
         uint256[] memory _numbers
-    ) external payable override returns (uint256 tokenId) {
+    ) external payable returns (uint256 tokenId) {
         require(_to != address(0), "can't mint to address(0)");
         require(msg.value == _numbers[0], "value not match");
         require(
@@ -79,8 +97,8 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
             _addresses.length == _numbers.length - 4 - _numbers[3],
             "numbers length not match"
         );
-        if (maxBundleSupply != 0) {
-            require(nonce < maxBundleSupply, "Max supply reached");
+        if (maxPackSupply != 0) {
+            require(nonce < maxPackSupply, "Max supply reached");
         }
         uint256 pointerA; //points to first erc20 address, if there is any
         uint256 pointerB = 4; //points to first erc20 amount, if there is any
@@ -129,8 +147,8 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
             _addresses.length == _numbers.length - 4 - _numbers[3],
             "numbers length not match"
         );
-        if (maxBundleSupply != 0) {
-            require(nonce < maxBundleSupply, "Max supply reached");
+        if (maxPackSupply != 0) {
+            require(nonce < maxPackSupply, "Max supply reached");
         }
         uint256 pointerA; //points to first erc20 address, if there is any
         uint256 pointerB = 4; //points to first erc20 amount, if there is any
@@ -256,19 +274,19 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         address _to,
         address[] memory _addresses,
         uint256[][] memory _arrayOfNumbers,
-        uint256 _amountOfBundles
+        uint256 _amountOfPacks
     ) external payable {
         require(_to != address(0), "can't mint to address(0)");
-        uint256 totalEth = _arrayOfNumbers[0][0] * _amountOfBundles;
+        uint256 totalEth = _arrayOfNumbers[0][0] * _amountOfPacks;
         require(msg.value == totalEth, "value not match");
-        if (maxBundleSupply != 0) {
-            require(nonce + _amountOfBundles <= maxBundleSupply, "Max supply reached");
+        if (maxPackSupply != 0) {
+            require(nonce + _amountOfPacks <= maxPackSupply, "Max supply reached");
         }
 
-        for (uint256 i = 0; i < _amountOfBundles; i++) {
+        for (uint256 i = 0; i < _amountOfPacks; i++) {
             _batchMint(_to, _addresses, _arrayOfNumbers[i]);
         }
 
-        emit BatchAssemblyAsset(_to, _amountOfBundles);
+        emit BatchAssemblyAsset(_to, _amountOfPacks);
     }
 }

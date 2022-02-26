@@ -11,25 +11,33 @@ export const useQueryMoralisDb = () => {
     return res;
   };
 
-  const getCreatedBundleData = async (owner) => {
-    const CreatedSingleBundle = Moralis.Object.extend("CreatedSingleBundle");
-    const query = new Moralis.Query(CreatedSingleBundle);
+  const getCreatedPackData = async (owner) => {
+    const CreatedSinglePack = Moralis.Object.extend("CreatedSinglePack");
+    const query = new Moralis.Query(CreatedSinglePack);
     query.equalTo("firstHolder", owner);
     const res = await query.find();
     return res;
   };
 
-  const getCreatedBatchBundleData = async (owner) => {
-    const CreatedBatchBundle = Moralis.Object.extend("CreatedBatchBundle");
-    const query = new Moralis.Query(CreatedBatchBundle);
+  const getCreatedBatchPackData = async (owner) => {
+    const CreatedBatchPack = Moralis.Object.extend("CreatedBatchPack");
+    const query = new Moralis.Query(CreatedBatchPack);
     query.equalTo("owner", owner);
     const res = await query.find();
     return res;
   };
 
-  const getClaimedBundleData = async (owner) => {
-    const ClaimedBundle = Moralis.Object.extend("ClaimedBundle");
-    const query = new Moralis.Query(ClaimedBundle);
+  const getClaimedPackData = async (owner) => {
+    const ClaimedPack = Moralis.Object.extend("ClaimedPack");
+    const query = new Moralis.Query(ClaimedPack);
+    query.equalTo("owner", owner);
+    const res = await query.find();
+    return res;
+  };
+
+  const getCustomCollectionData = async (owner) => {
+    const CustomCollections = Moralis.Object.extend("CustomCollections");
+    const query = new Moralis.Query(CustomCollections);
     query.equalTo("owner", owner);
     const res = await query.find();
     return res;
@@ -40,10 +48,18 @@ export const useQueryMoralisDb = () => {
     return parsedData;
   };
 
-  const parseCreatedBundleData = async (res, owner) => {
+  const parseCreatedPackData = async (res, owner) => {
     const parsedData = await JSON.parse(JSON.stringify(res)).filter((item) => item.firstHolder === owner);
     return parsedData;
   };
 
-  return { getCreatedCollectionData, getCreatedBundleData, getCreatedBatchBundleData, getClaimedBundleData, parseData, parseCreatedBundleData };
+  return {
+    getCreatedCollectionData,
+    getCreatedPackData,
+    getCreatedBatchPackData,
+    getClaimedPackData,
+    getCustomCollectionData,
+    parseData,
+    parseCreatedPackData,
+  };
 };

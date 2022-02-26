@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { getNativeByChain } from "helpers/networks";
 import { getCollectionsByChain } from "helpers/collections";
 import { useMoralis, useMoralisQuery } from "react-moralis";
+import SearchCollections from "components/SearchCollections";
 import { Card, Image, Tooltip, Modal, Badge, Alert, Spin } from "antd";
 import { useNFTTokenIds } from "hooks/useNFTTokenIds";
 import { FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
@@ -156,7 +157,11 @@ function NFTMarketplace({ inputValue, setInputValue }) {
 
   return (
     <>
-      <div style={{ marginTop: "100px" }}>
+      <div style={{ marginTop: "40px" }}>
+        <div style={{ textAlign: "center", margin: "auto", paddingBottom: "50px" }}>
+        <SearchCollections  setInputValue={setInputValue} />
+        </div>
+      
         {marketABIJson.noContractDeployed && (
           <>
             <Alert

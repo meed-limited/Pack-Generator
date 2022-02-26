@@ -61,7 +61,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
     <div style={styles.uploadBox}>
       <div>
         <p style={{ fontSize: "13px", letterSpacing: "1px", fontWeight: "300" }}>
-          Import some infos about the NFTs that you wish to bundle.
+          Import some infos about the NFTs that you wish to pack.
           <Tooltip style={{ position: "absolute", top: "35px", right: "80px" }} title={text}>
             <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
           </Tooltip>
