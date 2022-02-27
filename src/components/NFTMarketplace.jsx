@@ -141,6 +141,7 @@ function NFTMarketplace({ inputValue, setInputValue }) {
     await query.get(id).then((obj) => {
       obj.set("sold", true);
       obj.set("owner", walletAddress);
+      obj.set("collectionName", nftToBuy.name);
       obj.save();
     });
   }

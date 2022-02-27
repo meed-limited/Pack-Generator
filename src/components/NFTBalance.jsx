@@ -7,6 +7,7 @@ import { FileSearchOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { getExplorer } from "helpers/networks";
 import { useWeb3ExecuteFunction } from "react-moralis";
+import { getEllipsisTxt } from "helpers/formatters";
 const { Meta } = Card;
 
 const styles = {
@@ -244,7 +245,7 @@ function NFTBalance() {
       </div>
 
       <Modal
-        title={`List ${nftToSend?.name} #${nftToSend?.token_id} For Sale`}
+        title={`List ${nftToSend?.name} #${getEllipsisTxt(nftToSend?.token_id, 6)} For Sale`}
         visible={visible}
         onCancel={() => setVisibility(false)}
         onOk={() => list(nftToSend, price)}

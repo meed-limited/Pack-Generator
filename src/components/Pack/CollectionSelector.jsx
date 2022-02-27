@@ -97,7 +97,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     const file = new Moralis.File("metadata.json", { base64: btoa(JSON.stringify(metadata)) });
     let ipfsURI = await file.saveIPFS();
     setImageURI(ipfsURI);
-    console.log(file.ipfs())
     return file.ipfs();
   };
 
@@ -124,7 +123,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     message.config({
       maxCount: 1
     });
-    message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 20);
+    message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 10);
 
     const metadataURI = await uploadMetadataToIpfs();
     setImageURI(metadataURI);

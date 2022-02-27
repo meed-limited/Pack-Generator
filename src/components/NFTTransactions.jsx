@@ -4,7 +4,7 @@ import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvide
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import { getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
-import { Table, Tag, Space, Spin } from "antd";
+import { Table, Spin } from "antd";
 import moment from "moment";
 import styles from "./Pack/styles";
 import { FileSearchOutlined } from "@ant-design/icons";
@@ -25,23 +25,10 @@ function NFTTransactions() {
   const [fetchCreatedPack, setFetchCreatedPack] = useState();
   const [fetchCreatedBatchPack, setFetchCreatedBatchPack] = useState();
   const [fetchClaimedPack, setFetchClaimedPack] = useState();
-  const queryItemImages = useMoralisQuery("ItemImages");
-  const fetchItemImages = JSON.parse(JSON.stringify(queryItemImages.data, ["nftContract", "tokenId", "name", "image"]));
   const queryMarketItems = useMoralisQuery("CreatedMarketItems");
-  const fetchMarketItems = JSON.parse(
-    JSON.stringify(queryMarketItems.data, [
-      "updatedAt",
-      "price",
-      "nftContract",
-      "itemId",
-      "sold",
-      "tokenId",
-      "seller",
-      "owner"
-    ])
-  )
-    .filter((item) => item.seller === walletAddress || item.owner === walletAddress)
-    .sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : b.updatedAt < a.updatedAt ? -1 : 0));
+  const fetchMarketItems = JSON.parse(JSON.stringify(queryMarketItems.data)).filter(
+    (item) => item.sold === true && (item.seller === walletAddress || item.owner === walletAddress)
+  );
 
   const fetchNameABI = [
     {
@@ -52,16 +39,6 @@ function NFTTransactions() {
       type: "function"
     }
   ];
-
-  function getImage(addrs, id) {
-    const img = fetchItemImages.find((element) => element.nftContract === addrs && element.tokenId === id);
-    return img?.image;
-  }
-
-  function getName(addrs, id) {
-    const nme = fetchItemImages.find((element) => element.nftContract === addrs && element.tokenId === id);
-    return nme?.name;
-  }
 
   const getCollections = async () => {
     const res = await getCustomCollectionData(walletAddress);
@@ -169,61 +146,16 @@ function NFTTransactions() {
       title: "ID / SYMBOL",
       key: "key",
       dataIndex: "item"
-      //   // render: (text, record) => (
-      //   //   <Space size='middle'>
-      //   //     <img src={getImage(record.collection, record.item)} alt='' style={{ width: "40px", borderRadius: "4px" }} />
-      //   //     <span>#{record.item}</span>
-      //   //   </Space>
-      //   // )
     },
-    // {
-    //   title: "Collection",
-    //   key: "collection",
-    //   render: (text, record) => (
-    //     <Space size='middle'>
-    //       <span>{getName(record.collection, record.item)}</span>
-    //     </Space>
-    //   )
-    // },
     {
       title: "COLLECTION",
       key: "key",
       dataIndex: "collection"
-      // render: (collection) => {
-      //   if (collection && collection.length > 0) {
-      //     <a href={`${getExplorer(chainId)}address/${collection[1]}`} target='_blank' rel='noreferrer noopener'>
-      //       {collection[0]}
-      //     </a>;
-      //   }
-      // }
     },
     {
       title: "TYPE",
       key: "key",
       dataIndex: "tags"
-      // render: (tags) => (
-      //   <>
-      //     {tags.map((tag) => {
-      //       let color = "geekblue";
-      //       let status = "BUY";
-      //       if (tag === false) {
-      //         color = "volcano";
-      //         status = "waiting";
-      //       } else if (tag === true) {
-      //         color = "green";
-      //         status = "confirmed";
-      //       }
-      //       if (tag === walletAddress) {
-      //         status = "SELL";
-      //       }
-      //       return (
-      //         <Tag color={color} key={tag}>
-      //           {status.toUpperCase()}
-      //         </Tag>
-      //       );
-      //     })}
-      //   </>
-      // )
     },
     {
       title: "TXs HASH",
@@ -237,15 +169,6 @@ function NFTTransactions() {
       )
     }
   ];
-
-  // const marketData = fetchMarketItems?.map((item, index) => ({
-  //   key: index,
-  //   date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
-  //   collection: item.nftContract,
-  //   item: item.tokenId,
-  //   tags: [item.seller, item.sold]
-  //   //price: item.price / ("1e" + 18)
-  // }));
 
   const collectionData = fetchCollections?.map((item) => ({
     date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
@@ -279,8 +202,16 @@ function NFTTransactions() {
     link: item.transaction_hash
   }));
 
+  const marketData = fetchMarketItems?.map((item) => ({
+    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    collection: item.collectionName,
+    item: getEllipsisTxt(item.tokenId, 4),
+    tags: item.seller === walletAddress ? "Market sell" : "Market buy",
+    link: item.transaction_hash
+  }));
+
   var data = [];
-  data = data.concat(collectionData, createdPackData, createBatchPackData, claimedPackData);
+  data = data.concat(collectionData, createdPackData, createBatchPackData, claimedPackData, marketData);
   data = data.sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
   data = data.map((item, index) => ({
     ...item,
@@ -293,7 +224,13 @@ function NFTTransactions() {
         <div style={styles.table}>
           <Spin
             size='large'
-            spinning={fetchCollections === undefined || fetchCreatedPack === undefined || fetchCreatedBatchPack === undefined || fetchClaimedPack === undefined}
+            spinning={
+              fetchCollections === undefined ||
+              fetchCreatedPack === undefined ||
+              fetchCreatedBatchPack === undefined ||
+              fetchClaimedPack === undefined ||
+              marketData === undefined
+            }
           >
             <Table size='middle' columns={columns} dataSource={data} />
           </Spin>
