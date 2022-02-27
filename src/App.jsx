@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from "react-router-dom";
-import Account from "components/Account";
+import Account from "components/Account/Account";
 import Chains from "components/Chains";
 import NFTBalance from "components/NFTBalance";
 import NFTMarketplace from "components/NFTMarketplace";
