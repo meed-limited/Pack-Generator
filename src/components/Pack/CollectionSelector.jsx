@@ -84,7 +84,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   };
 
   const handleCreate = async () => {
-    createNewContract(name, symbol);
+    createNewContract(name, symbol, supply);
   };
 
   const uploadMetadataToIpfs = async () => {
@@ -97,11 +97,11 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     const file = new Moralis.File("metadata.json", { base64: btoa(JSON.stringify(metadata)) });
     let ipfsURI = await file.saveIPFS();
     setImageURI(ipfsURI);
-
+    console.log(file.ipfs())
     return file.ipfs();
   };
 
-  const uploadMetadataToMoralis = (collectionAddress, metadataURI) => {
+  const uploadMetadataToMoralis = (collectionAddress, supply, metadataURI) => {
     const CustomCollections = Moralis.Object.extend("CustomCollections");
     const customCollections = new CustomCollections();
     customCollections.set("owner", walletAddress);
@@ -120,7 +120,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     }
   };
 
-  const createNewContract = async (name, symbol) => {
+  const createNewContract = async (name, symbol, supply) => {
     message.config({
       maxCount: 1
     });
@@ -165,7 +165,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
         openNotification("success", title, msg);
         console.log("Collection created");
-        uploadMetadataToMoralis(newAddress, metadataURI);
+        uploadMetadataToMoralis(newAddress, supply, metadataURI);
       },
       onError: (error) => {
         let title = "Unexpected error";
@@ -180,7 +180,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   };
 
   useEffect(() => {
-    passNameAndSymbol([name, symbol, parseInt(supply)]);
+    passNameAndSymbol([name, symbol, supply]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, symbol, supply]);
 
@@ -216,6 +216,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     setName();
     setSymbol();
     setDescription();
+    setSupply(0);
     setImageURI();
   };
 

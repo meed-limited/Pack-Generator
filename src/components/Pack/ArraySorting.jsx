@@ -50,7 +50,7 @@ export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
   if (selectedERC20 && selectedERC20.length > 0) {
     for (let i = 0; i < selectedERC20.length; i++) {
       let tmp = (selectedERC20[i].value * ("1e" + 18));
-      assetsNumbers.push(tmp);
+      assetsNumbers.push(tmp.toString());
     }
   }
 

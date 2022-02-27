@@ -58,8 +58,8 @@ const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
       />
 
       <div style={{ color: "white", fontSize: "13px" }}>
-        {ethAmount && ethAmount > 0 && <p style={{ marginBottom: "10px" }}>{nativeName} to pack: </p>}
-        {ethAmount && ethAmount > 0 && (
+        {ethAmount != undefined && ethAmount > 0 && <p style={{ marginBottom: "10px" }}>{nativeName} to pack: </p>}
+        {ethAmount != undefined && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
             {ethAmount} {nativeName}
           </p>

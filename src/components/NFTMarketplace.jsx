@@ -57,7 +57,7 @@ function NFTMarketplace({ inputValue, setInputValue }) {
   const nativeName = getNativeByChain(chainId);
   const marketABIJson = JSON.parse(marketABI);
   const { Moralis } = useMoralis();
-  const queryMarketItems = useMoralisQuery("MarketItems");
+  const queryMarketItems = useMoralisQuery("CreatedMarketItems");
   const fetchMarketItems = JSON.parse(
     JSON.stringify(queryMarketItems.data, [
       "objectId",

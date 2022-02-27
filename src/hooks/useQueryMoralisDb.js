@@ -12,8 +12,8 @@ export const useQueryMoralisDb = () => {
   };
 
   const getCreatedPackData = async (owner) => {
-    const CreatedSinglePack = Moralis.Object.extend("CreatedSinglePack");
-    const query = new Moralis.Query(CreatedSinglePack);
+    const CreatedSinglePacks = Moralis.Object.extend("CreatedSinglePacks");
+    const query = new Moralis.Query(CreatedSinglePacks);
     query.equalTo("firstHolder", owner);
     const res = await query.find();
     return res;
@@ -28,8 +28,8 @@ export const useQueryMoralisDb = () => {
   };
 
   const getClaimedPackData = async (owner) => {
-    const ClaimedPack = Moralis.Object.extend("ClaimedPack");
-    const query = new Moralis.Query(ClaimedPack);
+    const ClaimedPacks = Moralis.Object.extend("ClaimedPacks");
+    const query = new Moralis.Query(ClaimedPacks);
     query.equalTo("owner", owner);
     const res = await query.find();
     return res;

@@ -42,6 +42,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
 
   const handleClickOk = () => {
     handleAssetOk(nativeAmount, ERC20Tokens);
+    // TODO: double check handle values and reset
     setNativeAmount(0);
     setERC20Tokens([]);
     setCurrentToken(currentToken);
@@ -55,7 +56,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
       confirmLoading={confirmLoading}
       onCancel={handleAssetCancel}
     >
-      <Title level={5}>Amount of {nativeName} to pack</Title>
+      <Title level={5} style={{ color: "white" }}>Amount of {nativeName} to pack</Title>
 
       <InputNumber
         style={{ marginBottom: "80px", minWidth: "200px" }}
@@ -66,7 +67,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
         onChange={setNativeAmount}
       ></InputNumber>
 
-      <Title level={5}>Amount of ERC20 Tokens to pack</Title>
+      <Title level={5} style={{ color: "white" }}>Amount of ERC20 Tokens to pack</Title>
       <AssetSelector getAsset={onChangeToken} style={{ width: "auto", minWidth: "120px" }} />
       <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
         <Input
@@ -86,7 +87,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
           Add
         </Button>
       </div>
-      <div style={{ width: "100", display: "flex", flexDirection: "column" }}>
+      <div style={{ width: "100", color: "white", display: "flex", flexDirection: "column" }}>
         {ERC20Tokens &&
           ERC20Tokens.length > 0 &&
           ERC20Tokens.map((token) => (

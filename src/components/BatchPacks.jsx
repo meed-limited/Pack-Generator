@@ -175,14 +175,13 @@ const BatchPack = () => {
       }
 
       var pointerNFT = numbers[1];
-      let uniqueAddrs = [ ...new Set(address)]
+      let uniqueAddrs = [...new Set(address)];
       for (let i = 0; i < uniqueAddrs.length; i++) {
         if (currentApproval[pointerNFT] === false) {
           await approveNFTcontract(uniqueAddrs[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
       }
-
     } catch (error) {
       let title = "Approval error";
       let msg = "Oops, something went wrong while approving some of your pack's assets!";
@@ -213,14 +212,13 @@ const BatchPack = () => {
       }
 
       var pointerNFT = numbers[1];
-      let uniqueAddrs = [ ...new Set(address)];
+      let uniqueAddrs = [...new Set(address)];
       for (let i = 0; i < uniqueAddrs.length; i++) {
         if (currentMultipleApproval[pointerNFT] === false) {
           await approveNFTcontract(uniqueAddrs[i], contractAddr, contractProcessor);
         }
         pointerNFT++;
       }
-
     } catch (error) {
       let title = "Approval error";
       let msg = "Oops, something went wrong while approving some of your packs's assets!";
@@ -230,6 +228,7 @@ const BatchPack = () => {
   }
 
   async function singlePackMint(assetContracts, assetNumbers, contractAddr) {
+    console.log(assetNumbers)
     const ops = {
       contractAddress: contractAddr,
       functionName: "mint",
@@ -369,7 +368,7 @@ const BatchPack = () => {
       const assetsArray = sortedData[0];
       const numbersArray = sortedData[1];
       const contractNumbersArray = await updateTokenIdsInArray(jsonFile, numbersArray, packNumber, ERC1155Number);
-      console.log(contractNumbersArray);
+
       /*SMART-CONTRACT CALL:
        **********************/
       const clonedArray = cloneDeep(assetsArray);
@@ -400,6 +399,8 @@ const BatchPack = () => {
     setPackNumber();
     setIsJSON(false);
     setJsonFile();
+    setEthAmount(0);
+    setSelectedTokens([]);
     if (assetPerPackRef && assetPerPackRef.current) {
       assetPerPackRef.current.reset();
     }

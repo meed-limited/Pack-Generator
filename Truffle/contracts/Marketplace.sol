@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract MarketPlace is ReentrancyGuard {
+contract Marketplace is ReentrancyGuard {
     using Counters for Counters.Counter;
     Counters.Counter private _itemIds;
     Counters.Counter private _itemsSold;
@@ -128,5 +128,3 @@ contract MarketPlace is ReentrancyGuard {
         emit MarketSaleCancelled(itemId, msg.sender);
     }
 }
-
-/// Thanks for inspiration: https://github.com/dabit3/polygon-ethereum-nextjs-marketplace/
