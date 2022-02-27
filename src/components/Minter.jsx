@@ -42,9 +42,9 @@ const BatchMinter = () => {
         <Input style={styles.input2} type='text' value={properties.attribut} onChange={handleChange("attribut")} />
         <Input style={styles.input} type='text' value={properties.value} onChange={handleChange("value")} />
 
-        <div>
+        <>
           {nftName} {nftDescription} {properties.attribut} {properties.value}
-        </div>
+        </>
 
         <label style={styles.label}>Select your files</label>
         <Input type='file' name='myfile'></Input>

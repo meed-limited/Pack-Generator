@@ -249,7 +249,7 @@ const BatchPack = () => {
         let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
         let title = "Pack created!";
         let msg = (
-          <div>
+          <>
             Your pack has been succesfully created!
             <br></br>
             Token id: {getEllipsisTxt(asset.tokenId, 6)}
@@ -258,7 +258,7 @@ const BatchPack = () => {
               View in explorer: &nbsp;
               <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
             </a>
-          </div>
+          </>
         );
 
         openNotification("success", title, msg);
@@ -297,14 +297,14 @@ const BatchPack = () => {
         let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
         let title = `Packs minted!`;
         let msg = (
-          <div>
+          <>
             Congrats!!! {packNum} packs have just been minted and sent to your wallet!
             <br></br>
             <a href={link} target='_blank' rel='noreferrer noopener'>
               View in explorer: &nbsp;
               <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
             </a>
-          </div>
+          </>
         );
         openNotification("success", title, msg);
         console.log(`${packNum} packs have been minted`);
@@ -477,9 +477,9 @@ const BatchPack = () => {
                   <p>OR</p>
                 </div>
                 <div style={styles.transparentContainerInside}>
-                  <div>
+                  <>
                     <AssetPerPack getAssetValues={getAssetValues} ref={assetPerPackRef} />
-                  </div>
+                  </>
                 </div>
               </div>
               <div style={{ marginTop: "10px" }}>
@@ -599,7 +599,7 @@ const BatchPack = () => {
                 </Button>
               </div>
             </div>
-            <div>
+            <>
               <PackConfirm
                 isVisible={isBatchPackConfirmVisible}
                 onCancel={handleBatchConfirmCancel}
@@ -617,7 +617,7 @@ const BatchPack = () => {
               <Button shape='round' style={styles.runFunctionButton} onClick={showBatchConfirm}>
                 BATCH PACK
               </Button>
-            </div>
+            </>
           </div>
         </TabPane>
         <TabPane tab='CLAIM PACK' key='3'>

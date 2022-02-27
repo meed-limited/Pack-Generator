@@ -120,7 +120,7 @@ function Chains() {
   );
 
   return (
-    <div>
+    <>
       <Dropdown overlay={menu} trigger={["click"]}>
         <Button
           key={selected?.key}
@@ -131,7 +131,7 @@ function Chains() {
           <DownOutlined />
         </Button>
       </Dropdown>
-    </div>
+    </>
   );
 }
 

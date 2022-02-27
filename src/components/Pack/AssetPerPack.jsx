@@ -37,10 +37,11 @@ const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
   }));
 
   return (
-    <div>
+    <>
       <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalERC20}>
         PICK SOME ASSETS
       </Button>
+
       <Tooltip
         title="Select all the assets (Native and/or ERC20) that you'd like to add to the pack(s)."
         style={{ position: "absolute", top: "35px", right: "80px" }}
@@ -49,6 +50,7 @@ const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
           style={{ color: "white", paddingLeft: "15px", paddingBottom: "40px", transform: "scale(0.8)" }}
         />
       </Tooltip>
+
       <ModalERC20
         isModalNFTVisible={isModalNFTVisible}
         handleAssetOk={handleAssetOk}
@@ -76,7 +78,7 @@ const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
             ))}
         </div>
       </div>
-    </div>
+    </>
   );
 });
 

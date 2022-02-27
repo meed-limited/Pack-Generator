@@ -88,14 +88,14 @@ const PackClaim = () => {
           let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
           let title = "Pack claimed!";
           let msg = (
-            <div>
+            <>
               Your pack id: "{getEllipsisTxt(asset.tokenId, 6)}" has been succesfully unpacked!
               <br></br>
               <a href={link} target='_blank' rel='noreferrer noopener'>
                 View in explorer: &nbsp;
                 <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
               </a>
-            </div>
+            </>
           );
           openNotification("success", title, msg);
           console.log("pack claimed");

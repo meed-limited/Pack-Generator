@@ -182,7 +182,7 @@ function NFTMarketplace({ inputValue, setInputValue }) {
               />
               <div style={styles.text}>
                 <>
-                  <div>{`${NFTMarketplace[0]?.name}`}</div>
+                  <>{`${NFTMarketplace[0]?.name}`}</>
                   <div
                     style={{
                       fontSize: "15px",

@@ -33,7 +33,7 @@ export default function Assets() {
     <div style={styles.content}>
       {assets.map((item, key) => (
         <div className="row" key={key} style={styles.row}>
-          <div>
+          <>
             {item.logo ? (
               <img
                 src={item.logo}
@@ -55,7 +55,7 @@ export default function Assets() {
                 }}
               />
             )}
-          </div>
+          </>
           <div style={styles.right}>
             <h4 style={styles.text}>{item.symbol}</h4>
             <h4 style={styles.text}>

@@ -151,7 +151,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
         let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
         let title = "Collection created!";
         let msg = (
-          <div>
+          <>
             Your new ERC721 collection has been succesfully created!
             <br></br>
             Your smart-contract address: {newAddress}
@@ -160,7 +160,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
               View in explorer: &nbsp;
               <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
             </a>
-          </div>
+          </>
         );
 
         openNotification("success", title, msg);
@@ -251,6 +251,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
         style={{ width: "70%", marginTop: "20px" }}
         placeholder='Pick an existing collection'
         optionFilterProp='children'
+        optionLabelProp='label'
         onChange={onCollectionChange}
         onDeselect={handleDeselect}
       >
@@ -258,8 +259,8 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
           customCollection.map((collection, i) => (
             <Option
               value={[
-                collection.image,
                 collection.name,
+                collection.image,
                 collection.maxSupply,
                 collection.collectionAddress,
                 collection.description,
@@ -268,8 +269,10 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
               key={i}
             >
               <Space size='middle'>
-                <img src={collection.image} alt='' style={{ width: "30px", height: "30px", borderRadius: "4px" }} />
-                <span>{collection.name}</span>
+                <>
+                  <img src={collection.image} alt='' style={{ width: "30px", height: "30px", borderRadius: "4px" }} />
+                  <span>{collection.name}</span>
+                </>
               </Space>
             </Option>
           ))}
@@ -329,7 +332,9 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
                           title='Optional - Define the limit of NFTs (hard-cap) that can be minted within this collection. Set to "0" for infinite supply.'
                           style={{ position: "absolute", top: "35px", right: "80px" }}
                         >
-                          <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px", transform: "scale(0.8)" }} />
+                          <QuestionCircleOutlined
+                            style={{ color: "white", paddingLeft: "15px", transform: "scale(0.8)" }}
+                          />
                         </Tooltip>
                         <Input style={styles.transparentInputSmaller} value={supply} onChange={handleSupplyChange} />
                       </div>
@@ -349,7 +354,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
                   </div>
                   <div style={{ alignItems: "center", margin: "auto" }}>
                     <Upload
-                      //style={{ width: "256px", height: "256px", }}
                       type='file'
                       maxCount='1'
                       name='image'
@@ -362,14 +366,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
                     </Upload>
                   </div>
                 </div>
-
-                {/* <div style={{ marginTop: "20px", display: "inline-flex" }}>
-                
-
-                <div>
-                  
-                </div>
-              </div> */}
 
                 <div style={{ marginTop: "20px" }}>
                   <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
