@@ -210,9 +210,11 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
   const handleDeselect = () => {
     setIsExistingCollection(false);
+    setDisplayFactory(false);
     setCustomAddress();
     customContractAddrs();
     setName();
+    setSymbol();
     setDescription();
     setImageURI();
   };
@@ -223,13 +225,14 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
   useImperativeHandle(ref, () => ({
     reset() {
+      setIsExistingCollection(false);
+      setDisplayFactory(false);
       setCustomAddress();
       customContractAddrs();
       setName();
       setSymbol();
       setDescription();
       setImageURI();
-      setIsExistingCollection(false);
     }
   }));
 
@@ -280,7 +283,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
           <div style={{ fontSize: "17px", margin: "20px", justifyContent: "center" }}>
             <span>Create a new collection: </span>
             <Tooltip
-              title='Create your very own pack collection from scratch ! Define the name, symbol, supply (0 for infinite) and description. Leave blanck to use our default collection.'
+              title='Create your very own pack collection from scratch ! Define the name, symbol, supply and description. Leave blanck to use our default collection.'
               style={{ position: "absolute", top: "35px", right: "80px" }}
             >
               <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
@@ -322,6 +325,12 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
                       <div style={{ display: "column-flex" }}>
                         <label style={{ fontSize: "11px" }}>Max Supply:</label>
+                        <Tooltip
+                          title='Optional - Define the limit of NFTs (hard-cap) that can be minted within this collection. Set to "0" for infinite supply.'
+                          style={{ position: "absolute", top: "35px", right: "80px" }}
+                        >
+                          <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px", transform: "scale(0.8)" }} />
+                        </Tooltip>
                         <Input style={styles.transparentInputSmaller} value={supply} onChange={handleSupplyChange} />
                       </div>
                     </div>

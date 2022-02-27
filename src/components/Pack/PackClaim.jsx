@@ -118,7 +118,7 @@ const PackClaim = () => {
   return (
     <div style={{ height: "auto" }}>
       <div style={styles.transparentContainer}>
-        <label style={{ letterSpacing: "1px" }}>Select a Pack to reveal his content:</label>
+        <label style={{ letterSpacing: "1px" }}>Select a Pack to reveal its content:</label>
         <div style={{ display: "grid", margin: "auto", width: "70%" }}>
           <div style={{ width: "70%", margin: "auto", position: "relative" }}>
             <Button type='primary' shape='round' style={styles.selectButton} onClick={showModalNFT}>
