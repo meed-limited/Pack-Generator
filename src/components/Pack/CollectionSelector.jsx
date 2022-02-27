@@ -124,7 +124,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     message.config({
       maxCount: 1
     });
-    message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 30);
+    message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 20);
 
     const metadataURI = await uploadMetadataToIpfs();
     setImageURI(metadataURI);
@@ -202,7 +202,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
       setIsExistingCollection(true);
       setCustomAddress(valueArr[3]);
       customContractAddrs(valueArr[3]);
-      setName(valueArr[1]);
+      setName(valueArr[0]);
       setDescription(valueArr[4]);
       setImageURI(valueArr[5]);
     }

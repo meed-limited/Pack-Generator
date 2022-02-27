@@ -317,7 +317,6 @@ const BatchPack = () => {
         createdBatchPack.set("transaction_hash", txHash);
         createdBatchPack.set("collectionName", nameAndSymbol[0] ? nameAndSymbol[0] : "Pack-Generator-NFT");
         createdBatchPack.set("collectionSymbol", nameAndSymbol[1] ? nameAndSymbol[1] : "PGNFT");
-        createdBatchPack.set("collectionSupply", nameAndSymbol[2]);
 
         try {
           createdBatchPack.save();
