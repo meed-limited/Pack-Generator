@@ -35,12 +35,31 @@ export const useQueryMoralisDb = () => {
     return res;
   };
 
+  const getAllCollectionData = async () => {
+    const CustomCollections = Moralis.Object.extend("CustomCollections");
+    const query = new Moralis.Query(CustomCollections);
+    const res = await query.find();
+    return res;
+  };
+
   const getCustomCollectionData = async (owner) => {
     const CustomCollections = Moralis.Object.extend("CustomCollections");
     const query = new Moralis.Query(CustomCollections);
     query.equalTo("owner", owner);
     const res = await query.find();
     return res;
+  };
+
+  const getMarketItemData = async () => {
+    const CreatedMarketItems = Moralis.Object.extend("CreatedMarketItems");
+    const query = new Moralis.Query(CreatedMarketItems);
+    const res = await query.find();
+    return res;
+  };
+
+  const parseAllData = async (res) => {
+    const parsedData = await JSON.parse(JSON.stringify(res));
+    return parsedData;
   };
 
   const parseData = async (res, owner) => {
@@ -58,8 +77,11 @@ export const useQueryMoralisDb = () => {
     getCreatedPackData,
     getCreatedBatchPackData,
     getClaimedPackData,
+    getAllCollectionData,
     getCustomCollectionData,
+    getMarketItemData,
+    parseAllData,
     parseData,
-    parseCreatedPackData,
+    parseCreatedPackData
   };
 };

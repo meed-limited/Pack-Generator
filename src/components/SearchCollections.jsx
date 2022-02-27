@@ -1,11 +1,9 @@
 import { Select } from "antd";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { getCollectionsByChain } from "helpers/collections";
+import { useNetworkCollections } from "hooks/useNetworkCollections";
 
 function SearchCollections({ setInputValue }) {
   const { Option } = Select;
-  const { chainId } = useMoralisDapp();
-  const NFTCollections = getCollectionsByChain(chainId);
+  const { NFTCollections } = useNetworkCollections();
 
   function onChange(value) {
     setInputValue(value);

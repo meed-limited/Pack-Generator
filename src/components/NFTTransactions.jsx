@@ -13,7 +13,6 @@ function NFTTransactions() {
   const contractProcessor = useWeb3ExecuteFunction();
   const { walletAddress, chainId } = useMoralisDapp();
   const {
-    getCreatedCollectionData,
     getCustomCollectionData,
     getCreatedPackData,
     getCreatedBatchPackData,
@@ -28,7 +27,7 @@ function NFTTransactions() {
   const [fetchClaimedPack, setFetchClaimedPack] = useState();
   const queryItemImages = useMoralisQuery("ItemImages");
   const fetchItemImages = JSON.parse(JSON.stringify(queryItemImages.data, ["nftContract", "tokenId", "name", "image"]));
-  const queryMarketItems = useMoralisQuery("MarketItems");
+  const queryMarketItems = useMoralisQuery("CreatedMarketItems");
   const fetchMarketItems = JSON.parse(
     JSON.stringify(queryMarketItems.data, [
       "updatedAt",
