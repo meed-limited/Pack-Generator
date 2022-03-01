@@ -170,24 +170,28 @@ function NFTTransactions() {
     }
   ];
 
-  const collectionData = fetchCollections?.map((item) => ({
-    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
-    collection: item.name,
-    item: item.symbol,
-    tags: "Collection Created",
-    link: item.transaction_hash
-  }));
+  const collectionData = fetchCollections
+    ?.map((item) => ({
+      date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
+      collection: item.name,
+      item: item.symbol,
+      tags: "Collection Created",
+      link: item.transaction_hash
+    }))
+    .sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
 
-  const createdPackData = fetchCreatedPack?.map((item) => ({
-    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
-    collection: item.collectionName,
-    item: getEllipsisTxt(item.tokenId, 4),
-    tags: "Pack Created",
-    link: item.transaction_hash
-  }));
+  const createdPackData = fetchCreatedPack
+    ?.map((item) => ({
+      date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
+      collection: item.collectionName,
+      item: getEllipsisTxt(item.tokenId, 4),
+      tags: "Pack Created",
+      link: item.transaction_hash
+    }))
+    .sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
 
   const createBatchPackData = fetchCreatedBatchPack?.map((item) => ({
-    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
     collection: item.collectionName.slice(0, 15),
     item: item.collectionSymbol,
     tags: `Batch-Pack x${item.amountOfPack} Created`,
@@ -195,7 +199,7 @@ function NFTTransactions() {
   }));
 
   const claimedPackData = fetchClaimedPack?.map((item) => ({
-    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 4),
     tags: "Pack Claimed",
@@ -203,7 +207,7 @@ function NFTTransactions() {
   }));
 
   const marketData = fetchMarketItems?.map((item) => ({
-    date: moment(item.updatedAt).format("DD-MM-YYYY HH:mm"),
+    date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 4),
     tags: item.seller === walletAddress ? "Market sell" : "Market buy",

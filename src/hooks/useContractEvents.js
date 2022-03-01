@@ -12,19 +12,22 @@ export const useContractEvents = () => {
 
   const retrieveCreatedAssemblyEvent = async (_pack, _contractAdd) => {
     const instance = await new web3.eth.Contract(assemblyABIJson, _contractAdd, { from: walletAddress });
+    var pack;
+
+    _pack.length > 0 ? (pack = _pack[0]) : (pack = _pack);
 
     await instance
       .getPastEvents("AssemblyAsset", {
-        filter: { tokenId: _pack[0].token_id },
-        fromBlock: _pack[0].block_number,
-        toBlock: _pack[0].block_number
+        filter: { tokenId: pack.token_id },
+        fromBlock: pack.block_number,
+        toBlock: pack.block_number
       })
       .then((event) => {
         arrayOfAddress = event[0].returnValues.addresses;
         arrayOfNumber = event[0].returnValues.numbers;
         salt = event[0].returnValues.salt;
       });
-      
+
     return [arrayOfAddress, arrayOfNumber, salt];
   };
 

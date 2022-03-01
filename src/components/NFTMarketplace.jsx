@@ -209,14 +209,14 @@ function NFTMarketplace({ inputValue, setInputValue }) {
                     <RightCircleOutlined onClick={() => setInputValue(nft?.addrs)} />
                   </Tooltip>
                 ]}
-                style={{ width: "240px", transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
+                style={{ width: "200px", transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
                 cover={
                   <Image
                     preview={false}
                     src={nft?.image || "error"}
                     fallback={fallbackImg}
                     alt=''
-                    style={{ height: "240px" }}
+                    style={{ height: "200px" }}
                   />
                 }
                 key={index}

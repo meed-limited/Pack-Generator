@@ -32,6 +32,11 @@ export const usePackCollections = () => {
   };
 
   const getArrayOfCollectionAddresses = async (num) => {
+    var assemblyAddress = await getAssemblyAddress();
+    if (!assemblyAddress) {
+        await getAssemblyAddress();
+    }
+    var assemblyAddressLower = assemblyAddress.toLowerCase();
     var collectionAddressArray = [];
 
     for (let i = 0; i < num; i++) {
@@ -47,14 +52,14 @@ export const usePackCollections = () => {
       await contractProcessor.fetch({
         params: ops,
         onSuccess: (response) => {
-          collectionAddressArray[i] = response;
+          collectionAddressArray[i] = response.toLowerCase();
         },
         onError: (error) => {
           console.log(error);
         }
       });
     }
-    collectionAddressArray = collectionAddressArray.concat(getAssemblyAddress());
+    collectionAddressArray = collectionAddressArray.concat(assemblyAddressLower);
     return collectionAddressArray;
   };
 
