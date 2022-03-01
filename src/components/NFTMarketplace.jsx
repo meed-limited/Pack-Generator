@@ -2,15 +2,16 @@ import React, { useEffect, useState } from "react";
 import { getNativeByChain } from "helpers/networks";
 import { useMoralis } from "react-moralis";
 import SearchCollections from "components/SearchCollections";
-import { Card, Image, Tooltip, Modal, Badge, Alert, Spin } from "antd";
+import { Card, Image, Tooltip, Modal, Badge, Alert, Spin, message } from "antd";
 import { useNetworkCollections } from "hooks/useNetworkCollections";
 import { useNFTTokenIds } from "hooks/useNFTTokenIds";
-import { FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { CopyOutlined, FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { getExplorer } from "helpers/networks";
 import { useWeb3ExecuteFunction } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
+import copy from "copy-to-clipboard";
 const { Meta } = Card;
 
 const styles = {
@@ -18,9 +19,10 @@ const styles = {
     display: "flex",
     flexWrap: "wrap",
     WebkitBoxPack: "start",
-    justifyContent: "flex-start",
+    justifyContent: "center",
     margin: "0 auto",
-    maxWidth: "1000px"
+    maxWidth: "1000px",
+    gap: "15px"
   },
   banner: {
     display: "flex",
@@ -32,6 +34,21 @@ const styles = {
     marginBottom: "40px",
     paddingBottom: "20px",
     borderBottom: "solid 1px #e3e3e3"
+  },
+  transparentContainer: {
+    borderRadius: "20px",
+    background: "rgba(240, 248, 255, 0.10)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "1px solid",
+    textAlign: "left",
+    padding: "15px",
+    fontSize: "18px",
+    color: "white"
   },
   logo: {
     height: "115px",
@@ -57,8 +74,10 @@ function NFTMarketplace({ inputValue, setInputValue }) {
   const { getMarketItemData, parseAllData } = useQueryMoralisDb();
   const { NFTCollections } = useNetworkCollections();
   const nativeName = getNativeByChain(chainId);
+  const [detailVisibility, setDetailVisibility] = useState(false);
   const [visible, setVisibility] = useState(false);
   const [nftToBuy, setNftToBuy] = useState(null);
+  const [nftToShow, setNftToShow] = useState();
   const [loading, setLoading] = useState(false);
   const [marketItems, setMarketItems] = useState([]);
   const marketABIJson = JSON.parse(marketABI);
@@ -68,6 +87,11 @@ function NFTMarketplace({ inputValue, setInputValue }) {
     const res = await getMarketItemData();
     const parsedMarketItems = await parseAllData(res);
     setMarketItems(parsedMarketItems);
+  };
+
+  const handleShowDetail = (nft) => {
+    setNftToShow(nft);
+    setDetailVisibility(true);
   };
 
   useEffect(() => {
@@ -154,6 +178,14 @@ function NFTMarketplace({ inputValue, setInputValue }) {
     return result;
   };
 
+  const copyToClipboard = (toCopy) => {
+    copy(toCopy);
+    message.config({
+      maxCount: 1
+    });
+    message.success(`"${toCopy}" copied!`, 2);
+  };
+
   return (
     <>
       <div style={{ marginTop: "40px" }}>
@@ -161,15 +193,6 @@ function NFTMarketplace({ inputValue, setInputValue }) {
           <SearchCollections setInputValue={setInputValue} />
         </div>
 
-        {marketABIJson.noContractDeployed && (
-          <>
-            <Alert
-              message='No Smart Contract Details Provided. Please deploy smart contract and provide address + ABI in the MoralisDappProvider.js file'
-              type='error'
-            />
-            <div style={{ marginBottom: "10px" }}></div>
-          </>
-        )}
         {inputValue !== "explore" && totalNFTs !== undefined && (
           <>
             <div style={styles.banner}>
@@ -204,9 +227,10 @@ function NFTMarketplace({ inputValue, setInputValue }) {
               <Card
                 hoverable
                 size='small'
+                onClick={() => setInputValue(nft?.addrs)}
                 actions={[
                   <Tooltip title='View Collection'>
-                    <RightCircleOutlined onClick={() => setInputValue(nft?.addrs)} />
+                    <RightCircleOutlined />
                   </Tooltip>
                 ]}
                 style={{ width: "200px", transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
@@ -240,20 +264,77 @@ function NFTMarketplace({ inputValue, setInputValue }) {
                     <ShoppingCartOutlined onClick={() => handleBuyClick(nft)} />
                   </Tooltip>
                 ]}
-                style={{ width: "240px", transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
+                style={{ width: "190px", border: "2px solid #e7eaf3" }}
                 cover={
                   <Image
                     preview={false}
                     src={nft.image || "error"}
                     fallback={fallbackImg}
                     alt=''
-                    style={{ height: "240px" }}
+                    style={{ height: "190px" }}
+                    onClick={() => handleShowDetail(nft)}
                   />
                 }
                 key={index}
               >
                 {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
-                <Meta title={nft.name} description={`#${nft.token_id}`} />
+                <Meta title={nft.name} description={`#${getEllipsisTxt(nft.token_id, 6)}`} />
+
+                <Modal
+                  title={"NFT details"}
+                  visible={detailVisibility}
+                  onCancel={() => setDetailVisibility(false)}
+                  footer={false}
+                >
+                  <img
+                    src={`${nftToShow?.image}`}
+                    alt=''
+                    style={{
+                      width: "250px",
+                      height: "250px",
+                      margin: "auto",
+                      borderRadius: "10px",
+                      marginBottom: "15px"
+                    }}
+                  />
+                  <div style={styles.transparentContainer}>
+                    {nftToShow?.name !== null && (
+                      <h3 style={{ textAlign: "center", fontSize: "21px" }}>{nftToShow?.name}</h3>
+                    )}
+                    {nftToShow?.metadata !== null && (
+                      <h4 style={{ textAlign: "center", fontSize: "19px" }}>{nftToShow?.metadata.description}</h4>
+                    )}
+                    <br></br>
+
+                    <div>
+                      NFT Id:{" "}
+                      <div style={{ float: "right" }}>
+                        {nftToShow?.token_id.length > 8 ? getEllipsisTxt(nftToShow?.token_id, 4) : nftToShow?.token_id}{" "}
+                        <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.token_id)} />
+                      </div>
+                    </div>
+                    <div>
+                      Contract Address:
+                      <div style={{ float: "right" }}>
+                        {getEllipsisTxt(nftToShow?.token_address, 6)}{" "}
+                        <CopyOutlined
+                          style={{ color: "blue" }}
+                          onClick={() => copyToClipboard(nftToShow?.token_address)}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      Contract Type:
+                      <div style={{ float: "right" }}>
+                        {nftToShow?.contract_type}{" "}
+                        <CopyOutlined
+                          style={{ color: "blue" }}
+                          onClick={() => copyToClipboard(nftToShow?.contract_type)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </Modal>
               </Card>
             ))}
         </div>
