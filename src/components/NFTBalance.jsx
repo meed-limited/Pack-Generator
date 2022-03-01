@@ -220,7 +220,6 @@ function NFTBalance() {
                 <Tooltip title='List NFT for sale'>
                   <ShoppingCartOutlined onClick={() => handleSellClick(nft)} />
                 </Tooltip>,
-
                 isPack(nft)
               ]}
               style={{ width: 190, border: "2px solid #e7eaf3" }}
@@ -242,7 +241,7 @@ function NFTBalance() {
       </div>
 
       <Modal
-        title={`List ${nftToSend?.name} #${getEllipsisTxt(nftToSend?.token_id, 6)} For Sale`}
+        title={`List "${nftToSend?.name} #${getEllipsisTxt(nftToSend?.token_id, 6)}" For Sale`}
         visible={visible}
         onCancel={() => setVisibility(false)}
         onOk={() => list(nftToSend, price)}
@@ -263,6 +262,7 @@ function NFTBalance() {
             alt=''
             style={{
               width: "250px",
+              height: "250px",
               margin: "auto",
               borderRadius: "10px",
               marginBottom: "15px"
@@ -277,12 +277,10 @@ function NFTBalance() {
         title={`Claim your pack to reveal its content!`}
         visible={claimModalvisible}
         onCancel={() => setClaimModalvisible(false)}
-        onOk={() => list(nftToSend, price)}
-        okText='List'
         footer={false}
       >
         <img
-          src={`${nftToShow?.image}`}
+          src={`${nftToClaim?.image}`}
           alt=''
           style={{
             width: "250px",
