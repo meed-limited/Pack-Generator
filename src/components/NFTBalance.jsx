@@ -67,7 +67,7 @@ function NFTBalance() {
   const [claimModalvisible, setClaimModalvisible] = useState(false);
   const [isClaimSuccess, setIsClaimSuccess] = useState(null);
   const [nftToSend, setNftToSend] = useState(null);
-  const [nftToShow, setNftToShow] = useState(null);
+  const [nftToShow, setNftToShow] = useState();
   const [nftToClaim, setNftToClaim] = useState(null);
   const [price, setPrice] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -301,33 +301,34 @@ function NFTBalance() {
           }}
         />
         <div style={styles.transparentContainer}>
-          <h3 style={{ textAlign: "center", fontSize: "21px" }}>{nftToShow?.name}</h3>
-          <h4 style={{ textAlign: "center", fontSize: "19px" }}>{nftToShow?.metadata.description}</h4>
+        
+          {nftToShow?.name !== null && <h3 style={{ textAlign: "center", fontSize: "21px" }}>{nftToShow?.name}</h3>}
+          {nftToShow?.metadata !== null && (
+            <h4 style={{ textAlign: "center", fontSize: "19px" }}>{nftToShow?.metadata.description}</h4>
+          )}
           <br></br>
 
-          <p>
+          <div>
             NFT Id:{" "}
             <div style={{ float: "right" }}>
               {nftToShow?.token_id.length > 8 ? getEllipsisTxt(nftToShow?.token_id, 4) : nftToShow?.token_id}{" "}
               <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.token_id)} />
             </div>
-          </p>
-          <p>
+          </div>
+          <div>
             Contract Address:
             <div style={{ float: "right" }}>
               {getEllipsisTxt(nftToShow?.token_address, 6)}{" "}
               <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.token_address)} />
             </div>
-          </p>
-          <p>
+          </div>
+          <div>
             Contract Type:
             <div style={{ float: "right" }}>
               {nftToShow?.contract_type}{" "}
               <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.contract_type)} />
             </div>
-          </p>
-
-          <p></p>
+          </div>
         </div>
       </Modal>
 

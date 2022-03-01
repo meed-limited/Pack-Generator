@@ -228,7 +228,6 @@ const BatchPack = () => {
   }
 
   async function singlePackMint(assetContracts, assetNumbers, contractAddr) {
-    console.log(assetNumbers)
     const ops = {
       contractAddress: contractAddr,
       functionName: "mint",
@@ -261,6 +260,7 @@ const BatchPack = () => {
         );
 
         openNotification("success", title, msg);
+        onClickReset();
         console.log("Pack created");
       },
       onError: (error) => {
