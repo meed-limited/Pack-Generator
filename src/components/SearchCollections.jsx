@@ -1,6 +1,5 @@
 import { Select } from "antd";
 import { useNetworkCollections } from "hooks/useNetworkCollections";
-import { useEffect } from "react";
 
 function SearchCollections({ setInputValue }) {
   const { Option } = Select;

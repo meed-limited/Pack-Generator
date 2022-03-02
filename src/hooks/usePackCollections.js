@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
+import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
 import { useContractAddress } from "hooks/useContractAddress";
 import { useSynchronousState } from "@toolz/use-synchronous-state";
 
 export const usePackCollections = () => {
   const contractProcessor = useWeb3ExecuteFunction();
+  const { Moralis } = useMoralis();
+  Moralis.enableWeb3()
   const { getAssemblyAddress, getFactoryAddress } = useContractAddress();
   const factoryAddress = getFactoryAddress();
   const [numberOfCollection, setNumberOfCollection] = useSynchronousState(0);

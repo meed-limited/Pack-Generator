@@ -274,7 +274,7 @@ function NFTBalance() {
       </Modal>
 
       <Modal
-        title={`Claim your pack to reveal its content!`}
+        title={`Claim "${nftToClaim?.name} #${getEllipsisTxt(nftToClaim?.token_id, 6)}" to reveal its content!`}
         visible={claimModalvisible}
         onCancel={() => setClaimModalvisible(false)}
         footer={false}
@@ -294,7 +294,7 @@ function NFTBalance() {
       </Modal>
 
       <Modal
-        title={"NFT details"}
+        title={`"${nftToShow?.name} #${getEllipsisTxt(nftToShow?.token_id, 6)}" Details`}
         visible={detailVisibility}
         onCancel={() => setDetailVisibility(false)}
         footer={false}

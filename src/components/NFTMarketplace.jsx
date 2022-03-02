@@ -1,3 +1,4 @@
+/*eslint no-dupe-keys: "Off"*/
 import React, { useEffect, useState } from "react";
 import { getNativeByChain } from "helpers/networks";
 import { useMoralis } from "react-moralis";

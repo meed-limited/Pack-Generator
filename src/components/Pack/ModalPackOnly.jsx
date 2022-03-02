@@ -178,7 +178,7 @@ const ModalPackOnly = forwardRef(
                       key={index}
                       onClick={() => handleClickCard(nft)}
                     >
-                      <Meta title={nft.name} description={nft.contract_type} />
+                      <Meta style={{ fontSize: "12x" }} title={nft.name} description={nft.contract_type} />
                     </Card>
                   );
                 })}

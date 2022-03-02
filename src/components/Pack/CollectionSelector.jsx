@@ -25,7 +25,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   const [customAddress, setCustomAddress] = useState();
   const [customCollection, setCustomCollection] = useState([]);
   const [imageURL, setImageURL] = useState();
-  const [imageURI, setImageURI] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
   const [displayFactory, setDisplayFactory] = useState(false);
   const { Option } = Select;
@@ -95,8 +94,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     };
 
     const file = new Moralis.File("metadata.json", { base64: btoa(JSON.stringify(metadata)) });
-    let ipfsURI = await file.saveIPFS();
-    setImageURI(ipfsURI);
+    await file.saveIPFS();
     return file.ipfs();
   };
 
@@ -126,7 +124,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 10);
 
     const metadataURI = await uploadMetadataToIpfs();
-    setImageURI(metadataURI);
 
     var contractAddr = getContractAddress();
     var newAddress;
@@ -203,7 +200,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
       customContractAddrs(valueArr[3]);
       setName(valueArr[0]);
       setDescription(valueArr[4]);
-      setImageURI(valueArr[5]);
     }
   }
 
@@ -216,7 +212,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
     setSymbol();
     setDescription();
     setSupply(0);
-    setImageURI();
+    //setImageURI();
   };
 
   const handleSwitch = () => {
@@ -232,7 +228,6 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
       setName();
       setSymbol();
       setDescription();
-      setImageURI();
     }
   }));
 
