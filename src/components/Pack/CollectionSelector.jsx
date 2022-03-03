@@ -95,6 +95,7 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
     const file = new Moralis.File("metadata.json", { base64: btoa(JSON.stringify(metadata)) });
     await file.saveIPFS();
+    console.log(file.ipfs());
     return file.ipfs();
   };
 

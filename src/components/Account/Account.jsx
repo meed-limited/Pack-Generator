@@ -77,7 +77,7 @@ function Account() {
   if (!isAuthenticated || !walletAddress) {
     return (
       <>
-        <div onClick={() => setIsAuthModalVisible(true)}>
+        <div style={styles.account} onClick={() => setIsAuthModalVisible(true)}>
           <p style={styles.text}>Authenticate</p>
         </div>
         <Modal

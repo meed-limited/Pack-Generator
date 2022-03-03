@@ -29,6 +29,7 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
   const { retrieveCreatedAssemblyEvent } = useContractEvents();
   const { getAssemblyAddress } = useContractAddress();
   const assemblyABIJson = JSON.parse(assemblyABI);
+  //const customAssemblyABIJson = JSON.parse(customAssemblyABI);
   const [isClaiming, setIsClaiming] = useState(false);
 
   const getContractAddress = () => {
