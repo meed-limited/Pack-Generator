@@ -1,7 +1,8 @@
-import { useMoralis } from "react-moralis";
-import { useERC20Balance } from "../hooks/useERC20Balance";
+import { useMoralis, useERC20Balances } from "react-moralis";
+//import { useERC20Balance } from "../hooks/useERC20Balance";
 import { Skeleton, Table } from "antd";
 import { getEllipsisTxt } from "../helpers/formatters";
+
 const styles = {
   title: {
     fontSize: "30px",
@@ -9,7 +10,7 @@ const styles = {
   },
 };
 function ERC20Balance(props) {
-  const { assets } = useERC20Balance(props);
+  const { data: assets } = useERC20Balances(props);
   const { Moralis } = useMoralis();
 
   const columns = [
@@ -43,7 +44,7 @@ function ERC20Balance(props) {
       dataIndex: "balance",
       key: "balance",
       render: (value, item) =>
-        parseFloat(Moralis.Units.FromWei(value, item.decimals).toFixed(6)),
+      parseFloat(Moralis?.Units?.FromWei(value, item.decimals)).toFixed(6),
     },
     {
       title: "Address",

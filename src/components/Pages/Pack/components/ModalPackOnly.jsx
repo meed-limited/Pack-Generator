@@ -1,24 +1,38 @@
-/*eslint no-dupe-keys: "Off"*/
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { Card, Image, Modal, Button, Spin } from "antd";
-import { useNFTBalance } from "hooks/useNFTBalance";
+import { Card, Image, Modal, Button, Spin, Alert } from "antd";
+import { useMoralis, useNFTBalances } from "react-moralis";
+import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { usePackCollections } from "hooks/usePackCollections";
+import buttonImg from "../../../../assets/buttonImg.svg";
 const { Meta } = Card;
 
 const styles = {
   scrollArea: {
     overflowY: "scroll",
-    maxHeight: "60vh",
-    justifyContent: "center",
+    maxHeight: "60vh"
   },
   NFTs: {
     display: "flex",
     flexWrap: "wrap",
     WebkitBoxPack: "start",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     margin: "0 auto",
-    maxWidth: "1000px",
+    maxWidth: "100%",
     gap: "15px"
   },
+  selectButton: {
+    display: "block",
+    width: "185px",
+    height: "50px",
+    margin: "auto",
+    marginBottom: "30px",
+    color: "white",
+    textAlign: "center",
+    backgroundImage: `url(${buttonImg})`,
+    backgroundSize: "cover",
+    border: "2px solid yellow"
+  },
+  /*eslint no-dupe-keys: "Off"*/
   loadMoreButton: {
     margin: "auto",
     borderRadius: "8px",
@@ -33,31 +47,42 @@ const styles = {
   }
 };
 
-const ModalNFT = forwardRef(
-  ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, getAsset, isMultiple = false }, ref) => {
+const ModalPackOnly = forwardRef(
+  ({ handleNFTCancel, isModalNFTVisible, handleNFTOk, confirmLoading, isMultiple = false }, ref) => {
+    const NFTsPerPage = 500;
+    const [offset, setOffset] = useState(0);
+    const [fetchedNFTs, setFetchedNFTs] = useState([]);
+    const { chainId } = useMoralis();
+    const { packCollections } = usePackCollections();
     const [selectedNFTs, setSelectedNFTs] = useState([]);
-    const [next, setNext] = useState(0);
-    const updatedNFTBalance = useNFTBalance({ limit: 20, offset: next });
-    const [allBalances, setAllBalances] = useState([]);
+    const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTsPerPage });
+    const { verifyMetadata } = useVerifyMetadata();
     const [isNFTloading, setIsNFTLoading] = useState(true);
-    const nftsPerPage = 20;
+    const [packToClaim, setPackToClaim] = useState([]);
 
-    useEffect(() => {
-      if (updatedNFTBalance.start > allBalances.length) {
-        setAllBalances(allBalances.concat(updatedNFTBalance.NFTBalance));
-      }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updatedNFTBalance.NFTBalance]);
-
-    useEffect(() => {
-      if (allBalances.length > 0) {
+    const addFetchedNFTs = () => {
+      if (NFTBalances) {
+        let nextFetchedNFTs = fetchedNFTs;
+        nextFetchedNFTs.push(...NFTBalances.result);
+        setFetchedNFTs(nextFetchedNFTs);
         setIsNFTLoading(false);
       }
-    }, [allBalances]);
+    };
 
-    const handleLoadMore = () => {
+    useEffect(() => {
+      const cleanupFunction = () => {
+        if (!isLoading && !isFetching) {
+          addFetchedNFTs();
+        }
+      };
+      cleanupFunction();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoading, isFetching]);
+
+    const handleLoadMore = async () => {
       setIsNFTLoading(true);
-      setNext(next + nftsPerPage);
+      await getNFTBalances({ params: { chainId: chainId, limit: NFTsPerPage, offset: offset + NFTsPerPage } });
+      setOffset(offset + NFTsPerPage);
     };
 
     const handleClickCard = (nftItem) => {
@@ -94,6 +119,21 @@ const ModalNFT = forwardRef(
       handleNFTOk(selectedNFTs);
     };
 
+    const packOnlyBalance = fetchedNFTs?.filter((results) => {
+      return results.contract_type.includes("ERC721");
+    });
+
+    useEffect(() => {
+      if (packCollections && packCollections.length > 0) {
+        setPackToClaim(
+          packOnlyBalance?.filter((balance) =>
+            packCollections?.some((arrayItem) => arrayItem.toLowerCase() === balance.token_address.toLowerCase())
+          )
+        );
+      }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [packCollections, packOnlyBalance?.length]);
+
     useImperativeHandle(ref, () => ({
       reset() {
         setSelectedNFTs([]);
@@ -105,20 +145,23 @@ const ModalNFT = forwardRef(
       <>
         <Modal
           width={"900px"}
-          title='Select NFTs to pack'
+          title='Select a pack to unpack:'
           visible={isModalNFTVisible}
           onOk={handleClickOk}
           confirmLoading={confirmLoading}
           onCancel={handleNFTCancel}
+          afterClose={handleClickOk}
         >
           <div style={styles.scrollArea}>
             <div style={styles.NFTs}>
-              {allBalances &&
-                allBalances.map((nft, index) => {
+              {packToClaim &&
+                packToClaim?.map((nft, index) => {
+                  nft = verifyMetadata(nft);
                   return (
                     <Card
-                      hoverable
                       size='small'
+                      onClick={() => handleClickCard(nft)}
+                      hoverable
                       style={{
                         width: 190,
                         border: selectedNFTs.some(
@@ -132,7 +175,7 @@ const ModalNFT = forwardRef(
                             `${nftItem.token_id}-${nftItem.token_address}` === `${nft.token_id}-${nft.token_address}`
                         )
                           ? "1"
-                          : "0.8"
+                          : "0.7"
                       }}
                       cover={
                         <Image
@@ -144,19 +187,21 @@ const ModalNFT = forwardRef(
                         />
                       }
                       key={index}
-                      onClick={() => handleClickCard(nft)}
                     >
-                      <Meta title={nft.name} description={nft.contract_type} />
+                      <Meta style={{ fontSize: "12x" }} title={nft.name} description={nft.contract_type} />
                     </Card>
                   );
                 })}
             </div>
             <div style={{ margin: "20px auto", textAlign: "center" }}>
-              {isNFTloading && <Spin size='large'></Spin>}
-              {!isNFTloading && allBalances.length > 19 && (
+              {!(fetchedNFTs?.length >= NFTBalances?.total) && isNFTloading && <Spin size='large'></Spin>}
+              {!(fetchedNFTs?.length >= NFTBalances?.total) && !isNFTloading && (
                 <Button style={styles.loadMoreButton} onClick={handleLoadMore}>
                   ... Load more
                 </Button>
+              )}
+              {fetchedNFTs?.length >= NFTBalances?.total && (
+                <Alert style={{ width: "250px", margin: "auto" }} message={"All NFTs loaded"} type='info' showIcon />
               )}
             </div>
           </div>
@@ -166,4 +211,4 @@ const ModalNFT = forwardRef(
   }
 );
 
-export default ModalNFT;
+export default ModalPackOnly;

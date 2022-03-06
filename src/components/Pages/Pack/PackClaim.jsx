@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
+import { useDapp } from "dappProvider/DappProvider";
+import { Moralis } from "moralis";
+import { useMoralis } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
-import { openNotification } from "../Notification";
+import { openNotification } from "../../../helpers/notifications";
 import { getExplorer } from "helpers/networks";
-import ModalPackOnly from "./ModalPackOnly";
+import ModalPackOnly from "./components/ModalPackOnly";
 import { useContractEvents } from "hooks/useContractEvents";
 import { useContractAddress } from "hooks/useContractAddress";
 import { Button, Tooltip } from "antd";
@@ -12,12 +13,12 @@ import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./styles";
 
 const PackClaim = () => {
-  const { walletAddress, chainId, assemblyABI } = useMoralisDapp();
+  const { chainId, account } = useMoralis();
+  const { assemblyABI } = useDapp();
   const { retrieveCreatedAssemblyEvent } = useContractEvents();
   const { getAssemblyAddress } = useContractAddress();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const contractProcessor = useWeb3ExecuteFunction();
   const assemblyABIJson = JSON.parse(assemblyABI);
   const [selectedPack, setSelectedPack] = useState({});
   const [packId, setPackId] = useState();
@@ -61,57 +62,55 @@ const PackClaim = () => {
   const claimPack = async () => {
     const contractAddress = getContractAddress();
     const data = await retrieveCreatedAssemblyEvent(selectedPack, contractAddress);
+
+    const sendOptions = {
+      contractAddress: contractAddress,
+      functionName: "burn",
+      abi: assemblyABIJson,
+      params: {
+        _to: account,
+        _tokenId: selectedPack[0].token_id,
+        _salt: data[2],
+        _addresses: data[0],
+        _numbers: data[1]
+      }
+    };
+
     try {
-      const ops = {
-        contractAddress: contractAddress,
-        functionName: "burn",
-        abi: assemblyABIJson,
-        params: {
-          _to: walletAddress,
-          _tokenId: selectedPack[0].token_id,
-          _salt: data[2],
-          _addresses: data[0],
-          _numbers: data[1]
-        }
-      };
+      const transaction = await Moralis.executeFunction(sendOptions);
+      const receipt = await transaction.wait(2);
 
-      await contractProcessor.fetch({
-        params: ops,
-        onSuccess: (response) => {
-          var asset;
-          if (response.events.Transfer.length > 0) {
-            asset = response.events.Transfer[0].returnValues;
-          } else {
-            asset = response.events.Transfer.returnValues;
-          }
+      let link = `${getExplorer(chainId)}tx/${receipt.transactionHash}`;
+      let title = "Pack claimed!";
+      let msg = (
+        <>
+          Your pack has been succesfully unpacked!
+          <br></br>
+          <a href={link} target='_blank' rel='noreferrer noopener'>
+            View in explorer: &nbsp;
+            <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
+          </a>
+        </>
+      );
+      openNotification("success", title, msg);
+      resetOnClaim();
+      console.log("pack claimed");
 
-          let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-          let title = "Pack claimed!";
-          let msg = (
-            <>
-              Your pack id: "{getEllipsisTxt(asset.tokenId, 6)}" has been succesfully unpacked!
-              <br></br>
-              <a href={link} target='_blank' rel='noreferrer noopener'>
-                View in explorer: &nbsp;
-                <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
-              </a>
-            </>
-          );
-          openNotification("success", title, msg);
-          console.log("pack claimed");
-          resetOnClaim();
-        },
-        onError: (error) => {
-          let title = "Unexpected error";
-          let msg = "Oops, something went wrong while unpacking your pack!";
-          openNotification("error", title, msg);
-          console.log(error);
-        }
-      });
+      const ClaimedPacks = Moralis.Object.extend("ClaimedPacks");
+      const claimedPacks = new ClaimedPacks();
+      claimedPacks.set("address", contractAddress);
+      claimedPacks.set("owner", account);
+      claimedPacks.set("tokenId", selectedPack[0].token_id);
+      claimedPacks.set("transaction_hash", receipt.transactionHash);
+      claimedPacks.set("addresses", data[0]);
+      claimedPacks.set("numbers", data[1]);
+      claimedPacks.save();
+
     } catch (error) {
-      let title = "Pack non-claimable";
-      let msg = "Oops, you can't claim this pack at this time. It is either unconfirmed yet, or already claimed.";
+      let title = "Unexpected error";
+      let msg = "Oops, something went wrong while unpacking your pack!";
       openNotification("error", title, msg);
+      console.log(error);
     }
   };
 
@@ -142,7 +141,7 @@ const PackClaim = () => {
             confirmLoading={confirmLoading}
           />
 
-          {selectedPack && selectedPack.length > 0 && (
+          {selectedPack && selectedPack?.length > 0 && (
             <div style={styles.displaySelected}>{`Selected Pack Id: ${getEllipsisTxt(packId, 5)}`}</div>
           )}
         </div>

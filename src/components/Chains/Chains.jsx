@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import useChain from "hooks/useChain";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { PolygonLogo, ETHLogo, LeprichainLogo } from "./Logos";
+import { useMoralis } from "react-moralis";
 //import { AvaxLogo, PolygonLogo, BSCLogo, ETHLogo } from "./Logos";
 
 /*eslint no-dupe-keys: "Off"*/
@@ -15,25 +15,28 @@ const styles = {
     fontWeight: "500",
     fontFamily: "Roboto, sans-serif",
     fontSize: "14px",
-    color:"white",
+    color: "white",
     padding: "0 10px",
     backgroundColor: "transparent",
     background: "rgba(240, 248, 255, 0.10)",
-    background: "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background: "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background: "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
   },
   button: {
     border: "0",
-    borderRadius: "12px",
-  },
+    borderRadius: "12px"
+  }
 };
 
-const menuItems = [
+export const menuItems = [
   {
     key: "0x1",
     value: "Ethereum",
-    icon: <ETHLogo />,
+    icon: <ETHLogo />
   },
   // {
   //   key: "0x539",
@@ -73,13 +76,13 @@ const menuItems = [
   {
     key: "0x89",
     value: "Polygon",
-    icon: <PolygonLogo />,
+    icon: <PolygonLogo />
   },
   {
     key: "0x13881",
     value: "Mumbai",
-    icon: <PolygonLogo />,
-  },
+    icon: <PolygonLogo />
+  }
   // {
   //   key: "0xa86a",
   //   value: "Avalanche",
@@ -94,7 +97,7 @@ const menuItems = [
 
 function Chains() {
   const { switchNetwork } = useChain();
-  const { chainId } = useMoralisDapp();
+  const { chainId } = useMoralis();
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
@@ -116,17 +119,13 @@ function Chains() {
           <span style={{ marginLeft: "5px" }}>{item.value}</span>
         </Menu.Item>
       ))}
-    </Menu> 
+    </Menu>
   );
 
   return (
     <>
       <Dropdown overlay={menu} trigger={["click"]}>
-        <Button
-          key={selected?.key}
-          icon={selected?.icon}
-          style={{ ...styles.button, ...styles.item }}
-        >
+        <Button key={selected?.key} icon={selected?.icon} style={{ ...styles.button, ...styles.item }}>
           <span style={{ marginLeft: "5px" }}>{selected?.value}</span>
           <DownOutlined />
         </Button>

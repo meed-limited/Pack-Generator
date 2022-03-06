@@ -2,8 +2,8 @@ import React, { forwardRef, useImperativeHandle, useState } from "react";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Tooltip } from "antd";
 import { useCSVReader, lightenDarkenColor, formatFileSize } from "react-papaparse";
-import styles from "./styles";
-import { openNotification } from "components/Notification";
+import styles from "../styles";
+import { openNotification } from "helpers/notifications";
 
 const DEFAULT_REMOVE_HOVER_COLOR = "#A01919";
 const REMOVE_HOVER_COLOR_LIGHT = lightenDarkenColor(DEFAULT_REMOVE_HOVER_COLOR, 40);
@@ -19,7 +19,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
     try {
       for (let i = 1; i < file.data.length; i++) {
         object[counter] = {
-          token_id: parseInt(file.data[i][0]),
+          token_id: file.data[i][0],
           amount: parseInt(file.data[i][1]),
           contract_type: file.data[i][2],
           token_address: file.data[i][3].toLowerCase()

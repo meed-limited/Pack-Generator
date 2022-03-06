@@ -1,8 +1,9 @@
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+import { useDapp } from "dappProvider/DappProvider";
+import { useMoralis } from "react-moralis";
 
 export const useContractAddress = () => {
+  const { chainId } = useMoralis();
   const {
-    chainId,
     assemblyAddressEthereum,
     assemblyAddressPolygon,
     assemblyAddressMumbai,
@@ -12,7 +13,7 @@ export const useContractAddress = () => {
     factoryAddressEthereum,
     factoryAddressPolygon,
     factoryAddressMumbai
-  } = useMoralisDapp();
+  } = useDapp();
 
   const getAssemblyAddress = () => {
     if (chainId === "0x1") {

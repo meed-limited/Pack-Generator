@@ -1,4 +1,3 @@
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useMoralis } from "react-moralis";
 import { getEllipsisTxt } from "helpers/formatters";
 import Blockie from "../Blockie";
@@ -41,14 +40,14 @@ const styles = {
     marginLeft: "auto",
     marginRight: "auto",
     padding: "20px 5px",
-    cursor: "pointer",
+    cursor: "pointer"
   },
   icon: {
     alignSelf: "center",
     fill: "rgb(40, 13, 95)",
     flexShrink: "0",
     marginBottom: "8px",
-    height: "30px",
+    height: "30px"
   },
   text: {
     color: "white"
@@ -68,13 +67,11 @@ const styles = {
 };
 
 function Account() {
-  const { authenticate, isAuthenticated, logout } = useMoralis();
-  const { walletAddress, chainId } = useMoralisDapp();
+  const { authenticate, isAuthenticated, account, chainId, logout } = useMoralis();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const [isAuthModalVisible, setIsAuthModalVisible] = useState(false);
 
-  if (!isAuthenticated || !walletAddress) {
+  if (!isAuthenticated || !account) {
     return (
       <>
         <div style={styles.account} onClick={() => setIsAuthModalVisible(true)}>
@@ -87,10 +84,10 @@ function Account() {
           bodyStyle={{
             padding: "15px",
             fontSize: "17px",
-            fontWeight: "500",
+            fontWeight: "500"
           }}
           style={{ fontSize: "16px", fontWeight: "500" }}
-          width="340px"
+          width='340px'
         >
           <div
             style={{
@@ -98,7 +95,7 @@ function Account() {
               display: "flex",
               justifyContent: "center",
               fontWeight: "700",
-              fontSize: "20px",
+              fontSize: "20px"
             }}
           >
             Connect Wallet
@@ -110,7 +107,10 @@ function Account() {
                 key={key}
                 onClick={async () => {
                   try {
-                    await authenticate({ provider: connectorId, signingMessage: "Welcome to Lepricon Pack-Generator!" });
+                    await authenticate({
+                      provider: connectorId,
+                      signingMessage: "Welcome to Lepricon Pack-Generator!"
+                    });
                     window.localStorage.setItem("connectorId", connectorId);
                     setIsAuthModalVisible(false);
                   } catch (e) {
@@ -131,7 +131,7 @@ function Account() {
   return (
     <>
       <div style={styles.account} onClick={() => setIsModalVisible(true)}>
-        <p style={{ marginRight: "5px", ...styles.text }}>{getEllipsisTxt(walletAddress, 6)}</p>
+        <p style={{ marginRight: "5px", ...styles.text }}>{getEllipsisTxt(account, 6)}</p>
         <Blockie currentWallet scale={3} />
       </div>
       <Modal
@@ -157,7 +157,7 @@ function Account() {
           <Address avatar='left' size={6} copyable style={{ fontSize: "20px" }} />
           <div style={{ marginTop: "10px", padding: "0 10px" }}>
             <a
-              href={`${getExplorer(chainId)}/address/${walletAddress}`}
+              href={`${getExplorer(chainId)}/address/${account}`}
               target='_blank'
               rel='noreferrer'
               style={{ color: "#dbff18" }}
@@ -169,8 +169,9 @@ function Account() {
         </Card>
         <Button
           style={styles.disconnectButton}
-          onClick={() => {
-            logout();
+          onClick={async () => {
+            await logout();
+            window.localStorage.removeItem("connectorId");
             setIsModalVisible(false);
           }}
         >

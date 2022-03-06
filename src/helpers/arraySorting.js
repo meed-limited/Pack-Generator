@@ -103,13 +103,14 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
   if (importedJson && importedJson.length > 0) {
     try {
       // Set ERC721 addresses (per pack)
-      if (numOfErc721 > 0) {
-        for (let i = 0; i < numOfNft; i++) {
+      if (numOfErc721 > 0) { //1
+        for (let i = 0; i < numOfNft; i++) {  //2x i=0 && i=1
           if (importedJson[i].contract_type === "ERC721") {
             assetsAddresses.push(importedJson[i].token_address);
           }
         }
       }
+
       // Set ERC1155 addresses (per pack)
       if (numOfErc1155 > 0) {
         for (let i = 0; i < numOfNft; i++) {
@@ -125,7 +126,9 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
           assetsNumbers.push(tmp);
         }
       }
-      // Set ERC721 ids (per pack)
+
+
+      // Set ERC721 ids
       if (numOfErc721 > 0) {
         for (let i = 0; i < numOfNft; i++) {
           if (importedJson[i].contract_type === "ERC721") {
@@ -134,13 +137,13 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
           }
         }
       }
-      // Set ERC1155 ids (per pack)
+      // Set ERC1155 ids
       if (numOfErc1155 > 0) {
         for (let i = 0; i < numOfNft; i++) {
           if (importedJson[i].contract_type === "ERC1155") {
             let tmpId = importedJson[i].token_id;
             let tmpAmt = importedJson[i].amount;
-            assetsNumbers.push(tmpId);
+            assetsNumbers.push(parseInt(tmpId));
             amountOf1155.push(tmpAmt);
           }
         }

@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
-import { useWeb3ExecuteFunction } from "react-moralis";
-import { getNativeByChain } from "../../helpers/networks";
-import { getEllipsisTxt } from "../../helpers/formatters";
+import { useMoralis, useNativeBalance } from "react-moralis";
+import { getContractName } from "../../../../helpers/generalContractCall";
+import { getEllipsisTxt } from "../../../../helpers/formatters";
 import { Modal, Table } from "antd";
-import styles from "./styles";
+import styles from "../styles";
 
 const PackConfirm = ({
   isVisible,
@@ -13,15 +12,14 @@ const PackConfirm = ({
   NFTsArr,
   ethAmount,
   selectedTokens,
-  isBatch,
   packNumber,
+  isBatch,
   ERC1155Number,
   ERC721Number,
   csv
 }) => {
-  const { chainId } = useMoralisDapp();
-  const nativeName = getNativeByChain(chainId);
-  const contractProcessor = useWeb3ExecuteFunction();
+  const { chainId } = useMoralis();
+  const { nativeToken } = useNativeBalance(chainId);
   const [name, setName] = useState();
 
   const singleNFTdata =
@@ -39,43 +37,17 @@ const PackConfirm = ({
       amount: item.contract_type === "ERC1155" ? item.amount : "-"
     }));
 
-  const getContractName = async (address) => {
-    console.log(address);
-    const fetchNameABI = [
-      {
-        inputs: [],
-        name: "name",
-        outputs: [{ internalType: "string", name: "_name", type: "string" }],
-        stateMutability: "view",
-        type: "function"
-      }
-    ];
-
-    const ops = {
-      contractAddress: address,
-      functionName: "name",
-      abi: fetchNameABI,
-      params: {}
-    };
-
-    await contractProcessor.fetch({
-      params: ops,
-      onSuccess: async (response) => {
-        setName(response);
-      },
-      onError: (error) => {
-        console.log(error);
-      }
-    });
-  };
-
   useEffect(() => {
-    if (csv?.filter((item) => item.contract_type === "ERC721").length > 0) {
-      console.log(csv.filter((item) => item.contract_type === "ERC721")[0]);
-      const contract_address = csv.filter((item) => item.contract_type === "ERC721")[0].token_address;
-      console.log("addr", contract_address);
-      getContractName(contract_address);
+    const cleanupFunction = () => {
+      if (csv && csv?.filter((item) => item.contract_type === "ERC721").length > 0) {
+        const contract_address = csv.filter((item) => item.contract_type === "ERC721")[0].token_address;
+        getContractName(contract_address).then(res => {
+          setName(res);
+        });
+        
+      }
     }
+    cleanupFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csv]);
 
@@ -145,7 +117,7 @@ const PackConfirm = ({
     assetsData = [
       {
         key: -1,
-        asset: nativeName,
+        asset: nativeToken?.name,
         amount: ethAmount
       },
       ...selectedTokensData

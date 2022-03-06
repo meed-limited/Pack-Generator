@@ -1,16 +1,15 @@
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Tooltip } from "antd";
 import { forwardRef, useImperativeHandle, useState } from "react";
-import { getNativeByChain } from "../../helpers/networks";
-import { useMoralisDapp } from "../../providers/MoralisDappProvider/MoralisDappProvider";
+import { useMoralis, useNativeBalance } from "react-moralis";
 import ModalERC20 from "./ModalERC20";
-import styles from "./styles";
+import styles from "../styles";
 
 const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
-  const { chainId } = useMoralisDapp();
-  const nativeName = getNativeByChain(chainId);
+  const { chainId } = useMoralis();
+  const { nativeToken } = useNativeBalance(chainId);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
-  const [ethAmount, setEthAmount] = useState();
+  const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
 
   const showModalERC20 = () => {
@@ -55,13 +54,15 @@ const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
         isModalNFTVisible={isModalNFTVisible}
         handleAssetOk={handleAssetOk}
         handleAssetCancel={handleAssetCancel}
+        native={ethAmount}
+        erc20={selectedTokens}
       />
 
       <div style={{ color: "white", fontSize: "13px" }}>
-        {ethAmount !== undefined && ethAmount > 0 && <p style={{ marginBottom: "10px" }}>{nativeName} to pack: </p>}
+        {ethAmount !== undefined && ethAmount > 0 && <p style={{ marginBottom: "10px" }}>{nativeToken?.name} to pack: </p>}
         {ethAmount !== undefined && ethAmount > 0 && (
           <p key={`${ethAmount}`} style={styles.displayAssets}>
-            {ethAmount} {nativeName}
+            {ethAmount} {nativeToken?.name}
           </p>
         )}
         <div>

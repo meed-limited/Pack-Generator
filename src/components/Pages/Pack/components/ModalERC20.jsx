@@ -1,52 +1,58 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Input, Typography, Button, InputNumber } from "antd";
-import AssetSelector from "../Wallet/components/AssetSelector";
-import { useNativeBalance } from "hooks/useNativeBalance";
+import AssetSelector from "../../../Wallet/components/AssetSelector";
+import { useNativeBalance } from "react-moralis";
 
 const { Title } = Typography;
 
-const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAssetCancel }) => {
-  const [nativeAmount, setNativeAmount] = useState(0);
-  const [ERC20Tokens, setERC20Tokens] = useState([]);
+const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAssetCancel, native, erc20 }) => {
+  const [nativeAmount, setNativeAmount] = useState(native);
+  const [ERC20Tokens, setERC20Tokens] = useState(erc20);
   const [currentToken, setCurrentToken] = useState();
-  const { balance, nativeName } = useNativeBalance();
+  const { data: balance, nativeToken } = useNativeBalance();
 
   const onChangeToken = (token) => {
     setCurrentToken({ ...currentToken, data: token });
   };
 
   const onChangeERC20Amount = (value) => {
-      let max = (currentToken.data.balance / ("1e" + 18)).toString();
-      if (parseFloat(value) <= 0) {
-        setCurrentToken({...currentToken, value: 0});
-      } else if (parseFloat(value) > parseFloat(max)) {
-        setCurrentToken({...currentToken, value: parseFloat(max)});
-      } else {
-        setCurrentToken({...currentToken, value: parseFloat(value)});
-      }
+    let max = (currentToken.data.balance / ("1e" + 18)).toString();
+    if (parseFloat(value) <= 0) {
+      setCurrentToken({ ...currentToken, value: 0 });
+    } else if (parseFloat(value) > parseFloat(max)) {
+      setCurrentToken({ ...currentToken, value: parseFloat(max) });
+    } else {
+      setCurrentToken({ ...currentToken, value: parseFloat(value) });
+    }
   };
-
+  
   const handleAddToken = () => {
+    const max = (currentToken.data.balance / ("1e" + 18)).toString();
+    const cappedValue = currentToken.value < max ? currentToken.value : max
     if (ERC20Tokens.some((selectedToken) => selectedToken.data.token_address === currentToken.data.token_address)) {
       setERC20Tokens(
         ERC20Tokens.map((tokenItem) =>
           tokenItem.data.token_address !== currentToken.data.token_address
             ? tokenItem
-            : { data: currentToken.data, value: currentToken.value }
+            : { data: currentToken.data, value: cappedValue }
         )
       );
     } else {
-      setERC20Tokens(ERC20Tokens.concat([currentToken]));
+      setERC20Tokens(ERC20Tokens.concat([{...currentToken, value: cappedValue}]));
     }
   };
 
   const handleClickOk = () => {
     handleAssetOk(nativeAmount, ERC20Tokens);
-    // TODO: double check handle values and reset
-    setNativeAmount(0);
-    setERC20Tokens([]);
-    setCurrentToken(currentToken);
   };
+
+  useEffect(() => {
+    if(isModalNFTVisible) {
+      setNativeAmount(native)
+      setERC20Tokens(erc20)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isModalNFTVisible])
 
   return (
     <Modal
@@ -56,19 +62,24 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
       confirmLoading={confirmLoading}
       onCancel={handleAssetCancel}
     >
-      <Title level={5} style={{ color: "white" }}>Amount of {nativeName} to pack</Title>
+      <Title level={5} style={{ color: "white" }}>
+        Amount of {nativeToken?.name} to pack
+      </Title>
 
       <InputNumber
         style={{ marginBottom: "80px", minWidth: "200px" }}
         type='number'
         min={0}
-        max={balance.formatted}
-        placeholder={`Enter ${nativeName} amount`}
+        max={balance?.balance / ("1e" + nativeToken?.decimals)}
+        placeholder={`Enter ${nativeToken?.name} amount`}
         onChange={setNativeAmount}
+        value={nativeAmount}
       ></InputNumber>
 
-      <Title level={5} style={{ color: "white" }}>Amount of ERC20 Tokens to pack</Title>
-      <AssetSelector getAsset={onChangeToken} style={{ width: "auto", minWidth: "120px" }} />
+      <Title level={5} style={{ color: "white" }}>
+        Amount of ERC20 Tokens to pack
+      </Title>
+      <AssetSelector setAsset={onChangeToken} style={{ width: "auto", minWidth: "200px" }} />
       <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
         <Input
           style={{ marginTop: "10px" }}

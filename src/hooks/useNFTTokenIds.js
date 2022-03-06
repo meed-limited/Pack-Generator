@@ -1,61 +1,66 @@
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
 import { useEffect, useState } from "react";
-import { useMoralisWeb3Api, useMoralisWeb3ApiCall } from "react-moralis";
+import { useMoralis, useMoralisWeb3Api } from "react-moralis";
 import { useIPFS } from "./useIPFS";
 
 export const useNFTTokenIds = (addr) => {
   const { token } = useMoralisWeb3Api();
-  const { chainId } = useMoralisDapp();
+  const { chainId } = useMoralis();
   const { resolveLink } = useIPFS();
-  const [NFTMarketplace, setNFTMarketplace] = useState([]);
+  const [Marketplace, setMarketplace] = useState([]);
   const [totalNFTs, setTotalNFTs] = useState();
   const [fetchSuccess, setFetchSuccess] = useState(true);
-  const {
-    fetch: getNFTMarketplace,
-    data,
-    error,
-    isLoading
-  } = useMoralisWeb3ApiCall(token.getAllTokenIds, {
-    chain: chainId,
-    address: addr,
-    limit: 20
-  });
+  const [fetchResult, setFetchResult] = useState();
+
+  const fetchAllTokenIds = async () => {
+    const options = {
+      chain: chainId,
+      address: addr,
+      limit: 20
+    };
+    const NFTs = await token.getAllTokenIds(options);
+    setFetchResult(NFTs);
+  };
 
   useEffect(() => {
-    async function fetchData() {
-      if (data?.result) {
-        const NFTs = data.result;
-        setTotalNFTs(data.total);
-        setFetchSuccess(true);
-        for (let NFT of NFTs) {
-          if (NFT?.metadata &&typeof(NFT.metadata) === "string") {
-            NFT.metadata = JSON.parse(NFT.metadata);
-            NFT.image = resolveLink(NFT.metadata?.image);
-          } else if (NFT?.token_uri) {
-            try {
-              await fetch(NFT.token_uri)
-                .then((response) => response.json())
-                .then((data) => {
-                  NFT.image = resolveLink(data.image);
-                });
-            } catch (error) {
-              setFetchSuccess(false);
-            }
+    if (addr && addr !== "explore") {
+      fetchAllTokenIds();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addr]);
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fetchResult]);
+
+  async function fetchData() {
+    if (fetchResult?.result) {
+      const NFTs = fetchResult.result;
+      setTotalNFTs(fetchResult.total);
+      setFetchSuccess(true);
+      for (let NFT of NFTs) {
+        if (NFT?.metadata && typeof NFT.metadata === "string") {
+          NFT.metadata = JSON.parse(NFT.metadata);
+          NFT.image = resolveLink(NFT.metadata?.image);
+        } else if (NFT?.token_uri) {
+          try {
+            await fetch(NFT.token_uri)
+              .then((response) => response.json())
+              .then((data) => {
+                NFT.image = resolveLink(data.image);
+              });
+          } catch (error) {
+            setFetchSuccess(false);
           }
         }
-        setNFTMarketplace(NFTs);
       }
+      setMarketplace(NFTs);
     }
-
-    fetchData();
-  }, [data, resolveLink]);
+  }
 
   return {
-    getNFTMarketplace,
-    NFTMarketplace,
+    Marketplace,
     totalNFTs,
-    fetchSuccess,
-    error,
-    isLoading
+    fetchSuccess
   };
 };

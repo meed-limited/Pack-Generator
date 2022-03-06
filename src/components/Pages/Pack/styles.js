@@ -1,5 +1,5 @@
-import buttonImg from "../../assets/buttonImg.svg";
-import background from "../../assets/background.jpg";
+import buttonImg from "../../../assets/buttonImg.svg";
+import background from "../../../assets/background.jpg";
 /*eslint no-dupe-keys: "Off"*/
 
 const GREY = '#CCC';
@@ -100,6 +100,22 @@ const styles = {
     paddingBottom: "20px",
     fontSize: "18px",
     color: "white"
+  },
+  transparentContainerNotconnected: {
+    borderRadius: "20px",
+    background: "rgba(240, 248, 255, 0.10)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "1px solid",
+    textAlign: "left",
+    padding: "15px",
+    fontSize: "18px",
+    color: "white",
+    marginTop: "80px",
   },
   transparentContainerInside: {
     borderRadius: "15px",

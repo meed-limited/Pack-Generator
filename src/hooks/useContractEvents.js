@@ -1,9 +1,9 @@
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+import { useDapp } from "dappProvider/DappProvider";
 const Web3 = require("web3");
 const web3 = new Web3(Web3.givenProvider);
 
 export const useContractEvents = () => {
-  const { walletAddress, assemblyABI } = useMoralisDapp();
+  const { walletAddress, assemblyABI } = useDapp();
   const assemblyABIJson = JSON.parse(assemblyABI);
 
   var arrayOfAddress;

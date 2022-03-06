@@ -1,6 +1,6 @@
 import React from "react";
-import pack from "../assets/Home/pack.png";
-import TEXT_LEPLOGO from "../../src/assets/Home/TEXT_LEPLOGO.svg";
+import pack from "../../assets/Home/pack.png";
+import TEXT_LEPLOGO from "../../../src/assets/Home/TEXT_LEPLOGO.svg";
 import { Button } from "antd";
 import buttonImg from "assets/buttonImg.svg";
 import { Link } from "react-router-dom";

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { useMoralisQuery, useWeb3ExecuteFunction } from "react-moralis";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+import { useMoralis, useMoralisQuery } from "react-moralis";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import { getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
+import { getContractName } from "helpers/generalContractCall";
 import { Table, Spin } from "antd";
 import moment from "moment";
 import styles from "./Pack/styles";
 import { FileSearchOutlined } from "@ant-design/icons";
+import ChainVerification from "components/Chains/ChainVerification";
 
-function NFTTransactions() {
-  const contractProcessor = useWeb3ExecuteFunction();
-  const { walletAddress, chainId } = useMoralisDapp();
+function Transactions() {
+  const { account, chainId, isAuthenticated } = useMoralis();
   const {
     getCustomCollectionData,
     getCreatedPackData,
@@ -20,119 +20,92 @@ function NFTTransactions() {
     parseData,
     parseCreatedPackData
   } = useQueryMoralisDb();
-
   const [fetchCollections, setFetchCollections] = useState();
   const [fetchCreatedPack, setFetchCreatedPack] = useState();
   const [fetchCreatedBatchPack, setFetchCreatedBatchPack] = useState();
   const [fetchClaimedPack, setFetchClaimedPack] = useState();
   const queryMarketItems = useMoralisQuery("CreatedMarketItems");
   const fetchMarketItems = JSON.parse(JSON.stringify(queryMarketItems.data)).filter(
-    (item) => item.sold === true && (item.seller === walletAddress || item.owner === walletAddress)
+    (item) => item.sold === true && (item.seller === account || item.owner === account)
   );
 
-  const fetchNameABI = [
-    {
-      inputs: [],
-      name: "name",
-      outputs: [{ internalType: "string", name: "_name", type: "string" }],
-      stateMutability: "view",
-      type: "function"
-    }
-  ];
-
   const getCollections = async () => {
-    const res = await getCustomCollectionData(walletAddress);
-    const parsedcollections = await parseData(res, walletAddress);
+    const res = await getCustomCollectionData(account);
+    const parsedcollections = await parseData(res, account);
     setFetchCollections(parsedcollections);
   };
 
   const getCreatedPack = async () => {
-    const res = await getCreatedPackData(walletAddress);
-    const parsedCreatedPack = await parseCreatedPackData(res, walletAddress);
+    const res = await getCreatedPackData(account);
+    const parsedCreatedPack = await parseCreatedPackData(res, account);
     let sliced = parsedCreatedPack.slice(0, 50);
 
     if (sliced.length > 0) {
       for (let i = 0; i < sliced.length; i++) {
-        const ops = {
-          contractAddress: sliced[i].address,
-          functionName: "name",
-          abi: fetchNameABI,
-          params: {}
-        };
-
-        await contractProcessor.fetch({
-          params: ops,
-          onSuccess: async (response) => {
-            sliced[i].collectionName = response;
-          },
-          onError: (error) => {
-            console.log(error);
-          }
-        });
+        const res = await getContractName(sliced[i].address);
+        sliced[i].collectionName = res;
       }
     }
     setFetchCreatedPack(sliced);
   };
 
   const getClaimedPack = async () => {
-    const res = await getClaimedPackData(walletAddress);
-    const parsedClaimedPack = await parseData(res, walletAddress);
+    const res = await getClaimedPackData(account);
+    const parsedClaimedPack = await parseData(res, account);
 
     if (parsedClaimedPack.length > 0) {
       for (let i = 0; i < parsedClaimedPack.length; i++) {
-        const ops = {
-          contractAddress: parsedClaimedPack[i].address,
-          functionName: "name",
-          abi: fetchNameABI,
-          params: {}
-        };
-
-        await contractProcessor.fetch({
-          params: ops,
-          onSuccess: async (response) => {
-            parsedClaimedPack[i].collectionName = response;
-          },
-          onError: (error) => {
-            console.log(error);
-          }
-        });
+        const res = await getContractName(parsedClaimedPack[i].address);
+        parsedClaimedPack[i].collectionName = res;
       }
     }
     setFetchClaimedPack(parsedClaimedPack);
   };
 
   const getCreatedBatchPack = async () => {
-    const res = await getCreatedBatchPackData(walletAddress);
-    const parsedCreatedBatchPack = await parseData(res, walletAddress);
+    const res = await getCreatedBatchPackData(account);
+    const parsedCreatedBatchPack = await parseData(res, account);
     let sliced = parsedCreatedBatchPack.slice(0, 100);
     setFetchCreatedBatchPack(sliced);
   };
 
   useEffect(() => {
-    if (!fetchCollections) {
-      getCollections();
-    }
+    const cleanupFunction1 = () => {
+      if (!fetchCollections) {
+        getCollections();
+      }
+    };
+    cleanupFunction1();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCollections]);
 
   useEffect(() => {
-    if (!fetchCreatedPack) {
-      getCreatedPack();
-    }
+    const cleanupFunction2 = () => {
+      if (!fetchCreatedPack) {
+        getCreatedPack();
+      }
+    };
+    cleanupFunction2();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedPack]);
 
   useEffect(() => {
-    if (!fetchCreatedBatchPack) {
-      getCreatedBatchPack();
-    }
+    const cleanupFunction3 = () => {
+      if (!fetchCreatedBatchPack) {
+        getCreatedBatchPack();
+      }
+    };
+    cleanupFunction3();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedBatchPack]);
 
   useEffect(() => {
-    if (!fetchClaimedPack) {
-      getClaimedPack();
-    }
+    const cleanupFunction4 = () => {
+      if (!fetchClaimedPack) {
+        getClaimedPack();
+      }
+    };
+    cleanupFunction4();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchClaimedPack]);
 
@@ -210,7 +183,7 @@ function NFTTransactions() {
     date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 4),
-    tags: item.seller === walletAddress ? "Market sell" : "Market buy",
+    tags: item.seller === account ? "Market sell" : "Market buy",
     link: item.transaction_hash
   }));
 
@@ -224,6 +197,12 @@ function NFTTransactions() {
 
   return (
     <>
+      {!isAuthenticated && (
+        <div style={styles.transparentContainerNotconnected}>
+          <p style={{ textAlign: "center" }}>Connect your wallet to show your transactions history.</p>
+        </div>
+      )}
+      <ChainVerification />
       <div style={{ marginTop: "60px" }}>
         <div style={styles.table}>
           <Spin
@@ -244,4 +223,4 @@ function NFTTransactions() {
   );
 }
 
-export default NFTTransactions;
+export default Transactions;

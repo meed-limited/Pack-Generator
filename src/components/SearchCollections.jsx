@@ -1,7 +1,7 @@
 import { Select } from "antd";
 import { useNetworkCollections } from "hooks/useNetworkCollections";
 
-function SearchCollections({ setInputValue }) {
+function SearchCollections({ setInputValue, inputValue }) {
   const { Option } = Select;
   const { NFTCollections } = useNetworkCollections();
 
@@ -13,6 +13,7 @@ function SearchCollections({ setInputValue }) {
     <>
       <Select
         showSearch
+        value={inputValue}
         style={{ width: "300px" }}
         placeholder='Find a Collection'
         optionFilterProp='children'

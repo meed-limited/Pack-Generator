@@ -3,7 +3,8 @@ import { useMoralis } from "react-moralis";
 
 const useChain = () => {
   const { Moralis, isWeb3Enabled, enableWeb3 } = useMoralis();
-  async function switchNetwork(chain) {
+
+   const switchNetwork = async (chain) => {
     if (isWeb3Enabled) {
       try {
         await Moralis.switchNetwork(chain);

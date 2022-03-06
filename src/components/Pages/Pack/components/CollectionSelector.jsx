@@ -1,32 +1,32 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import { useMoralis, useWeb3ExecuteFunction } from "react-moralis";
-import { useMoralisDapp } from "providers/MoralisDappProvider/MoralisDappProvider";
+import { useMoralis } from "react-moralis";
+import { Moralis } from "moralis";
+import { useDapp } from "dappProvider/DappProvider";
 import { getExplorer } from "helpers/networks";
-import { openNotification } from "components/Notification";
+import { openNotification } from "helpers/notifications";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import { Button, Input, Tooltip, Select, Upload, message, Space, Switch } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import TextArea from "antd/lib/input/TextArea";
-import "../../style.css";
-import styles from "./styles";
+import "../../../../style.css";
+import styles from "../styles";
 
-const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol }, ref) => {
-  const contractProcessor = useWeb3ExecuteFunction();
-  const { chainId, walletAddress, factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } =
-    useMoralisDapp();
-  const { Moralis } = useMoralis();
+const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
+  const { chainId, account } = useMoralis();
+  const { factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useDapp();
   const factoryABIJson = JSON.parse(factoryABI);
+  const [displayFactory, setDisplayFactory] = useState(false);
   const { getCustomCollectionData, parseData } = useQueryMoralisDb();
+  const [isExistingCollection, setIsExistingCollection] = useState(false);
+  const [customCollection, setCustomCollection] = useState([]);
+  const [currentCollection, setCurrentCollection] = useState([]);
   const [name, setName] = useState();
   const [symbol, setSymbol] = useState();
   const [supply, setSupply] = useState(0);
   const [description, setDescription] = useState("");
-  const [isExistingCollection, setIsExistingCollection] = useState(false);
-  const [customAddress, setCustomAddress] = useState();
-  const [customCollection, setCustomCollection] = useState([]);
   const [imageURL, setImageURL] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
-  const [displayFactory, setDisplayFactory] = useState(false);
+  
   const { Option } = Select;
 
   const getContractAddress = () => {
@@ -95,16 +95,15 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
     const file = new Moralis.File("metadata.json", { base64: btoa(JSON.stringify(metadata)) });
     await file.saveIPFS();
-    console.log(file.ipfs());
     return file.ipfs();
   };
 
   const uploadMetadataToMoralis = (collectionAddress, supply, metadataURI) => {
     const CustomCollections = Moralis.Object.extend("CustomCollections");
     const customCollections = new CustomCollections();
-    customCollections.set("owner", walletAddress);
-    customCollections.set("name", name ? name : "LepriPack");
-    customCollections.set("symbol", symbol ? symbol : "L3P");
+    customCollections.set("owner", account);
+    customCollections.set("name", name ? name : "Pack-Generator-NFT");
+    customCollections.set("symbol", symbol ? symbol : "PGNFT");
     customCollections.set("maxSupply", supply);
     customCollections.set("description", description);
     customCollections.set("collectionAddress", collectionAddress);
@@ -119,17 +118,21 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   };
 
   const createNewContract = async (name, symbol, supply) => {
+    console.log(name, symbol, supply)
     message.config({
       maxCount: 1
     });
-    message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 10);
+    message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 5);
 
     const metadataURI = await uploadMetadataToIpfs();
+    console.log(metadataURI)
 
-    var contractAddr = getContractAddress();
+    const contractAddr = await getContractAddress();
+    console.log(contractAddr)
+    
     var newAddress;
 
-    const ops = {
+    const sendOptions = {
       contractAddress: contractAddr,
       functionName: "createCustomCollection",
       abi: factoryABIJson,
@@ -141,49 +144,43 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
       }
     };
 
-    await contractProcessor.fetch({
-      params: ops,
-      onSuccess: async (response) => {
-        newAddress = response.events.NewCustomCollectionCreated.returnValues.newCustomCollection;
-        let link = `${getExplorer(chainId)}tx/${response.transactionHash}`;
-        let title = "Collection created!";
-        let msg = (
-          <>
-            Your new ERC721 collection has been succesfully created!
-            <br></br>
-            Your smart-contract address: {newAddress}
-            <br></br>
-            <a href={link} target='_blank' rel='noreferrer noopener'>
-              View in explorer: &nbsp;
-              <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
-            </a>
-          </>
-        );
+    try {
+      const transaction = await Moralis.executeFunction(sendOptions);
+      const receipt = await transaction.wait(2);
+      console.log(receipt);
 
-        openNotification("success", title, msg);
-        console.log("Collection created");
-        uploadMetadataToMoralis(newAddress, supply, metadataURI);
-      },
-      onError: (error) => {
-        let title = "Unexpected error";
-        let msg = "Oops, something went wrong while creating your custom collection!";
-        openNotification("error", title, msg);
-        console.log(error);
-      }
-    });
+       newAddress = receipt.events[0].address;
+      let link = `${getExplorer(chainId)}tx/${receipt.transactionHash}`;
+      let title = "Collection created!";
+      let msg = (
+        <>
+          Your new ERC721 collection has been succesfully created!
+          <br></br>
+          Your smart-contract address: {newAddress}
+          <br></br>
+          <a href={link} target='_blank' rel='noreferrer noopener'>
+            View in explorer: &nbsp;
+            <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
+          </a>
+        </>
+      );
 
-    setCustomAddress(newAddress);
-    customContractAddrs(newAddress);
+      openNotification("success", title, msg);
+      console.log("Collection created");
+      uploadMetadataToMoralis(newAddress, supply, metadataURI);
+    } catch (error) {
+      let title = "Unexpected error";
+      let msg = "Oops, something went wrong while creating your custom collection!";
+      openNotification("error", title, msg);
+      console.log(error);
+    }
+    setCurrentCollection([newAddress, name, symbol, supply]);
+    customCollectionInfo([newAddress, name, symbol, supply]);
   };
 
-  useEffect(() => {
-    passNameAndSymbol([name, symbol, supply]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, symbol, supply]);
-
   const getCustomCollections = async () => {
-    const res = await getCustomCollectionData(walletAddress);
-    const parsedcollections = await parseData(res, walletAddress);
+    const res = await getCustomCollectionData(account);
+    const parsedcollections = await parseData(res, account);
     setCustomCollection(parsedcollections);
   };
 
@@ -197,8 +194,8 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
       handleDeselect();
     } else {
       setIsExistingCollection(true);
-      setCustomAddress(valueArr[3]);
-      customContractAddrs(valueArr[3]);
+      setCurrentCollection([valueArr[3], valueArr[0], valueArr[6], valueArr[2]]);
+      customCollectionInfo([valueArr[3], valueArr[0], valueArr[6], valueArr[2]]);
       setName(valueArr[0]);
       setDescription(valueArr[4]);
     }
@@ -206,14 +203,13 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
 
   const handleDeselect = () => {
     setIsExistingCollection(false);
+    setCurrentCollection([]);
     setDisplayFactory(false);
-    setCustomAddress();
-    customContractAddrs();
+    customCollectionInfo();
     setName();
     setSymbol();
     setDescription();
     setSupply(0);
-    //setImageURI();
   };
 
   const handleSwitch = () => {
@@ -223,9 +219,9 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
   useImperativeHandle(ref, () => ({
     reset() {
       setIsExistingCollection(false);
+      setCurrentCollection([]);
       setDisplayFactory(false);
-      setCustomAddress();
-      customContractAddrs();
+      customCollectionInfo();
       setName();
       setSymbol();
       setDescription();
@@ -260,7 +256,8 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
                 collection.maxSupply,
                 collection.collectionAddress,
                 collection.description,
-                collection.metadataURI
+                collection.metadataURI,
+                collection.symbol
               ]}
               key={i}
             >
@@ -374,12 +371,12 @@ const CollectionSelector = forwardRef(({ customContractAddrs, passNameAndSymbol 
         </>
       )}
 
-      {customAddress && customAddress.length > 0 && (
+      {currentCollection[0] && currentCollection[0]?.length > 0 && (
         <div style={styles.transparentContainerInside}>
           <p style={{ padding: "20px 10px 0px 10px", fontSize: "14px" }}>
             Here is the smart-contract address of your pack collection:
             <br></br>
-            <span style={{ fontSize: "13px", color: "yellow" }}>{customAddress}</span>
+            <span style={{ fontSize: "13px", color: "yellow" }}>{currentCollection[0]}</span>
             <br></br>
             To start minting your packs, scroll down and prepare them.
           </p>

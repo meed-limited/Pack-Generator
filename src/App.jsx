@@ -1,19 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMoralis } from "react-moralis";
 import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from "react-router-dom";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
-import NFTBalance from "components/NFTBalance";
-import NFTMarketplace from "components/NFTMarketplace";
+import YourNFTs from "components/Pages/YourNFTs";
+import Marketplace from "components/Pages/Marketplace";
 import { Menu, Layout } from "antd";
 import "antd/dist/antd.css";
 import NativeBalance from "components/NativeBalance";
 import "./style.css";
 import Text from "antd/lib/typography/Text";
-import NFTTransactions from "components/NFTTransactions";
-import BatchPack from "components/BatchPacks";
+import Transactions from "components/Pages/Transactions";
+import Pack from "components/Pages/Pack/Pack";
 //import BatchMinter from "components/BatchMinter";
-import Home from "components/Home";
+import Home from "components/Pages/Home";
 import background from "./assets/background.jpg";
 import lepriconLogoWhite from "./assets/lepriconLogoWhite.png";
 import headerBackground from "./assets/headerBackground.jpg";
@@ -77,7 +77,6 @@ const styles = {
 };
 const App = () => {
   const { isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
-  const [inputValue, setInputValue] = useState("explore");
 
   useEffect(() => {
     if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
@@ -112,10 +111,10 @@ const App = () => {
             {/* <Menu.Item key='batchMinter'>
               <NavLink to='/BatchMinter'>Minter</NavLink>
             </Menu.Item> */}
-            <Menu.Item key='batchPack'>
-              <NavLink to='/Packs'>Packs</NavLink>
+            <Menu.Item key='pack'>
+              <NavLink to='/Pack'>Packs</NavLink>
             </Menu.Item>
-            <Menu.Item key='nftMarket' onClick={() => setInputValue("explore")}>
+            <Menu.Item key='nftMarket'>
               <NavLink to='/MarketPlace'>MarketPlace</NavLink>
             </Menu.Item>
             <Menu.Item key='nft'>
@@ -140,17 +139,17 @@ const App = () => {
             {/* <Route exact path='/BatchMinter'>
               <BatchMinter />
             </Route> */}
-            <Route exact path='/Packs'>
-              <BatchPack />
+            <Route exact path='/Pack'>
+              <Pack />
             </Route>
             <Route exact path='/MarketPlace'>
-              <NFTMarketplace inputValue={inputValue} setInputValue={setInputValue} />
+              <Marketplace />
             </Route>
             <Route exact path='/YourNFTs'>
-              <NFTBalance />
+              <YourNFTs />
             </Route>
             <Route exact path='/Transactions'>
-              <NFTTransactions />
+              <Transactions />
             </Route>
           </Switch>
           <Redirect to='/Home' />
