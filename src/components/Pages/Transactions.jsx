@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis, useMoralisQuery } from "react-moralis";
+import ChainVerification from "components/Chains/ChainVerification";
+import AccountVerification from "components/Account/AccountVerification";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import { getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
@@ -8,10 +10,9 @@ import { Table, Spin } from "antd";
 import moment from "moment";
 import styles from "./Pack/styles";
 import { FileSearchOutlined } from "@ant-design/icons";
-import ChainVerification from "components/Chains/ChainVerification";
 
 function Transactions() {
-  const { account, chainId, isAuthenticated } = useMoralis();
+  const { account, chainId } = useMoralis();
   const {
     getCustomCollectionData,
     getCreatedPackData,
@@ -197,11 +198,7 @@ function Transactions() {
 
   return (
     <>
-      {!isAuthenticated && (
-        <div style={styles.transparentContainerNotconnected}>
-          <p style={{ textAlign: "center" }}>Connect your wallet to show your transactions history.</p>
-        </div>
-      )}
+      <AccountVerification param={"transactions"} />
       <ChainVerification />
       <div style={{ marginTop: "60px" }}>
         <div style={styles.table}>

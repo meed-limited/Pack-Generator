@@ -13,25 +13,10 @@ import { getEllipsisTxt } from "helpers/formatters";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import copy from "copy-to-clipboard";
 import ChainVerification from "components/Chains/ChainVerification";
+import AccountVerification from "components/Account/AccountVerification";
 const { Meta } = Card;
 
 const styles = {
-  transparentContainerNotconnected: {
-    borderRadius: "20px",
-    background: "rgba(240, 248, 255, 0.10)",
-    background:
-      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    border: "1px solid",
-    textAlign: "left",
-    padding: "15px",
-    fontSize: "18px",
-    color: "white",
-    marginTop: "80px"
-  },
   NFTs: {
     display: "flex",
     flexWrap: "wrap",
@@ -216,11 +201,7 @@ function Marketplace() {
 
   return (
     <>
-      {!isAuthenticated && (
-        <div style={styles.transparentContainerNotconnected}>
-          <p style={{ textAlign: "center" }}>Connect your wallet to browse through the marketplace.</p>
-        </div>
-      )}
+      <AccountVerification param={"marketplace"}/>
       <ChainVerification />
       {isAuthenticated && (
         <div style={{ marginTop: "40px" }}>

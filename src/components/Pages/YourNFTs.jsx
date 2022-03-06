@@ -4,6 +4,8 @@ import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import ClaimSingleNFT from "./Pack/components/ClaimSingleNFT";
 import { useDapp } from "dappProvider/DappProvider";
+import ChainVerification from "components/Chains/ChainVerification";
+import AccountVerification from "components/Account/AccountVerification";
 import { usePackCollections } from "hooks/usePackCollections";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
@@ -13,7 +15,6 @@ import { openNotification } from "../../helpers/notifications";
 import copy from "copy-to-clipboard";
 import { Card, Image, Tooltip, Modal, Input, Spin, Button, message, Alert } from "antd";
 import { CopyOutlined, FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import ChainVerification from "components/Chains/ChainVerification";
 
 const { Meta } = Card;
 
@@ -61,7 +62,7 @@ function YourNFTs() {
   const NFTsPerPage = 100;
   const [offset, setOffset] = useState(0);
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
-  const { chainId, isAuthenticated } = useMoralis();
+  const { chainId } = useMoralis();
   const { marketAddressMumbai, marketABI } = useDapp();
   const { nativeToken } = useNativeBalance(chainId);
   const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTsPerPage });
@@ -206,6 +207,8 @@ function YourNFTs() {
 
   return (
     <>
+      <AccountVerification param={"yourNfts"} />
+      <ChainVerification />
       <div style={styles.NFTs}>
         {fetchedNFTs &&
           fetchedNFTs?.map((nft, index) => {
@@ -359,12 +362,6 @@ function YourNFTs() {
           )}
         </div>
       )}
-      {!isAuthenticated && (
-        <div style={styles.transparentContainer}>
-          <p style={{ textAlign: "center" }}>Connect your wallet to display your NFTs.</p>
-        </div>
-      )}
-      <ChainVerification />
     </>
   );
 }
