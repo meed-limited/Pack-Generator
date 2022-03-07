@@ -17,8 +17,7 @@ import styles from "./styles";
 
 function SinglePack() {
   const { account, chainId } = useMoralis();
-  const { assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai, assemblyABI } =
-    useDapp();
+  const { assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai, assemblyABI } = useDapp();
   const [isSinglePackConfirmVisible, setIsSinglePackConfirmVisible] = useState(false);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [NFTsArr, setNFTsArr] = useState([]);
@@ -83,7 +82,7 @@ function SinglePack() {
   const getSinglePackArrays = () => {
     let data = sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
     return [data[0], data[1]];
-  }
+  };
 
   const handleSinglePack = async () => {
     const contractAddress = getContractAddress();
@@ -103,10 +102,9 @@ function SinglePack() {
       openNotification("error", title, msg);
       console.log(err);
     }
-  }
+  };
 
   async function singlePackMint(assetContracts, assetNumbers, contractAddr) {
-    console.log(assetNumbers)
     const sendOptions = {
       contractAddress: contractAddr,
       functionName: "mint",

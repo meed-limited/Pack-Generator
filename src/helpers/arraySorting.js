@@ -1,7 +1,7 @@
 import cloneDeep from "lodash/cloneDeep";
 
 /* SINGLE PACK: Sorting arrays before feeding contract:
- *********************************************************/
+ *******************************************************/
 export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
   var assetsAddresses = [];
   var assetsNumbers = [];
@@ -49,7 +49,7 @@ export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
   // Set ERC20 amounts
   if (selectedERC20 && selectedERC20.length > 0) {
     for (let i = 0; i < selectedERC20.length; i++) {
-      let tmp = (selectedERC20[i].value * ("1e" + 18));
+      let tmp = selectedERC20[i].value * ("1e" + 18);
       assetsNumbers.push(tmp.toString());
     }
   }
@@ -79,9 +79,8 @@ export function sortSingleArrays(ethValue, selectedERC20, selectedNFTs) {
 }
 
 /* MULTIPLE PACKS: Sorting arrays before feeding contract:
- ************************************************************/
+ *********************************************************/
 export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfErc721, numOfErc1155) {
-  
   var assetsAddresses = [];
   var assetsNumbers = [];
   var numOfNft = parseInt(numOfErc721) + parseInt(numOfErc1155);
@@ -103,8 +102,8 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
   if (importedJson && importedJson.length > 0) {
     try {
       // Set ERC721 addresses (per pack)
-      if (numOfErc721 > 0) { //1
-        for (let i = 0; i < numOfNft; i++) {  //2x i=0 && i=1
+      if (numOfErc721 > 0) {
+        for (let i = 0; i < numOfNft; i++) {
           if (importedJson[i].contract_type === "ERC721") {
             assetsAddresses.push(importedJson[i].token_address);
           }
@@ -127,7 +126,6 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
         }
       }
 
-
       // Set ERC721 ids
       if (numOfErc721 > 0) {
         for (let i = 0; i < numOfNft; i++) {
@@ -147,7 +145,7 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
             amountOf1155.push(tmpAmt);
           }
         }
-      }      
+      }
       assetsNumbers = assetsNumbers.concat(amountOf1155);
     } catch (error) {
       console.log(error);
@@ -171,7 +169,7 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
 }
 
 /* MULTIPLE PACKS: Updating token IDs before feeding contract:
- ****************************************************************/
+ *************************************************************/
 export function updateTokenIdsInArray(importedJson, multiNumArr, packNum, amount1155) {
   var arrOfArr = [];
 
@@ -184,14 +182,14 @@ export function updateTokenIdsInArray(importedJson, multiNumArr, packNum, amount
       let arr = cloneDeep(multiNumArr);
       let first1155Amount = arr.length - amount1155;
 
-      for (let j = firstNFTIndex; j < (arr.length - amount1155); j++) {
+      for (let j = firstNFTIndex; j < arr.length - amount1155; j++) {
         arr[j] = importedJson[k].token_id;
-        
+
         if (importedJson[k].contract_type === "ERC1155") {
           arr[first1155Amount] = importedJson[k].amount;
           first1155Amount++;
         }
-         k++;
+        k++;
       }
       arrOfArr.push(arr);
     }
