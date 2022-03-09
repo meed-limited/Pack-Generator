@@ -16,7 +16,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
   };
 
   const onChangeERC20Amount = (value) => {
-    let max = (currentToken.data.balance / ("1e" + 18)).toString();
+    let max = (currentToken?.data.balance / ("1e" + 18)).toString();
     if (parseFloat(value) <= 0) {
       setCurrentToken({ ...currentToken, value: 0 });
     } else if (parseFloat(value) > parseFloat(max)) {
@@ -25,20 +25,20 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
       setCurrentToken({ ...currentToken, value: parseFloat(value) });
     }
   };
-  
+
   const handleAddToken = () => {
     const max = (currentToken.data.balance / ("1e" + 18)).toString();
-    const cappedValue = currentToken.value < max ? currentToken.value : max
+    const cappedValue = currentToken.value < max ? currentToken.value : max;
     if (ERC20Tokens.some((selectedToken) => selectedToken.data.token_address === currentToken.data.token_address)) {
       setERC20Tokens(
-        ERC20Tokens.map((tokenItem) =>
+        ERC20Tokens?.map((tokenItem) =>
           tokenItem.data.token_address !== currentToken.data.token_address
             ? tokenItem
             : { data: currentToken.data, value: cappedValue }
         )
       );
     } else {
-      setERC20Tokens(ERC20Tokens.concat([{...currentToken, value: cappedValue}]));
+      setERC20Tokens(ERC20Tokens.concat([{ ...currentToken, value: cappedValue }]));
     }
   };
 
@@ -47,12 +47,12 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
   };
 
   useEffect(() => {
-    if(isModalNFTVisible) {
-      setNativeAmount(native)
-      setERC20Tokens(erc20)
+    if (isModalNFTVisible) {
+      setNativeAmount(native);
+      setERC20Tokens(erc20);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isModalNFTVisible])
+  }, [isModalNFTVisible]);
 
   return (
     <Modal
@@ -85,7 +85,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
           style={{ marginTop: "10px" }}
           type='number'
           min='0'
-          step={0.00001}
+          step={0.001}
           placeholder='Enter selected token amount'
           onChange={(e) => onChangeERC20Amount(parseFloat(e.target.value))}
           disabled={!currentToken ? true : false}
@@ -101,7 +101,7 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
       <div style={{ width: "100", color: "white", display: "flex", flexDirection: "column" }}>
         {ERC20Tokens &&
           ERC20Tokens.length > 0 &&
-          ERC20Tokens.map((token) => (
+          ERC20Tokens?.map((token) => (
             <p key={token.data.symbol}>
               {token.data.symbol}: {token.value}
             </p>

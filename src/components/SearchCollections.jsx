@@ -20,7 +20,7 @@ function SearchCollections({ setInputValue, inputValue }) {
         onChange={onChange}
       >
         {NFTCollections &&
-          NFTCollections.map((collection, i) => (
+          NFTCollections?.map((collection, i) => (
             <Option value={collection.addrs} key={i}>
               {collection.name}
             </Option>

@@ -1,5 +1,4 @@
 import { useMoralis, useERC20Balances } from "react-moralis";
-//import { useERC20Balance } from "../hooks/useERC20Balance";
 import { Skeleton, Table } from "antd";
 import { getEllipsisTxt } from "../helpers/formatters";
 

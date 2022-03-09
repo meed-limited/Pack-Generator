@@ -31,7 +31,7 @@ export default function Assets() {
 
   return (
     <div style={styles.content}>
-      {assets.map((item, key) => (
+      {assets?.map((item, key) => (
         <div className="row" key={key} style={styles.row}>
           <>
             {item.logo ? (

@@ -71,42 +71,50 @@ function Transactions() {
   };
 
   useEffect(() => {
-    const cleanupFunction1 = () => {
+    let isTriggered = true;
+    const getCollection = async () => {
       if (!fetchCollections) {
         getCollections();
       }
     };
-    cleanupFunction1();
+    if (isTriggered) getCollection();
+    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCollections]);
 
   useEffect(() => {
-    const cleanupFunction2 = () => {
+    let isTriggered = true;
+    const getPacks = async () => {
       if (!fetchCreatedPack) {
         getCreatedPack();
       }
     };
-    cleanupFunction2();
+    if (isTriggered) getPacks();
+    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedPack]);
 
   useEffect(() => {
-    const cleanupFunction3 = () => {
+    let isTriggered = true;
+    const getBatchPacks = async () => {
       if (!fetchCreatedBatchPack) {
         getCreatedBatchPack();
       }
     };
-    cleanupFunction3();
+    if (isTriggered) getBatchPacks();
+    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedBatchPack]);
 
   useEffect(() => {
-    const cleanupFunction4 = () => {
+    let isTriggered = true;
+    const getClaimedPacks = async () => {
       if (!fetchClaimedPack) {
         getClaimedPack();
       }
     };
-    cleanupFunction4();
+    if (isTriggered) getClaimedPacks();
+    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchClaimedPack]);
 
@@ -191,7 +199,7 @@ function Transactions() {
   var data = [];
   data = data.concat(collectionData, createdPackData, createBatchPackData, claimedPackData, marketData);
   data = data.sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
-  data = data.map((item, index) => ({
+  data = data?.map((item, index) => ({
     ...item,
     key: index
   }));

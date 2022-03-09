@@ -72,7 +72,7 @@ const AssetPerPack = forwardRef(({ getAssetValues }, ref) => {
 
           {selectedTokens &&
             selectedTokens.length > 0 &&
-            selectedTokens.map((selectedToken, key) => (
+            selectedTokens?.map((selectedToken, key) => (
               <div style={styles.displayAssets} key={`${selectedToken.value} - ${selectedToken.data.symbol}`}>
                 <p style={{ marginBottom: "5px" }}>{`${selectedToken.value} ${selectedToken.data.symbol}`}</p>
               </div>

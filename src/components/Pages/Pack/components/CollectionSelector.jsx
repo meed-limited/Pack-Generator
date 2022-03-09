@@ -248,7 +248,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
         onDeselect={handleDeselect}
       >
         {customCollection &&
-          customCollection.map((collection, i) => (
+          customCollection?.map((collection, i) => (
             <Option
               value={[
                 collection.name,

@@ -114,7 +114,7 @@ function Chains() {
 
   const menu = (
     <Menu onClick={handleMenuClick}>
-      {menuItems.map((item) => (
+      {menuItems?.map((item) => (
         <Menu.Item key={item.key} icon={item.icon} style={styles.item}>
           <span style={{ marginLeft: "5px" }}>{item.value}</span>
         </Menu.Item>

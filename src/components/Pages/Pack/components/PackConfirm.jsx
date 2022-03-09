@@ -24,7 +24,7 @@ const PackConfirm = ({
 
   const singleNFTdata =
     !isBatch &&
-    NFTsArr.map((item, key) => ({
+    NFTsArr?.map((item, key) => ({
       key: key,
       contract_type: item.contract_type,
       name:
@@ -75,7 +75,7 @@ const PackConfirm = ({
       arr = arr.concat(ERC1155element);
     }
 
-    return arr.map((item, key) => ({
+    return arr?.map((item, key) => ({
       key: key,
       ...item
     }));
@@ -106,7 +106,7 @@ const PackConfirm = ({
     }
   ];
 
-  const selectedTokensData = selectedTokens.map((item, key) => ({
+  const selectedTokensData = selectedTokens?.map((item, key) => ({
     key: key, //start after native asset amount
     asset: item.data.symbol,
     amount: item.value

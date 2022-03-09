@@ -110,7 +110,12 @@ function Marketplace() {
   };
 
   useEffect(() => {
-    getMarketItems();
+    let isTriggered = true;
+    const getItems = async () => {
+      getMarketItems();
+    };
+    if (isTriggered) getItems();
+    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -201,7 +206,7 @@ function Marketplace() {
 
   return (
     <>
-      <AccountVerification param={"marketplace"}/>
+      <AccountVerification param={"marketplace"} />
       <ChainVerification />
       {isAuthenticated && (
         <div style={{ marginTop: "40px" }}>

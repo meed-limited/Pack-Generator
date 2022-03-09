@@ -206,7 +206,7 @@ function SinglePack() {
 
                 {NFTsArr &&
                   NFTsArr.length > 0 &&
-                  NFTsArr.map((nftItem, key) => (
+                  NFTsArr?.map((nftItem, key) => (
                     <div
                       style={{
                         margin: "15px",

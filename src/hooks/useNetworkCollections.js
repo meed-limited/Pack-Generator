@@ -9,7 +9,7 @@ export const useNetworkCollections = () => {
     const getCollections = async () => {
         const collections = await getAllCollectionData();
         const parsedCollections = await parseAllData(collections);
-        const rename = parsedCollections.map(item => ({
+        const rename = parsedCollections?.map(item => ({
           addrs: item.collectionAddress,
           ...item
         }))
