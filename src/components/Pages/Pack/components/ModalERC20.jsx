@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Modal, Input, Typography, Button, InputNumber } from "antd";
 import AssetSelector from "../../../Wallet/components/AssetSelector";
 import { useNativeBalance } from "react-moralis";
-
 const { Title } = Typography;
 
 const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAssetCancel, native, erc20 }) => {
@@ -56,19 +55,21 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
 
   return (
     <Modal
-      title='Select assets to pack'
+      title='Select some Crypto-Tokens to pack (Amount PER pack)'
       visible={isModalNFTVisible}
       onOk={handleClickOk}
       confirmLoading={confirmLoading}
       onCancel={handleAssetCancel}
     >
+      <div style={{ margin: "auto", textAlign: "center" }}>
       <Title level={5} style={{ color: "white" }}>
-        Amount of {nativeToken?.name} to pack
+        Amount of {nativeToken?.name} coins per pack:
       </Title>
 
       <InputNumber
         style={{ marginBottom: "80px", minWidth: "200px" }}
         type='number'
+        step={0.01}
         min={0}
         max={balance?.balance / ("1e" + nativeToken?.decimals)}
         placeholder={`Enter ${nativeToken?.name} amount`}
@@ -77,15 +78,15 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
       ></InputNumber>
 
       <Title level={5} style={{ color: "white" }}>
-        Amount of ERC20 Tokens to pack
+        Amount of ERC20 Tokens per pack:
       </Title>
-      <AssetSelector setAsset={onChangeToken} style={{ width: "auto", minWidth: "200px" }} />
-      <div style={{ display: "flex", width: "100%", alignItems: "center" }}>
+      <AssetSelector setAsset={onChangeToken} style={{ width: "auto", minWidth: "300px" }} />
+      <div style={{ margin: "auto", width: "300px", alignItems: "center" }}>
         <Input
           style={{ marginTop: "10px" }}
           type='number'
           min='0'
-          step={0.001}
+          step={0.1}
           placeholder='Enter selected token amount'
           onChange={(e) => onChangeERC20Amount(parseFloat(e.target.value))}
           disabled={!currentToken ? true : false}
@@ -98,6 +99,8 @@ const ModalERC20 = ({ isModalNFTVisible, handleAssetOk, confirmLoading, handleAs
           Add
         </Button>
       </div>
+      </div>
+      
       <div style={{ width: "100", color: "white", display: "flex", flexDirection: "column" }}>
         {ERC20Tokens &&
           ERC20Tokens.length > 0 &&

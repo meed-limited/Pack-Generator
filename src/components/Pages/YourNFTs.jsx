@@ -13,7 +13,7 @@ import { getEllipsisTxt } from "helpers/formatters";
 import { approveNFTcontract } from "../../helpers/approval";
 import { openNotification } from "../../helpers/notifications";
 import copy from "copy-to-clipboard";
-import { Card, Image, Tooltip, Modal, Input, Spin, Button, message, Alert } from "antd";
+import { Card, Image, Tooltip, Modal, Input, Spin, Button, message, Alert, Space } from "antd";
 import { CopyOutlined, FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
 const { Meta } = Card;
@@ -59,7 +59,7 @@ const styles = {
 };
 
 function YourNFTs() {
-  const NFTsPerPage = 100;
+  const NFTsPerPage = 50;
   const [offset, setOffset] = useState(0);
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
   const { chainId } = useMoralis();
@@ -195,7 +195,7 @@ function YourNFTs() {
     message.success(`"${toCopy}" copied!`, 2);
   };
 
-  const isPack = (nft) => {
+  const isClaimable = (nft) => {
     if (packCollections.includes(nft.token_address.toLowerCase()) === true) {
       return (
         <Tooltip title='Claim Pack'>
@@ -210,6 +210,11 @@ function YourNFTs() {
       <AccountVerification param={"yourNfts"} />
       <ChainVerification />
       <div style={styles.NFTs}>
+        {!NFTBalances && (
+          <Space>
+            <Spin size='large' />
+          </Space>
+        )}
         {fetchedNFTs &&
           fetchedNFTs?.map((nft, index) => {
             nft = verifyMetadata(nft);
@@ -226,7 +231,7 @@ function YourNFTs() {
                   <Tooltip title='List NFT for sale'>
                     <ShoppingCartOutlined onClick={() => handleSellClick(nft)} />
                   </Tooltip>,
-                  isPack(nft)
+                  isClaimable(nft)
                 ]}
                 style={{ width: 190, border: "2px solid #e7eaf3" }}
                 cover={
