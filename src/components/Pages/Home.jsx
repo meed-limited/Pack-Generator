@@ -1,17 +1,18 @@
 import React from "react";
-import pack from "../../assets/Home/pack.png";
-import TEXT_LEPLOGO from "../../../src/assets/Home/TEXT_LEPLOGO.svg";
+import { Link } from "react-router-dom";
 import { Button } from "antd";
 import buttonImg from "assets/buttonImg.svg";
-import { Link } from "react-router-dom";
+import Homepage_pack2 from "../../assets/Homepage_pack2.png";
+import TEXT_LEPLOGO from "../../../src/assets/Home/TEXT_LEPLOGO.svg";
 
 const styles = {
   grid: {
     display: "grid",
+    width: "60vw",
     gridTemplateColumns: "60% 40%",
-    marginLeft: "30px",
+    marginLeft: "-80px",
     height: "-webkit-fill-available",
-    paddingTop: "70px"
+    paddingTop: "100px"
   },
   homeButton: {
     width: "193px",
@@ -69,9 +70,9 @@ const Home = () => {
 
       <div>
         <img
-          src={pack}
+          src={Homepage_pack2}
           alt=''
-          style={{ transform: "scale(1.1)", margin: "auto", paddingTop: "70px", paddingLeft: "50px" }}
+          style={{ transform: "scale(2)", paddingTop: "30px", marginLeft: "80px" }}
         />
       </div>
     </div>
