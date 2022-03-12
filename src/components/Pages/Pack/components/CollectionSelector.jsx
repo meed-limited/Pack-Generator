@@ -26,7 +26,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   const [description, setDescription] = useState("");
   const [imageURL, setImageURL] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
-  
+
   const { Option } = Select;
 
   const getContractAddress = () => {
@@ -118,18 +118,15 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   };
 
   const createNewContract = async (name, symbol, supply) => {
-    console.log(name, symbol, supply)
     message.config({
       maxCount: 1
     });
     message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 5);
 
     const metadataURI = await uploadMetadataToIpfs();
-    console.log(metadataURI)
+    console.log(metadataURI);
 
     const contractAddr = await getContractAddress();
-    console.log(contractAddr)
-    
     var newAddress;
 
     const sendOptions = {
@@ -147,9 +144,8 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
     try {
       const transaction = await Moralis.executeFunction(sendOptions);
       const receipt = await transaction.wait(2);
-      console.log(receipt);
 
-       newAddress = receipt.events[0].address;
+      newAddress = receipt.events[0].address;
       let link = `${getExplorer(chainId)}tx/${receipt.transactionHash}`;
       let title = "Collection created!";
       let msg = (
