@@ -62,7 +62,7 @@ function YourNFTs() {
   const NFTsPerPage = 50;
   const [offset, setOffset] = useState(0);
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
-  const { chainId } = useMoralis();
+  const { chainId, isAuthenticated } = useMoralis();
   const { marketAddressMumbai, marketABI } = useDapp();
   const { nativeToken } = useNativeBalance(chainId);
   const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTsPerPage });
@@ -210,7 +210,7 @@ function YourNFTs() {
       <AccountVerification param={"yourNfts"} />
       <ChainVerification />
       <div style={styles.NFTs}>
-        {!NFTBalances && (
+        {isAuthenticated && !NFTBalances && (
           <Space>
             <Spin size='large' />
           </Space>
