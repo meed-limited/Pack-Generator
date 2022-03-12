@@ -46,7 +46,6 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   const text = () => {
     return (
       <p>
-        <br />
         Make a copy of the attached template and edit your data. When all set, simply save your file as ".csv". <br />
         Required info: <br />
         1. Token Id <br />
