@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "antd";
 import buttonImg from "assets/buttonImg.svg";
-import Homepage_pack2 from "../../assets/Homepage_pack2.png";
+import Homepage_pack from "../../assets/Home/Homepage_pack.png";
 import TEXT_LEPLOGO from "../../../src/assets/Home/TEXT_LEPLOGO.svg";
 
 const styles = {
@@ -70,7 +70,7 @@ const Home = () => {
 
       <div>
         <img
-          src={Homepage_pack2}
+          src={Homepage_pack}
           alt=''
           style={{ transform: "scale(2)", paddingTop: "30px", marginLeft: "80px" }}
         />
