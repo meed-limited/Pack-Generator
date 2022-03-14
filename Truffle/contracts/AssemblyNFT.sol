@@ -280,7 +280,10 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         uint256 totalEth = _arrayOfNumbers[0][0] * _amountOfPacks;
         require(msg.value == totalEth, "value not match");
         if (maxPackSupply != 0) {
-            require(nonce + _amountOfPacks <= maxPackSupply, "Max supply reached");
+            require(
+                nonce + _amountOfPacks <= maxPackSupply,
+                "Max supply reached"
+            );
         }
 
         for (uint256 i = 0; i < _amountOfPacks; i++) {
