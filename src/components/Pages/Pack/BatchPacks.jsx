@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMoralis, useNativeBalance } from "react-moralis";
 import { Moralis } from "moralis";
-import { getAssemblyAddress, customAssemblyABI } from "Constant/constant";
+import { getAssemblyAddress, customAssemblyABI } from "constant/constant";
 import cloneDeep from "lodash/cloneDeep";
 import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";

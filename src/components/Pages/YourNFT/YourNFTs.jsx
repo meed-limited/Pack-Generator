@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import ClaimSingleNFT from "./ClaimSingleNFT";
-import { getMarketplaceAddress, marketABI } from "Constant/constant";
+import { getMarketplaceAddress, marketABI } from "constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import { usePackCollections } from "hooks/usePackCollections";
@@ -14,7 +14,7 @@ import { approveNFTcontract } from "../../../helpers/approval";
 import { openNotification } from "../../../helpers/notifications";
 import { Card, Image, Tooltip, Modal, Input, Spin, Button, Alert, Space } from "antd";
 import { FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import ShowNFTModal from "./ShowNFTModal";
+import ShowNFTModal from "../../ShowNFTModal";
 
 const { Meta } = Card;
 
@@ -40,21 +40,6 @@ const styles = {
     border: "0.5px solid white",
     fontSize: "15px",
     cursor: "pointer"
-  },
-  transparentContainer: {
-    borderRadius: "20px",
-    background: "rgba(240, 248, 255, 0.10)",
-    background:
-      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    border: "1px solid",
-    textAlign: "left",
-    padding: "15px",
-    fontSize: "18px",
-    color: "white"
   }
 };
 
@@ -283,7 +268,6 @@ function YourNFTs() {
         onCancel={() => setClaimModalvisible(false)}
         footer={false}
       >
-        
         <ClaimSingleNFT nftToClaim={nftToClaim} getClaimStatut={getClaimStatut} />
       </Modal>
 

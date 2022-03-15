@@ -1,5 +1,5 @@
 import { useMoralis } from "react-moralis";
-import { assemblyABI } from "Constant/constant";
+import { assemblyABI } from "constant/constant";
 const Web3 = require("web3");
 const web3 = new Web3(Web3.givenProvider);
 

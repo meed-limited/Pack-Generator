@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
-import { assemblyABI, getAssemblyAddress } from "Constant/constant";
+import { assemblyABI, getAssemblyAddress } from "constant/constant";
 import { useContractEvents } from "hooks/useContractEvents";
 import { getExplorer } from "helpers/networks";
 import { openNotification } from "../../../helpers/notifications.js";
