@@ -3,7 +3,7 @@ import { useMoralis } from "react-moralis";
 import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from "react-router-dom";
 import Account from "components/Account/Account";
 import Chains from "components/Chains";
-import YourNFTs from "components/Pages/YourNFTs";
+import YourNFTs from "components/Pages/YourNFT/YourNFTs";
 import Marketplace from "components/Pages/Marketplace";
 import { Menu, Layout } from "antd";
 import "antd/dist/antd.css";

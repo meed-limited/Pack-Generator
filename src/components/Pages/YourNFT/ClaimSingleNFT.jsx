@@ -4,10 +4,10 @@ import { Moralis } from "moralis";
 import { assemblyABI, getAssemblyAddress } from "Constant/constant";
 import { useContractEvents } from "hooks/useContractEvents";
 import { getExplorer } from "helpers/networks";
-import { openNotification } from "../../../../helpers/notifications.js";
+import { openNotification } from "../../../helpers/notifications.js";
 import { Button, Spin } from "antd";
 import { FileSearchOutlined } from "@ant-design/icons";
-import buttonImg from "../../../../assets/buttonImg.svg";
+import buttonImg from "../../../assets/buttonImg.svg";
 
 const styles = {
   selectButton: {
@@ -85,7 +85,6 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
       claimedPacks.set("addresses", nftData[0]);
       claimedPacks.set("numbers", nftData[1]);
       claimedPacks.save();
-
     } catch (error) {
       let title = "Unexpected error";
       let msg = "Oops, something went wrong while unpacking your pack!";
@@ -98,13 +97,23 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
 
   return (
     <>
-      {!isClaiming && (
+      <Spin spinning={isClaiming} style={{ margin: "auto", display: "block" }} size='large'>
+        <img
+          src={`${nftToClaim?.image}`}
+          alt=''
+          style={{
+            width: "250px",
+            height: "250px",
+            margin: "auto",
+            borderRadius: "10px",
+            marginBottom: "15px"
+          }}
+        />
+
         <Button type='primary' shape='round' style={styles.selectButton} onClick={claimPack}>
           CLAIM
         </Button>
-      )}
-
-      {isClaiming && <Spin style={{ margin: "auto", display: "block" }} size='large' />}
+      </Spin>
     </>
   );
 };

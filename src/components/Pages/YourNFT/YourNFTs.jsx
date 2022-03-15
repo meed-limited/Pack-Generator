@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
-import ClaimSingleNFT from "./Pack/components/ClaimSingleNFT";
+import ClaimSingleNFT from "./ClaimSingleNFT";
 import { getMarketplaceAddress, marketABI } from "Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
@@ -10,11 +10,11 @@ import { usePackCollections } from "hooks/usePackCollections";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
-import { approveNFTcontract } from "../../helpers/approval";
-import { openNotification } from "../../helpers/notifications";
-import copy from "copy-to-clipboard";
-import { Card, Image, Tooltip, Modal, Input, Spin, Button, message, Alert, Space } from "antd";
-import { CopyOutlined, FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import { approveNFTcontract } from "../../../helpers/approval";
+import { openNotification } from "../../../helpers/notifications";
+import { Card, Image, Tooltip, Modal, Input, Spin, Button, Alert, Space } from "antd";
+import { FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
+import ShowNFTModal from "./ShowNFTModal";
 
 const { Meta } = Card;
 
@@ -153,11 +153,6 @@ function YourNFTs() {
     setVisibility(true);
   };
 
-  const handleShowDetail = (nft) => {
-    setNftToShow(nft);
-    setDetailVisibility(true);
-  };
-
   const handleClaimClick = async (nft) => {
     setNftToClaim(nft);
     setClaimModalvisible(true);
@@ -187,12 +182,9 @@ function YourNFTs() {
     itemImage.save();
   }
 
-  const copyToClipboard = (toCopy) => {
-    copy(toCopy);
-    message.config({
-      maxCount: 1
-    });
-    message.success(`"${toCopy}" copied!`, 2);
+  const handleShowDetail = (nft) => {
+    setNftToShow(nft);
+    setDetailVisibility(true);
   };
 
   const isClaimable = (nft) => {
@@ -291,67 +283,15 @@ function YourNFTs() {
         onCancel={() => setClaimModalvisible(false)}
         footer={false}
       >
-        <img
-          src={`${nftToClaim?.image}`}
-          alt=''
-          style={{
-            width: "250px",
-            height: "250px",
-            margin: "auto",
-            borderRadius: "10px",
-            marginBottom: "15px"
-          }}
-        />
+        
         <ClaimSingleNFT nftToClaim={nftToClaim} getClaimStatut={getClaimStatut} />
       </Modal>
 
-      <Modal
-        title={`"${nftToShow?.name} #${getEllipsisTxt(nftToShow?.token_id, 6)}" Details`}
-        visible={detailVisibility}
-        onCancel={() => setDetailVisibility(false)}
-        footer={false}
-      >
-        <img
-          src={`${nftToShow?.image}`}
-          alt=''
-          style={{
-            width: "250px",
-            height: "250px",
-            margin: "auto",
-            borderRadius: "10px",
-            marginBottom: "15px"
-          }}
-        />
-        <div style={styles.transparentContainer}>
-          {nftToShow?.name !== null && <h3 style={{ textAlign: "center", fontSize: "21px" }}>{nftToShow?.name}</h3>}
-          {nftToShow?.metadata !== null && (
-            <h4 style={{ textAlign: "center", fontSize: "19px" }}>{nftToShow?.metadata.description}</h4>
-          )}
-          <br></br>
-
-          <div>
-            NFT Id:{" "}
-            <div style={{ float: "right" }}>
-              {nftToShow?.token_id.length > 8 ? getEllipsisTxt(nftToShow?.token_id, 4) : nftToShow?.token_id}{" "}
-              <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.token_id)} />
-            </div>
-          </div>
-          <div>
-            Contract Address:
-            <div style={{ float: "right" }}>
-              {getEllipsisTxt(nftToShow?.token_address, 6)}{" "}
-              <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.token_address)} />
-            </div>
-          </div>
-          <div>
-            Contract Type:
-            <div style={{ float: "right" }}>
-              {nftToShow?.contract_type}{" "}
-              <CopyOutlined style={{ color: "blue" }} onClick={() => copyToClipboard(nftToShow?.contract_type)} />
-            </div>
-          </div>
-        </div>
-      </Modal>
+      <ShowNFTModal
+        nftToShow={nftToShow}
+        setDetailVisibility={setDetailVisibility}
+        detailVisibility={detailVisibility}
+      />
 
       {fetchedNFTs && fetchedNFTs?.length > 0 && (
         <div style={{ margin: "20px auto", textAlign: "center" }}>
