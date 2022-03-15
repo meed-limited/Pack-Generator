@@ -1,4 +1,4 @@
-# PACK-GENRATOR - Quick Start
+# PACK-GENERATOR - Quick Start
 
 ```
 💿 Install all dependencies:
