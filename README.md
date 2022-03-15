@@ -13,13 +13,17 @@ REACT_APP_MORALIS_APPLICATION_ID = xxxxxxxxxxxx
 REACT_APP_MORALIS_SERVER_URL = https://xxxxxx.grandmoralis.com:2053/server
 ```
 
-🔎 Locate the DappProvider in `src/dappProvider/DappProvider.js` and paste your smart-contracts addresses and ABI;
+🔎 Locate the constant file in `src/Constant/constant.js` and paste your smart-contracts addresses and ABI;
 ```jsx
-const marketABI = useState();
-const marketAddressMumbai = useState();
+// Contracts deployed on Ethereum
+const assemblyAddressEthereum = "Paste your constract address here";
+const factoryAddressEthereum = "Paste your constract address here";
+const marketAddressEthereum = "Paste your constract address here";
+
+export const assemblyABI = "Paste your ABI here";
 ```
 
-🔃 Sync any smart-contracts events with your Moralis Server
+🔃 Sync any smart-contracts events needed with your Moralis Server
 
 
 🚴‍♂️ Run your App:
