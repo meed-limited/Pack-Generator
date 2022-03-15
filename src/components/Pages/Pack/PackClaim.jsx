@@ -1,22 +1,19 @@
 import React, { useState } from "react";
-import { useDapp } from "dappProvider/DappProvider";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
-import { getEllipsisTxt } from "helpers/formatters";
-import { openNotification } from "../../../helpers/notifications";
-import { getExplorer } from "helpers/networks";
+import { assemblyABI, getAssemblyAddress } from "../../../Constant/constant";
 import ModalPackOnly from "./components/ModalPackOnly";
 import { useContractEvents } from "hooks/useContractEvents";
-import { useContractAddress } from "hooks/useContractAddress";
+import { getExplorer } from "helpers/networks";
+import { getEllipsisTxt } from "helpers/formatters";
+import { openNotification } from "../../../helpers/notifications";
 import { Button, Tooltip } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./styles";
 
 const PackClaim = () => {
   const { chainId, account } = useMoralis();
-  const { assemblyABI } = useDapp();
   const { retrieveCreatedAssemblyEvent } = useContractEvents();
-  const { getAssemblyAddress } = useContractAddress();
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const assemblyABIJson = JSON.parse(assemblyABI);
@@ -51,7 +48,7 @@ const PackClaim = () => {
   };
 
   const getContractAddress = () => {
-    const defaultAssemblyAddress = getAssemblyAddress();
+    const defaultAssemblyAddress = getAssemblyAddress(chainId);
     if (selectedPack && selectedPack[0].token_address !== defaultAssemblyAddress) {
       return selectedPack[0].token_address;
     } else {
@@ -94,7 +91,7 @@ const PackClaim = () => {
       );
       openNotification("success", title, msg);
       resetOnClaim();
-      console.log("pack claimed");
+      console.log("Pack claimed");
 
       const ClaimedPacks = Moralis.Object.extend("ClaimedPacks");
       const claimedPacks = new ClaimedPacks();

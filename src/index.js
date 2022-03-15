@@ -1,10 +1,9 @@
 import React, { Text } from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
-import { Moralis } from 'moralis';
 import { MoralisProvider } from "react-moralis";
+import { Moralis } from 'moralis';
+import App from "./App";
 import "./index.css";
-import { DappProvider } from "./dappProvider/DappProvider.js";
 
 const APP_ID = process.env.REACT_APP_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.REACT_APP_MORALIS_SERVER_URL;
@@ -19,9 +18,7 @@ const Application = () => {
   if (isServerInfo)
     return (
       <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
-        <DappProvider>
           <App isServerInfo />
-        </DappProvider>
       </MoralisProvider>
     );
   else {

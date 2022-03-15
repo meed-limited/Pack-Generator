@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
-import { useDapp } from "dappProvider/DappProvider";
-import { useContractAddress } from "hooks/useContractAddress";
+import { assemblyABI, getAssemblyAddress } from "Constant/constant";
 import { useContractEvents } from "hooks/useContractEvents";
 import { getExplorer } from "helpers/networks";
 import { openNotification } from "../../../../helpers/notifications.js";
-import buttonImg from "../../../../assets/buttonImg.svg";
 import { Button, Spin } from "antd";
 import { FileSearchOutlined } from "@ant-design/icons";
+import buttonImg from "../../../../assets/buttonImg.svg";
 
 const styles = {
   selectButton: {
@@ -25,14 +24,12 @@ const styles = {
 
 const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
   const { chainId, account } = useMoralis();
-  const { assemblyABI } = useDapp();
   const { retrieveCreatedAssemblyEvent } = useContractEvents();
-  const { getAssemblyAddress } = useContractAddress();
   const assemblyABIJson = JSON.parse(assemblyABI);
   const [isClaiming, setIsClaiming] = useState(false);
 
   const getContractAddress = () => {
-    const defaultAssemblyAddress = getAssemblyAddress();
+    const defaultAssemblyAddress = getAssemblyAddress(chainId);
     if (nftToClaim && nftToClaim.token_address !== defaultAssemblyAddress) {
       return nftToClaim.token_address;
     } else {

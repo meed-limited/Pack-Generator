@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import ClaimSingleNFT from "./Pack/components/ClaimSingleNFT";
-import { useDapp } from "dappProvider/DappProvider";
+import { getMarketplaceAddress, marketABI } from "Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import { usePackCollections } from "hooks/usePackCollections";
@@ -59,11 +59,11 @@ const styles = {
 };
 
 function YourNFTs() {
+  const { chainId, isAuthenticated } = useMoralis();
+  const marketAddress = getMarketplaceAddress(chainId);
   const NFTsPerPage = 50;
   const [offset, setOffset] = useState(0);
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
-  const { chainId, isAuthenticated } = useMoralis();
-  const { marketAddressMumbai, marketABI } = useDapp();
   const { nativeToken } = useNativeBalance(chainId);
   const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTsPerPage });
   const { verifyMetadata } = useVerifyMetadata();
@@ -112,7 +112,7 @@ function YourNFTs() {
     setLoading(true);
     const p = listPrice * ("1e" + 18);
     const sendOptions = {
-      contractAddress: marketAddressMumbai,
+      contractAddress: marketAddress,
       functionName: listItemFunction,
       abi: marketABIJson,
       params: {
@@ -144,7 +144,7 @@ function YourNFTs() {
 
   const approveAll = async (nft) => {
     setLoading(true);
-    approveNFTcontract(nft.token_address, marketAddressMumbai);
+    approveNFTcontract(nft.token_address, marketAddress);
     setLoading(false);
   };
 

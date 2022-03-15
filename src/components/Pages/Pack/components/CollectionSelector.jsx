@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
-import { useDapp } from "dappProvider/DappProvider";
+import { getFactoryAddress, factoryABI } from "Constant/constant";
 import { getExplorer } from "helpers/networks";
 import { openNotification } from "helpers/notifications";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
@@ -13,10 +13,9 @@ import styles from "../styles";
 
 const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   const { chainId, account } = useMoralis();
-  const { factoryAddressEthereum, factoryAddressPolygon, factoryAddressMumbai, factoryABI } = useDapp();
   const factoryABIJson = JSON.parse(factoryABI);
-  const [displayFactory, setDisplayFactory] = useState(false);
   const { getCustomCollectionData, parseData } = useQueryMoralisDb();
+  const [displayFactory, setDisplayFactory] = useState(false);
   const [isExistingCollection, setIsExistingCollection] = useState(false);
   const [customCollection, setCustomCollection] = useState([]);
   const [currentCollection, setCurrentCollection] = useState([]);
@@ -26,18 +25,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   const [description, setDescription] = useState("");
   const [imageURL, setImageURL] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
-
   const { Option } = Select;
-
-  const getContractAddress = () => {
-    if (chainId === "0x1") {
-      return factoryAddressEthereum;
-    } else if (chainId === "0x89") {
-      return factoryAddressPolygon;
-    } else if (chainId === "0x13881") {
-      return factoryAddressMumbai;
-    }
-  };
 
   const handleNameChange = (e) => {
     setName(e.target.value);
@@ -126,7 +114,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
     const metadataURI = await uploadMetadataToIpfs();
     console.log(metadataURI);
 
-    const contractAddr = await getContractAddress();
+    const contractAddr = getFactoryAddress();
     var newAddress;
 
     const sendOptions = {

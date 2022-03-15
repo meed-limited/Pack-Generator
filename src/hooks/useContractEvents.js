@@ -1,9 +1,10 @@
-import { useDapp } from "dappProvider/DappProvider";
+import { useMoralis } from "react-moralis";
+import { assemblyABI } from "Constant/constant";
 const Web3 = require("web3");
 const web3 = new Web3(Web3.givenProvider);
 
 export const useContractEvents = () => {
-  const { walletAddress, assemblyABI } = useDapp();
+  const { account } = useMoralis();
   const assemblyABIJson = JSON.parse(assemblyABI);
 
   var arrayOfAddress;
@@ -11,7 +12,7 @@ export const useContractEvents = () => {
   var salt;
 
   const retrieveCreatedAssemblyEvent = async (_pack, _contractAdd) => {
-    const instance = await new web3.eth.Contract(assemblyABIJson, _contractAdd, { from: walletAddress });
+    const instance = await new web3.eth.Contract(assemblyABIJson, _contractAdd, { from: account });
     var pack;
 
     _pack.length > 0 ? (pack = _pack[0]) : (pack = _pack);

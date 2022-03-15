@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
-import { useDapp } from "dappProvider/DappProvider";
+import { getAssemblyAddress, assemblyABI } from "Constant/constant";
 import cloneDeep from "lodash/cloneDeep";
 import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
 import { sortSingleArrays } from "../../../helpers/arraySorting";
@@ -17,7 +17,6 @@ import styles from "./styles";
 
 function SinglePack() {
   const { account, chainId } = useMoralis();
-  const { assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai, assemblyABI } = useDapp();
   const [isSinglePackConfirmVisible, setIsSinglePackConfirmVisible] = useState(false);
   const [isModalNFTVisible, setIsModalNFTVisible] = useState(false);
   const [NFTsArr, setNFTsArr] = useState([]);
@@ -58,16 +57,6 @@ function SinglePack() {
     setSelectedTokens(Erc20);
   };
 
-  const getContractAddress = () => {
-    if (chainId === "0x1") {
-      return assemblyAddressEthereum;
-    } else if (chainId === "0x89") {
-      return assemblyAddressPolygon;
-    } else if (chainId === "0x13881") {
-      return assemblyAddressMumbai;
-    }
-  };
-
   const onClickReset = () => {
     setEthAmount(0);
     setSelectedTokens([]);
@@ -85,7 +74,7 @@ function SinglePack() {
   };
 
   const handleSinglePack = async () => {
-    const contractAddress = getContractAddress();
+    const contractAddress = getAssemblyAddress(chainId);
     const result = getSinglePackArrays();
 
     try {

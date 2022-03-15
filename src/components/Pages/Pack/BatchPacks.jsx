@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useMoralis, useNativeBalance } from "react-moralis";
 import { Moralis } from "moralis";
-import { useDapp } from "dappProvider/DappProvider";
+import { getAssemblyAddress, customAssemblyABI } from "Constant/constant";
 import cloneDeep from "lodash/cloneDeep";
 import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
@@ -17,7 +17,6 @@ import styles from "./styles";
 
 const BatchPack = () => {
   const { account, chainId } = useMoralis();
-  const { assemblyAddressEthereum, assemblyAddressPolygon, assemblyAddressMumbai, customAssemblyABI } = useDapp();
   const customAssemblyABIJson = JSON.parse(customAssemblyABI);
   const [displayFactory, setDisplayFactory] = useState(false);
   const { nativeToken } = useNativeBalance(chainId);
@@ -49,13 +48,7 @@ const BatchPack = () => {
     if (customCollectionData[0] && customCollectionData[0].length > 0) {
       return customCollectionData[0];
     } else {
-      if (chainId === "0x1") {
-        return assemblyAddressEthereum;
-      } else if (chainId === "0x89") {
-        return assemblyAddressPolygon;
-      } else if (chainId === "0x13881") {
-        return assemblyAddressMumbai;
-      }
+      return getAssemblyAddress(chainId);
     }
   };
 
@@ -224,7 +217,7 @@ const BatchPack = () => {
       openNotification("error", title, msg);
       console.log(err);
     }
-  }
+  };
 
   const onClickReset = () => {
     setDisplayFactory(false);
@@ -256,11 +249,11 @@ const BatchPack = () => {
         <label style={{ letterSpacing: "1px" }}>Prepare your Multiple Packs</label>
         <p style={{ fontSize: "14px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
           1. Create / Select a pack collection (Optional)
-          <Switch 
-            style={{ marginLeft: "30px" }} 
+          <Switch
+            style={{ marginLeft: "30px" }}
             defaultChecked={false}
             checked={!displayFactory ? false : true}
-            onChange={handleFactorySwitch} 
+            onChange={handleFactorySwitch}
           />
         </p>
         {displayFactory && (
