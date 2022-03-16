@@ -1,12 +1,12 @@
 import React from "react";
+import { useMoralis } from "react-moralis";
 import SinglePack from "./SinglePack";
 import BatchPack from "./BatchPacks";
 import PackClaim from "./PackClaim";
-import { Tabs } from "antd";
-import styles from "./styles";
-import { useMoralis } from "react-moralis";
 import AccountVerification from "components/Account/AccountVerification";
 import ChainVerification from "components/Chains/ChainVerification";
+import { Tabs } from "antd";
+import styles from "./styles";
 
 const { TabPane } = Tabs;
 
