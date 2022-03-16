@@ -169,7 +169,7 @@ const App = () => {
 
 export const Logo = () => (
   <img
-    style={{ paddingTop: "10px", paddingLeft: "15px", width: "400px", height: "34px" }}
+    style={{ paddingTop: "10px", paddingLeft: "15px", width: "450px", height: "34px" }}
     src={PG_Logo}
     alt='PG_Logo'
   />
