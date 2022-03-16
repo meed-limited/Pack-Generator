@@ -15,7 +15,7 @@ import Pack from "components/Pages/Pack/Pack";
 //import BatchMinter from "components/BatchMinter";
 import Home from "components/Pages/Home";
 import background from "./assets/background.jpg";
-import lepriconLogoWhite from "./assets/lepriconLogoWhite.png";
+import PG_Logo from "./assets/PG_Logo.png";
 import headerBackground from "./assets/headerBackground.jpg";
 import footerBackground from "./assets/footerBackground.jpg";
 
@@ -169,9 +169,9 @@ const App = () => {
 
 export const Logo = () => (
   <img
-    style={{ width: "1.25in", maxWidth: "none", margin: "30px", paddingTop: "5px" }}
-    src={lepriconLogoWhite}
-    alt='LepriconLogo'
+    style={{ paddingTop: "10px", paddingLeft: "15px", width: "400px", height: "34px" }}
+    src={PG_Logo}
+    alt='PG_Logo'
   />
 );
 

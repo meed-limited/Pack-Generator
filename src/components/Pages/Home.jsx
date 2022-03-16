@@ -61,7 +61,7 @@ const Home = () => {
           <div style={styles.text}>{text}</div>
         </div>
 
-        <Link to='/Packs'>
+        <Link to='/Pack'>
           <Button ghost style={styles.homeButton}>
             Get Started
           </Button>
