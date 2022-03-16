@@ -7,7 +7,7 @@ import { Card, Image, Tooltip, Modal, Badge, Alert, Spin, Button } from "antd";
 import { useNetworkCollections } from "hooks/useNetworkCollections";
 import { useNFTTokenIds } from "hooks/useNFTTokenIds";
 import { FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import { getMarketplaceAddress, marketABI } from "../../constant/constant";
+import { getMarketplaceAddress, marketABI } from "../../Constant/constant";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";

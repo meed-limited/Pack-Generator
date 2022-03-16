@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
-import { assemblyABI, getAssemblyAddress } from "../../../constant/constant";
+import { assemblyABI, getAssemblyAddress } from "../../../Constant/constant";
 import ModalPackOnly from "./components/ModalPackOnly";
 import { useContractEvents } from "hooks/useContractEvents";
 import { getExplorer } from "helpers/networks";

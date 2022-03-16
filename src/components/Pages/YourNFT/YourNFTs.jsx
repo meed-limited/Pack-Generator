@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import ClaimSingleNFT from "./ClaimSingleNFT";
-import { getMarketplaceAddress, marketABI } from "../../../constant/constant";
+import { getMarketplaceAddress, marketABI } from "../../../Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import { usePackCollections } from "hooks/usePackCollections";
