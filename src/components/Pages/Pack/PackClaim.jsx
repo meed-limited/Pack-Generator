@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
 import { assemblyABI, getAssemblyAddress } from "../../../Constant/constant";
-import ModalPackOnly from "./components/ModalPackOnly";
+import ModalNFT from "./components/ModalNFT";
 import { useContractEvents } from "hooks/useContractEvents";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
@@ -102,7 +102,6 @@ const PackClaim = () => {
       claimedPacks.set("addresses", data[0]);
       claimedPacks.set("numbers", data[1]);
       claimedPacks.save();
-
     } catch (error) {
       let title = "Unexpected error";
       let msg = "Oops, something went wrong while unpacking your pack!";
@@ -130,12 +129,14 @@ const PackClaim = () => {
               />
             </Tooltip>
           </div>
-          <ModalPackOnly
+          <ModalNFT
             handleNFTCancel={handleNFTCancel}
             isModalNFTVisible={isModalNFTVisible}
             handleNFTOk={handleNFTOk}
             isMultiple={false}
             confirmLoading={confirmLoading}
+            NFTsPerPage={500}
+            isPackOnly={true}
           />
 
           {selectedPack && selectedPack?.length > 0 && (

@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
 import { getAssemblyAddress, assemblyABI } from "../../../Constant/constant";
-import cloneDeep from "lodash/cloneDeep";
-import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
-import { sortSingleArrays } from "../../../helpers/arraySorting";
 import AssetPerPack from "./components/AssetPerPack";
 import ModalNFT from "./components/ModalNFT";
 import PackConfirm from "./components/PackConfirm";
+import { sortSingleArrays } from "../../../helpers/arraySorting";
+import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
 import { openNotification } from "../../../helpers/notifications";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
+import cloneDeep from "lodash/cloneDeep";
 import { Button, Tooltip } from "antd";
 import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import styles from "./styles";
@@ -188,6 +188,8 @@ function SinglePack() {
                 isModalNFTVisible={isModalNFTVisible}
                 handleNFTOk={handleNFTOk}
                 isMultiple={true}
+                NFTsPerPage={100}
+                isPackOnly={false}
                 ref={assetModalRef}
               />
               <div style={{ color: "white", fontSize: "13px" }}>

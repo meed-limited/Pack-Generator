@@ -14,30 +14,29 @@ const styles = {
     height: "-webkit-fill-available",
     paddingTop: "100px"
   },
-  homeButton: {
-    width: "193px",
+  imageDLC: {
     margin: "auto",
-    backgroundImage: `url(${buttonImg})`,
-    backgroundSize: "cover",
-    border: "none",
-    borderRadius: "2px",
-    height: "50px",
-    fontSize: "20px",
+    width: "100%"
   },
   text: {
     position: "absolute",
-    bottom: "30px",
+    bottom: "0px",
     color: "white",
     fontSize: "15px",
     fontWeight: "350",
     letterSpacing: "1px",
     whiteSpace: "pre-wrap"
   },
-  imageDLC: {
+  homeButton: {
+    width: "193px",
     margin: "auto",
-    marginTop: "0",
-    paddingTop: "0",
-    width: "100%"
+    marginTop: "30px",
+    backgroundImage: `url(${buttonImg})`,
+    backgroundSize: "cover",
+    border: "none",
+    borderRadius: "2px",
+    height: "50px",
+    fontSize: "20px"
   }
 };
 
@@ -49,7 +48,6 @@ const Home = () => {
       <div>
         <div style={{ position: "relative", textAlign: "left", height: "fit-content" }}>
           <img src={TEXT_LEPLOGO} alt='' position='relative' style={styles.imageDLC} />
-
           <div style={styles.text}>{text}</div>
         </div>
 
@@ -61,11 +59,7 @@ const Home = () => {
       </div>
 
       <div>
-        <img
-          src={Homepage_pack}
-          alt=''
-          style={{ transform: "scale(2)", paddingTop: "30px", marginLeft: "80px" }}
-        />
+        <img src={Homepage_pack} alt='' style={{ transform: "scale(2)", paddingTop: "30px", marginLeft: "80px" }} />
       </div>
     </div>
   );
