@@ -45,16 +45,18 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
 
   const handleImageChange = async (e) => {
     setIsImageLoading(true);
-    try {
-      const image = e.file.originFileObj;
-      const file = new Moralis.File(e.file.name, image);
-      await file.saveIPFS();
-      setImageURL(file.ipfs());
-    } catch (error) {
-      let title = "Image error";
-      let msg = "Something went wrong while loading your image. Please, try again.";
-      openNotification("error", title, msg);
-    }
+    const image = e.file.originFileObj;
+    const file = new Moralis.File(e.file.name, image);
+    await file
+      .saveIPFS()
+      .then((result) => {
+        setImageURL(file.ipfs());
+      })
+      .catch((err) => {
+        let title = "Image error";
+        let msg = "Something went wrong while loading your image. Please, try again.";
+        openNotification("error", title, msg);
+      });
     setIsImageLoading(false);
   };
 

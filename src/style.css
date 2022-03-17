@@ -9,12 +9,8 @@
   border-bottom: 2px solid #ffffff !important;
 }
 
-.ant-menu-horizontal > .ant-menu-item a {
-  color: white;
-}
-
 .ant-menu-horizontal > .ant-menu-item-selected a {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 .ant-menu-horizontal > .ant-menu-item a:hover {
   color: #ffffff !important;
@@ -25,35 +21,35 @@
 }
 
 .ant-typography {
-  color: white;
+  color: white !important;
 }
 
 .ant-typography a {
-  color: #faad14;
+  color: #faad14 !important;
 }
 
 .ant-modal-content {
-  overflow: auto;
-  border-radius: 1rem;
-  background: rgba(240, 248, 255, 0.1);
+  overflow: auto !important;
+  border-radius: 1rem !important;
+  background: rgba(240, 248, 255, 0.1) !important;
   background: -moz-linear-gradient(
     left,
     rgba(240, 248, 255, 0.8) 0%,
     rgba(240, 248, 255, 1) 50%,
     rgba(240, 248, 255, 0.8) 100%
-  );
+  ) !important;
   background: -webkit-linear-gradient(
     left,
     rgba(240, 248, 255, 0.8) 0%,
     rgba(240, 248, 255, 1) 50%,
     rgba(240, 248, 255, 0.6) 100%
-  );
+  ) !important;
   background: linear-gradient(
     to right,
     rgba(240, 248, 255, 0.8) 0%,
     rgba(240, 248, 255, 1) 50%,
     rgba(240, 248, 255, 0.8) 100%
-  );
+  ) !important;
 }
 
 .ant-card {
@@ -70,15 +66,15 @@
 
 .ant-card-meta-title {
   color: white !important;
-  letter-spacing: 2px;
-  font-weight: 400;
-  font-family: Sora;
+  letter-spacing: 2px !important;
+  font-weight: 400 !important;
+  font-family: Sora !important;
 }
 
 .ant-card-meta-description {
   color: white !important;
-  letter-spacing: 1px;
-  font-family: Sora;
+  letter-spacing: 1px !important;
+  font-family: Sora !important;
   font-size: 13px !important;
 }
 
@@ -87,8 +83,9 @@
 }
 
 .ant-card-actions {
+  background: #6762e0 !important;
   color: yellow !important;
-  border-radius: 10px !important;
+  border: none !important;
 }
 
 .ant-card-actions > li > span a:not(.ant-btn),
@@ -97,53 +94,49 @@
 }
 
 .ant-tabs-tab {
-  font-size: 13px;
-  padding: 8px;
-  width: 200px;
+  font-size: 13px !important;
+  padding: 8px !important;
+  width: 200px !important;
   margin: auto !important;
-  display: inline-block;
-  text-align: center;
-}
-.ant-card-actions {
-  background: #6762e0 !important;
-  border-top: none;
+  display: inline-block !important;
+  text-align: center !important;
 }
 
 .ant-tabs-tab-active {
-  border-radius: 2px;
-  background: rgba(240, 248, 255, 0.1);
+  border-radius: 2px !important;
+  background: rgba(240, 248, 255, 0.1) !important;
   background: -moz-linear-gradient(
     left,
     rgba(240, 248, 255, 0.45) 0%,
     rgba(240, 248, 255, 0.25) 50%,
     rgba(240, 248, 255, 0.1) 100%
-  );
+  ) !important;
   background: -webkit-linear-gradient(
     left,
     rgba(240, 248, 255, 0.45) 0%,
     rgba(240, 248, 255, 0.25) 50%,
     rgba(240, 248, 255, 0.1) 100%
-  );
+  ) !important;
   background: linear-gradient(
     to right,
     rgba(240, 248, 255, 0.45) 0%,
     rgba(240, 248, 255, 0.25) 50%,
     rgba(240, 248, 255, 0.1) 100%
-  );
+  ) !important;
 }
 
 .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .ant-tabs-top > .ant-tabs-nav::before {
-  border-bottom: none;
+  border-bottom: none !important;
 }
 .ant-tabs-top > .ant-tabs-nav .ant-tabs-ink-bar {
   width: 0% !important;
 }
 .ant-tabs > .ant-tabs-nav .ant-tabs-nav-list {
-  margin: 0px;
+  margin: 0px !important;
 }
 
 .ant-alert-warning {
@@ -169,28 +162,30 @@ input::placeholder {
 
 .ant-table.ant-table-middle {
   background-color: transparent !important;
-  font-size: 13px;
+  font-size: 13px !important;
 }
 
 .ant-table-thead > tr > th {
-  background: transparent;
-  color: white;
-  letter-spacing: 1px;
+  background: transparent !important;
+  color: white !important;
+  letter-spacing: 1px !important;
   padding-bottom: 20px !important;
 }
 
-.ant-table-thead > tr > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
- top: 40%;
- height: 1.4em;
- background-color: white;
+.ant-table-thead
+  > tr
+  > th:not(:last-child):not(.ant-table-selection-column):not(.ant-table-row-expand-icon-cell):not([colspan])::before {
+  top: 40% !important;
+  height: 1.4em !important;
+  background-color: transparent !important;
 }
 
 .ant-modal-body {
-  background-image: url('assets/background.jpg') !important;
-  -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
+  background-image: url("assets/background.jpg") !important;
+  -webkit-background-size: cover !important;
+  -moz-background-size: cover !important;
+  -o-background-size: cover !important;
+  background-size: cover !important;
 }
 
 .ant-table {
@@ -198,12 +193,12 @@ input::placeholder {
 }
 
 .ant-upload.ant-upload-select-picture-card {
-  width: 150px;
-  height: 150px;
+  width: 150px !important;
+  height: 150px !important;
 }
 
 .ant-upload-picture-card-wrapper {
-  height: 100%;
-  margin: auto;
-  align-items: center;
+  height: 100% !important;
+  margin: auto !important;
+  align-items: center !important;
 }
