@@ -20,6 +20,10 @@
   color: #ffffff !important;
 }
 
+.ant-menu-item a {
+  color: white !important;
+}
+
 .ant-typography {
   color: white;
 }

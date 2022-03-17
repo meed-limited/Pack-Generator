@@ -1,23 +1,23 @@
 import { useEffect } from "react";
-import { useMoralis } from "react-moralis";
 import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from "react-router-dom";
-import Account from "components/Account/Account";
-import Chains from "components/Chains";
-import YourNFTs from "components/Pages/YourNFT/YourNFTs";
-import Marketplace from "components/Pages/Marketplace";
-import { Menu, Layout } from "antd";
-import "antd/dist/antd.css";
-import NativeBalance from "components/NativeBalance";
-import "./style.css";
-import Text from "antd/lib/typography/Text";
-import Transactions from "components/Pages/Transactions";
-import Pack from "components/Pages/Pack/Pack";
-//import BatchMinter from "components/BatchMinter";
+import { useMoralis } from "react-moralis";
 import Home from "components/Pages/Home";
+//import BatchMinter from "components/BatchMinter";
+import Pack from "components/Pages/Pack/Pack";
+import Marketplace from "components/Pages/Marketplace";
+import YourNFTs from "components/Pages/YourNFT/YourNFTs";
+import Transactions from "components/Pages/Transactions";
+import Chains from "components/Chains";
+import NativeBalance from "components/NativeBalance";
+import Account from "components/Account/Account";
+import Text from "antd/lib/typography/Text";
 import background from "./assets/background.jpg";
-import PG_Logo from "./assets/PG_Logo.png";
 import headerBackground from "./assets/headerBackground.jpg";
 import footerBackground from "./assets/footerBackground.jpg";
+import PG_Logo from "./assets/PG_Logo.png";
+import { Menu, Layout } from "antd";
+import "antd/dist/antd.css";
+import "./style.css";
 
 const { Header, Footer } = Layout;
 
@@ -59,9 +59,18 @@ const styles = {
     display: "flex",
     gap: "20px",
     alignItems: "center",
-    fontSize: "15px",
-    paddingTop: "10px",
+    fontSize: "14px",
     fontWeight: "500"
+  },
+  menuItems: {
+    display: "flex",
+    fontSize: "15px",
+    letterSpacing: "0.7px",
+    borderBottom: "none",
+    justifyContent: "center",
+    margin: "auto",
+    paddingTop: "10px",
+    backgroundColor: "transparent"
   },
   footer: {
     backgroundImage: `url(${footerBackground})`,
@@ -90,24 +99,7 @@ const App = () => {
           <Link to='/Home'>
             <Logo />
           </Link>
-          <Menu
-            mode='horizontal'
-            style={{
-              display: "flex",
-              fontSize: "13px",
-              fontWeight: "400",
-              letterSpacing: "1px",
-              color: "white !important",
-              borderBottom: "none",
-              justifyContent: "center",
-              margin: "auto",
-              width: "100%",
-              paddingTop: "10px",
-              backgroundColor: "transparent"
-            }}
-            defaultSelectedKeys={["/Home"]}
-            defaultOpenKeys={["/Home"]}
-          >
+          <Menu mode='horizontal' style={styles.menuItems} defaultSelectedKeys={["/Home"]} defaultOpenKeys={["/Home"]}>
             {/* <Menu.Item key='batchMinter'>
               <NavLink to='/BatchMinter'>Minter</NavLink>
             </Menu.Item> */}
@@ -168,11 +160,9 @@ const App = () => {
 };
 
 export const Logo = () => (
-  <img
-    style={{ paddingTop: "10px", paddingLeft: "15px", width: "450px", height: "34px" }}
-    src={PG_Logo}
-    alt='PG_Logo'
-  />
+  <div style={{ width: "260px" }}>
+    <img src={PG_Logo} alt='PG_Logo' />
+  </div>
 );
 
 export default App;
