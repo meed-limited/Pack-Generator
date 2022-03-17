@@ -24,13 +24,6 @@ const styles = {
     height: "50px",
     fontSize: "20px",
   },
-  title: {
-    marginTop: "10px",
-    letterSpacing: "6px",
-    color: "white",
-    fontSize: "35px",
-    fontWeight: "370"
-  },
   text: {
     position: "absolute",
     bottom: "30px",
@@ -54,7 +47,6 @@ const Home = () => {
   return (
     <div style={styles.grid}>
       <div>
-        <div style={styles.title}>PACK GENERATOR</div>
         <div style={{ position: "relative", textAlign: "left", height: "fit-content" }}>
           <img src={TEXT_LEPLOGO} alt='' position='relative' style={styles.imageDLC} />
 
