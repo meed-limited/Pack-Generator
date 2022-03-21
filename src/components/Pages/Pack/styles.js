@@ -1,91 +1,83 @@
-import buttonImg from "../../../assets/buttonImg.svg";
-import background from "../../../assets/background.jpg";
 /*eslint no-dupe-keys: "Off"*/
+import buttonImg from "../../../assets/buttonImg.svg";
 
-const GREY = '#CCC';
-const GREY_LIGHT = 'rgba(255, 255, 255, 0.4)';
-const GREY_DIM = '#686868';
+const GREY = "#CCC";
+const GREY_LIGHT = "rgba(255, 255, 255, 0.4)";
+const GREY_DIM = "#686868";
 
 const styles = {
-  content: {
-    height: "auto",
-    margin: "auto",
-    marginTop: "30px",
-    textAlign: "center"
-  },
-  label: {
-    textAlign: "center",
-    display: "block",
-    color: "white",
-    fontSize: "12px"
-  },
   transparentInput: {
-    textAlign: "center",
     width: "90%",
     margin: "auto",
-    color: "white",
-    border: "none", // border or no border ???
     background: "rgba(240, 248, 255, 0.10)",
     background:
       "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     background:
       "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "none",
+    color: "white",
+    textAlign: "center"
   },
   transparentInputSmaller: {
-    textAlign: "center",
     width: "80%",
     margin: "auto",
-    color: "white",
-    border: "none", // border or no border ???
     background: "rgba(240, 248, 255, 0.10)",
     background:
       "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     background:
       "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "none",
+    color: "white",
+    textAlign: "center"
   },
   selectButton: {
     width: "55%",
-    fontSize: "12px",
     margin: "30px auto 30px 35px",
-    textAlign: "center",
     backgroundImage: `url(${buttonImg})`,
     backgroundSize: "cover",
-    border: "1px solid yellow"
+    border: "1px solid yellow",
+    textAlign: "center",
+    fontSize: "12px"
   },
   resetButton: {
-    paddingLeft: "30px",
-    paddingRight: "30px",
+    margin: "10px 30px",
+    padding: "0 30px",
     background: "#d020ba",
     background: "-moz-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     background: "-webkit-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
-    color: "yellow",
     border: "0.5px solid white",
-    fontSize: "12px",
-    cursor: "pointer"
+    color: "yellow",
+    fontSize: "12px"
   },
   runFunctionButton: {
-    margin: "35px",
     width: "300px",
     height: "50px",
+    margin: "15px",
+    padding: "8px",
     background: "#d020ba",
     background: "-moz-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     background: "-webkit-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
-    color: "yellow",
     border: "0.5px solid white",
-    padding: "8px",
-    fontSize: "16px",
-    cursor: "pointer",
     borderRadius: "25px",
+    color: "yellow",
+    fontSize: "16px",
     fontWeight: "600",
     letterSpacing: "2px"
   },
-  transparentContainer: {
+  mainPackContainer: {
+    display: "flex",
+    flexDirection: "column",
+    maxWidth: "100%",
+    height: "65vh",
+    alignItems: "center",
+    justifyContent: "center",
+    margin: "auto",
     borderRadius: "20px",
     background: "rgba(240, 248, 255, 0.10)",
     background:
@@ -95,14 +87,13 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
-    textAlign: "center",
-    paddingTop: "30px",
-    paddingBottom: "20px",
+    color: "white",
     fontSize: "18px",
-    color: "white"
+    textAlign: "center"
   },
   transparentContainerNotconnected: {
-    borderRadius: "20px",
+    marginTop: "80px",
+    padding: "15px",
     background: "rgba(240, 248, 255, 0.10)",
     background:
       "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
@@ -111,106 +102,61 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
-    textAlign: "left",
-    padding: "15px",
-    fontSize: "18px",
+    borderRadius: "20px",
     color: "white",
-    marginTop: "80px",
+    fontSize: "18px",
+    textAlign: "left"
   },
   transparentContainerInside: {
+    margin: "auto 30px",
+    padding: "20px 0px",
+    background: "rgba(240, 248, 255, 0.10)",
+    background:
+      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    background:
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+    border: "1px solid",
     borderRadius: "15px",
-    margin: "30px",
-    marginTop: "15px",
-    background: "rgba(240, 248, 255, 0.10)",
-    background:
-      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    border: "1px solid",
-    textAlign: "center",
-    paddingBottom: "20px",
-    marginBottom: "0",
-    fontSize: "15px",
-    color: "white"
-  },
-  ConfirmModal: {
-    backgroundImage: `url(${background})`,
-  },
-  transparentContainerConfirmModal: {
-    display: "flex",
-    flexDirection: "row",
-    borderRadius: "20px",
-    background: "rgba(240, 248, 255, 0.10)",
-    background:
-      "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
-    border: "1px solid",
-    textAlign: "center",
-    paddingTop: "30px",
-    paddingBottom: "20px",
-    fontSize: "18px",
-    color: "white",
-    justifyContent: "center"
-  },
-  displayAssets: {
-    alignSelf: "center",
-    maxWidth: "50%",
-    marginTop: "8px",
-    margin: "auto",
-    borderRadius: "8px",
-    backgroundColor: "white",
-    color: "black",
-    opacity: "0.8"
-  },
-
-  // TABS:
-  tabs: {
-    height: "60px",
-    color: "white",
-    borderBottom: "none"
+    textAlign: "center"
   },
 
   // Minter tab
   input: {
+    display: "block",
     width: "60%",
     margin: "auto",
     marginBottom: "30px",
     border: "1px solid #ddd",
-    boxSizing: "border-box",
-    display: "block"
+    boxSizing: "border-box"
   },
   input2: {
+    display: "block",
     width: "60%",
     margin: "auto",
     marginBottom: "10px",
     border: "1px solid #ddd",
-    boxSizing: "border-box",
-    display: "block"
+    boxSizing: "border-box"
   },
   textarea: {
+    display: "block",
     width: "60%",
     margin: "auto",
-    marginBottom: "30px",
-    display: "block"
+    marginBottom: "30px"
   },
   select: {
+    display: "block",
     width: "100%",
     padding: "6px 10px",
     margin: "10px 0",
     border: "1px solid #ddd",
-    boxSizing: "border-box",
-    display: "block"
+    boxSizing: "border-box"
   },
 
   // Pack tab
   uploadBox: {
     display: "flex-grid",
-    marginTop: "40px",
     margin: "20px",
     padding: "15px",
     background: "rgba(240, 248, 255, 0.10)",
@@ -221,76 +167,75 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     borderRadius: "8px",
-    opacity: "0.9",
-    marginBottom: "20px",
     color: "white",
-    fontSize: "12px"
+    fontSize: "12px",
+    opacity: "0.9"
   },
   zone: {
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    height: "100%",
     marginTop: "10px",
     marginBottom: "15px",
-    borderWidth: 2,
-    borderStyle: 'dashed',
-    borderColor: "#6d3ef7",
-    backgroundColor:"white",
-    color: "black",
-    borderRadius: 20,
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    justifyContent: 'center',
     padding: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    borderColor: "#6d3ef7",
+    borderWidth: 2,
+    borderStyle: "dashed",
+    borderRadius: 20,
+    color: "black"
   },
   file: {
-    background: 'linear-gradient(to bottom, rgb(243 213 232), rgb(22 0 110))',
+    background: "linear-gradient(to bottom, rgb(243 213 232), rgb(22 0 110))",
     borderRadius: 20,
-    display: 'flex',
+    display: "flex",
     height: "auto",
     width: "80%",
-    position: 'relative',
+    position: "relative",
     zIndex: 10,
-    flexDirection: 'column',
-    justifyContent: 'center',
+    flexDirection: "column",
+    justifyContent: "center"
   },
   info: {
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'column',
+    alignItems: "center",
+    display: "flex",
+    flexDirection: "column",
     padding: "10px"
   },
   size: {
     backgroundColor: GREY_LIGHT,
     borderRadius: 3,
-    marginBottom: '0.5em',
-    justifyContent: 'center',
-    display: 'flex',
+    marginBottom: "0.5em",
+    justifyContent: "center",
+    display: "flex"
   },
   name: {
     backgroundColor: GREY_LIGHT,
     borderRadius: 3,
     fontSize: 15,
-    marginBottom: '0.5em',
+    marginBottom: "0.5em"
   },
   progressBar: {
     bottom: 14,
-    position: 'absolute',
-    width: '100%',
+    position: "absolute",
+    width: "100%",
     paddingLeft: 10,
-    paddingRight: 10,
+    paddingRight: 10
   },
   zoneHover: {
-    borderColor: GREY_DIM,
+    borderColor: GREY_DIM
   },
   default: {
-    borderColor: GREY,
+    borderColor: GREY
   },
   remove: {
     height: 23,
-    position: 'absolute',
+    position: "absolute",
     right: 6,
     top: 6,
-    width: 23,
+    width: 23
   },
   contentGrid: {
     marginBottom: "30px",
@@ -298,18 +243,6 @@ const styles = {
     display: "grid",
     gridTemplateColumns: "49% 2% 49%",
     fontSize: "12px"
-  },
-
-  // Claim tab
-  displaySelected: {
-    margin: "auto",
-    marginTop: "20px",
-    borderRadius: "8px",
-    backgroundColor: "white",
-    color: "black",
-    opacity: "0.8",
-    fontSize: "15px",
-    width: "60%"
   },
 
   // MARKETPLACE:

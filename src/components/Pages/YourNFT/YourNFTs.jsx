@@ -30,16 +30,11 @@ const styles = {
     gap: "15px"
   },
   loadMoreButton: {
-    margin: "auto",
+    marginRight: "15px",
+    marginBottom: "50px",
+    float: "right",
     borderRadius: "8px",
-    background: "#d020ba",
-    background: "-moz-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
-    background: "-webkit-linear-gradient(left, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
-    background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
-    color: "yellow",
-    border: "0.5px solid white",
-    fontSize: "15px",
-    cursor: "pointer"
+    fontSize: "12px"
   }
 };
 
@@ -186,6 +181,7 @@ function YourNFTs() {
     <>
       <AccountVerification param={"yourNfts"} />
       <ChainVerification />
+      
       <div style={styles.NFTs}>
         {isAuthenticated && !NFTBalances && (
           <Space>
@@ -228,6 +224,7 @@ function YourNFTs() {
             );
           })}
       </div>
+      
 
       <Modal
         title={`List "${nftToSend?.name} #${getEllipsisTxt(nftToSend?.token_id, 6)}" For Sale`}
@@ -282,7 +279,7 @@ function YourNFTs() {
           {!(fetchedNFTs?.length >= NFTBalances?.total) && isNFTloading && <Spin size='large'></Spin>}
 
           {!(fetchedNFTs?.length >= NFTBalances?.total) && !isNFTloading && (
-            <Button style={styles.loadMoreButton} onClick={handleLoadMore}>
+            <Button type='ghost' style={styles.loadMoreButton} onClick={handleLoadMore}>
               ... Load more
             </Button>
           )}

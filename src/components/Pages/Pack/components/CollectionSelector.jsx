@@ -223,45 +223,55 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
 
   return (
     <div style={styles.transparentContainerInside}>
-      <Select
-        showSearch
-        allowClear={true}
-        style={{ width: "70%", marginTop: "20px" }}
-        placeholder='Pick an existing collection'
-        optionFilterProp='children'
-        optionLabelProp='label'
-        onChange={onCollectionChange}
-        onDeselect={handleDeselect}
-      >
-        {customCollection &&
-          customCollection?.map((collection, i) => (
-            <Option
-              value={[
-                collection.name,
-                collection.image,
-                collection.maxSupply,
-                collection.collectionAddress,
-                collection.description,
-                collection.metadataURI,
-                collection.symbol
-              ]}
-              key={i}
-            >
-              <Space size='middle'>
-                <>
-                  <img src={collection.image} alt='' style={{ width: "30px", height: "30px", borderRadius: "4px" }} />
-                  <span>{collection.name}</span>
-                </>
-              </Space>
-            </Option>
-          ))}
-      </Select>
+      {!displayFactory && (
+        <>
+          <Select
+            showSearch
+            allowClear={true}
+            style={{ width: "70%", marginTop: "20px" }}
+            placeholder='Pick an existing collection'
+            optionFilterProp='children'
+            optionLabelProp='label'
+            onChange={onCollectionChange}
+            onDeselect={handleDeselect}
+          >
+            {customCollection &&
+              customCollection?.map((collection, i) => (
+                <Option
+                  value={[
+                    collection.name,
+                    collection.image,
+                    collection.maxSupply,
+                    collection.collectionAddress,
+                    collection.description,
+                    collection.metadataURI,
+                    collection.symbol
+                  ]}
+                  key={i}
+                >
+                  <Space size='middle'>
+                    <>
+                      <img
+                        src={collection.image}
+                        alt=''
+                        style={{ width: "30px", height: "30px", borderRadius: "4px" }}
+                      />
+                      <span>{collection.name}</span>
+                    </>
+                  </Space>
+                </Option>
+              ))}
+          </Select>
+          {!isExistingCollection && (
+            <div style={{ fontSize: "12px", margin: "20px", justifyContent: "center" }}>
+              <p>OR</p>
+            </div>
+          )}
+        </>
+      )}
 
       {!isExistingCollection && (
         <>
-          <div style={{ fontSize: "12px", margin: "20px", justifyContent: "center" }}>
-            <p>OR</p>
-          </div>
           <div style={{ fontSize: "17px", margin: "20px", justifyContent: "center" }}>
             <span>Create a new collection: </span>
             <Tooltip
@@ -275,82 +285,74 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
 
           {displayFactory && (
             <>
-              <div style={styles.transparentContainerInside}>
-                <p style={{ fontSize: "13px", marginTop: "8px", letterSpacing: "1px", fontWeight: "300" }}>
-                  Fill the fields below to create a new pack collection:
-                </p>
+              <div style={{ display: "grid", gridTemplateColumns: "65% 35%", textAlign: "center", margin: "auto" }}>
+                <div>
+                  <div style={{ display: "column-flex" }}>
+                    <label style={{ fontSize: "11px" }}>Collection Name:</label>
+                    <Input
+                      style={styles.transparentInput}
+                      placeholder='e.g. My Super Collection'
+                      value={name}
+                      onChange={handleNameChange}
+                    />
+                  </div>
 
-                <div style={{ display: "grid", gridTemplateColumns: "65% 35%", textAlign: "center", margin: "auto" }}>
-                  <div>
+                  <div style={{ display: "grid", gridTemplateColumns: "50% 50%", textAlign: "center", margin: "auto" }}>
                     <div style={{ display: "column-flex" }}>
-                      <label style={{ fontSize: "11px" }}>Collection Name:</label>
+                      <label style={{ fontSize: "11px" }}>Collection Symbol:</label>
                       <Input
-                        style={styles.transparentInput}
-                        placeholder='e.g. My Super Collection'
-                        value={name}
-                        onChange={handleNameChange}
+                        style={styles.transparentInputSmaller}
+                        placeholder='e.g. MSC'
+                        value={symbol}
+                        onChange={handleSymbolChange}
                       />
-                    </div>
-
-                    <div
-                      style={{ display: "grid", gridTemplateColumns: "50% 50%", textAlign: "center", margin: "auto" }}
-                    >
-                      <div style={{ display: "column-flex" }}>
-                        <label style={{ fontSize: "11px" }}>Collection Symbol:</label>
-                        <Input
-                          style={styles.transparentInputSmaller}
-                          placeholder='e.g. MSC'
-                          value={symbol}
-                          onChange={handleSymbolChange}
-                        />
-                      </div>
-
-                      <div style={{ display: "column-flex" }}>
-                        <label style={{ fontSize: "11px" }}>Max Supply:</label>
-                        <Tooltip
-                          title='Optional - Define the limit of NFTs (hard-cap) that can be minted within this collection. Set to "0" for infinite supply.'
-                          style={{ position: "absolute", top: "35px", right: "80px" }}
-                        >
-                          <QuestionCircleOutlined
-                            style={{ color: "white", paddingLeft: "15px", transform: "scale(0.8)" }}
-                          />
-                        </Tooltip>
-                        <Input style={styles.transparentInputSmaller} value={supply} onChange={handleSupplyChange} />
-                      </div>
                     </div>
 
                     <div style={{ display: "column-flex" }}>
-                      <label style={{ fontSize: "11px" }}>Collection Description:</label>
-                      <TextArea
-                        style={styles.transparentInput}
-                        placeholder='e.g. This is a great collection.'
-                        maxLength={250}
-                        showCount
-                        value={description}
-                        onChange={handleDescriptionChange}
-                      />
+                      <label style={{ fontSize: "11px" }}>Max Supply:</label>
+                      <Tooltip
+                        title='Optional - Define the limit of NFTs (hard-cap) that can be minted within this collection. Set to "0" for infinite supply.'
+                        style={{ position: "absolute", top: "35px", right: "80px" }}
+                      >
+                        <QuestionCircleOutlined
+                          style={{ color: "white", paddingLeft: "15px", transform: "scale(0.8)" }}
+                        />
+                      </Tooltip>
+                      <Input style={styles.transparentInputSmaller} value={supply} onChange={handleSupplyChange} />
                     </div>
                   </div>
-                  <div style={{ alignItems: "center", margin: "auto" }}>
-                    <Upload
-                      type='file'
-                      maxCount='1'
-                      name='image'
-                      listType='picture-card'
-                      showUploadList={false}
-                      beforeUpload={beforeUpload}
-                      onChange={handleImageChange}
-                    >
-                      {imageURL ? <img src={imageURL} alt='' style={{ width: "100%" }} /> : uploadButton}
-                    </Upload>
+
+                  <div style={{ display: "column-flex" }}>
+                    <label style={{ fontSize: "11px" }}>Collection Description:</label>
+                    <TextArea
+                      style={styles.transparentInput}
+                      placeholder='e.g. This is a great collection.'
+                      maxLength={250}
+                      showCount
+                      value={description}
+                      onChange={handleDescriptionChange}
+                    />
                   </div>
                 </div>
-
-                <div style={{ marginTop: "20px" }}>
-                  <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
-                    CREATE NEW COLLECTION
-                  </Button>
+                <div style={{ alignItems: "center", margin: "auto" }}>
+                  <Upload
+                    type='file'
+                    maxCount='1'
+                    name='image'
+                    listType='picture-card'
+                    showUploadList={false}
+                    beforeUpload={beforeUpload}
+                    onChange={handleImageChange}
+                  >
+                    {imageURL ? <img src={imageURL} alt='' style={{ width: "100%" }} /> : uploadButton}
+                  </Upload>
                 </div>
+              </div>
+
+              <div style={{ marginTop: "20px" }}>
+                <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
+                  CREATE NEW COLLECTION
+                </Button>
               </div>
             </>
           )}
@@ -358,21 +360,22 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
       )}
 
       {currentCollection[0] && currentCollection[0]?.length > 0 && (
-        <div style={styles.transparentContainerInside}>
-          <p style={{ padding: "20px 10px 0px 10px", fontSize: "14px" }}>
+        <div style={{...styles.transparentContainerInside, margin: "20px"}}>
+          <p style={{ fontSize: "14px" }}>
             Here is the smart-contract address of your pack collection:
             <br></br>
             <span style={{ fontSize: "13px", color: "yellow" }}>{currentCollection[0]}</span>
             <br></br>
-            To start minting your packs, scroll down and prepare them.
+            To start minting your packs, click on the "NEXT" button below to prepare their contents.
           </p>
         </div>
       )}
 
-      <p style={{ fontSize: "11px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300" }}>
-        *Just leave everything blank if you do not want to create a new collection and simply use our integrated L3PB
-        collection.
-      </p>
+      {!displayFactory && (
+        <p style={{ fontSize: "11px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300", padding: "0 20px" }}>
+          *Just leave everything blank and click on "NEXT" if you simply want to use our integrated PGNFT collection.
+        </p>
+      )}
     </div>
   );
 });

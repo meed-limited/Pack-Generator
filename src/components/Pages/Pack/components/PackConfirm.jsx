@@ -2,22 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useMoralis, useNativeBalance } from "react-moralis";
 import { getContractName } from "../../../../helpers/generalContractCall";
 import { getEllipsisTxt } from "../../../../helpers/formatters";
-import { Modal, Table } from "antd";
-import styles from "../styles";
+import { Alert, Table } from "antd";
+import Text from "antd/lib/typography/Text";
 
-const PackConfirm = ({
-  isVisible,
-  onOk,
-  onCancel,
-  NFTsArr,
-  ethAmount,
-  selectedTokens,
-  packNumber,
-  isBatch,
-  ERC1155Number,
-  ERC721Number,
-  csv
-}) => {
+const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, ERC1155Number, ERC721Number, csv }) => {
   const { chainId } = useMoralis();
   const { nativeToken } = useNativeBalance(chainId);
   const [name, setName] = useState();
@@ -41,12 +29,11 @@ const PackConfirm = ({
     const cleanupFunction = () => {
       if (csv && csv?.filter((item) => item.contract_type === "ERC721").length > 0) {
         const contract_address = csv.filter((item) => item.contract_type === "ERC721")[0].token_address;
-        getContractName(contract_address).then(res => {
+        getContractName(contract_address).then((res) => {
           setName(res);
         });
-        
       }
-    }
+    };
     cleanupFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csv]);
@@ -142,29 +129,29 @@ const PackConfirm = ({
     : "Your pack will contain the following:";
 
   return (
-    <Modal
-      title={"Confirm items to pack"}
-      visible={isVisible}
-      okText='PACK'
-      onOk={onOk}
-      onCancel={onCancel}
-      width='fit-content'
-    >
-      <div style={{ color: "white", fontSize: "18px", textAlign: "center", paddingBottom: "10px" }}>{headerText}</div>
-      <div style={styles.transparentContainerConfirmModal}>
+    <>
+      <div style={{ margin: "auto", padding: "0 30px" }}>
+        <Text style={{ fontSize: "16px" }}>{headerText}</Text>
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "center",
+          overflow: "auto",
+          maxHeight: "30vh"
+        }}
+      >
         <div style={{ margin: "10px" }}>
-          {NFTdata.length === 0 &&
-            (ethAmount === null || ethAmount === 0) &&
-            selectedTokens.length === 0 &&
-            `Pack${isBatch ? "s" : ""} will be created empty!`}
+          {NFTdata.length === 0 && (ethAmount === null || ethAmount === 0) && selectedTokens.length === 0 && (
+            <Alert type='warning' showIcon message={`Nothing! The pack${isBatch ? "s" : ""} will be empty. Are you sure?`} />
+          )}
           {NFTdata && NFTdata.length > 0 && (
             <p>
               <b>NFTs</b>
             </p>
           )}
-          {NFTdata && NFTdata.length > 0 && (
-            <Table dataSource={NFTdata} columns={NFTcolumns} pagination={false}></Table>
-          )}
+          {NFTdata && NFTdata.length > 0 && <Table dataSource={NFTdata} columns={NFTcolumns} pagination={false} />}
         </div>
         <div style={{ margin: "10px" }}>
           {((ethAmount && ethAmount > 0) || selectedTokens.length > 0) && (
@@ -172,12 +159,12 @@ const PackConfirm = ({
               <p>
                 <b>ASSETS:</b>
               </p>
-              <Table dataSource={assetsData} columns={assetsColumns} pagination={false}></Table>
+              <Table dataSource={assetsData} columns={assetsColumns} pagination={false} />
             </>
           )}
         </div>
       </div>
-    </Modal>
+    </>
   );
 };
 

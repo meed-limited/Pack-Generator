@@ -22,7 +22,7 @@ import { Menu, Layout } from "antd";
 import { FacebookOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "./style.css";
-
+const { SubMenu } = Menu;
 const { Header, Footer } = Layout;
 
 const styles = {
@@ -32,18 +32,14 @@ const styles = {
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     width: "100vw",
-    height: "100vh",
+    height: "95vh",
     overflow: "auto"
   },
   pageContent: {
     justifyContent: "top",
-    flex: "auto",
-    width: "60%",
-    height: "fit-content",
+    width: "80%",
     fontFamily: "Sora, sans-serif",
-    margin: "auto",
-    marginTop: "75px",
-    marginBottom: "100px"
+    margin: "80px auto 20px auto"
   },
   header: {
     backgroundImage: `url(${headerBackground})`,
@@ -81,7 +77,6 @@ const styles = {
     backgroundSize: "cover",
     height: "70px",
     textAlign: "center",
-    marginTop: "30px",
     position: "fixed",
     width: "100%",
     bottom: "0",
@@ -107,9 +102,20 @@ const App = () => {
             {/* <Menu.Item key='batchMinter'>
               <NavLink to='/BatchMinter'>Minter</NavLink>
             </Menu.Item> */}
-            <Menu.Item key='pack'>
-              <NavLink to='/Pack'>Packs</NavLink>
-            </Menu.Item>
+
+            <SubMenu key='SubMenu' title='Pack'>
+              <Menu.Item key='SinglePack'>
+                <NavLink to='/Pack/SinglePack'>Single Pack</NavLink>
+              </Menu.Item>
+
+              <Menu.Item key='BatchPacks'>
+                <NavLink to='/Pack/BatchPacks'>Batch Packs</NavLink>
+              </Menu.Item>
+              <Menu.Item key='ClaimPack'>
+                <NavLink to='/Pack/ClaimPack'>Claim Pack</NavLink>
+              </Menu.Item>
+            </SubMenu>
+
             <Menu.Item key='nftMarket'>
               <NavLink to='/MarketPlace'>MarketPlace</NavLink>
             </Menu.Item>
@@ -132,12 +138,20 @@ const App = () => {
             <Route path='/Home'>
               <Home />
             </Route>
-            {/* <Route exact path='/BatchMinter'>
+            {/* <Route exact path='BatchMinter'>
               <BatchMinter />
             </Route> */}
-            <Route exact path='/Pack'>
-              <Pack />
+
+            <Route exact path='/Pack/SinglePack'>
+              <Pack paneToShow={"single"} />
             </Route>
+            <Route exact path='/Pack/BatchPacks'>
+              <Pack paneToShow={"batch"} />
+            </Route>
+            <Route exact path='/Pack/ClaimPack'>
+              <Pack paneToShow={"claim"} />
+            </Route>
+
             <Route exact path='/MarketPlace'>
               <Marketplace />
             </Route>

@@ -9,7 +9,7 @@ export default function AssetSelector({ setAsset, style }) {
 
   const fullBalance = useMemo(() => {
     if (!assets) return null;
-    return assets
+    return assets;
   }, [assets]);
 
   function handleChange(value) {
@@ -18,7 +18,7 @@ export default function AssetSelector({ setAsset, style }) {
   }
 
   return (
-    <Select onChange={handleChange} size='large' style={style}>
+    <Select onChange={handleChange} size='large' placeholder='Select a token' style={style}>
       {fullBalance &&
         fullBalance.map((item) => {
           return (
