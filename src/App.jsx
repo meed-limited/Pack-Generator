@@ -181,7 +181,7 @@ const App = () => {
               <TwitterOutlined style={{ color: "white" }} />
             </div>
           </a>
-          <a href='https://discord.gg/FPepmQhtKa' target='_blank' rel='noopener noreferrer'>
+          <a href='http://discord.gg/lepricon' target='_blank' rel='noopener noreferrer'>
             <div style={{ padding: "4px 10px 0 10px" }}>
               <img src={discord} alt='discord' />
             </div>
