@@ -50,7 +50,7 @@ const Home = () => {
           <div style={styles.text}>{text}</div>
         </div>
 
-        <Link to='/Pack'>
+        <Link to='/Pack/SinglePack'>
           <Button ghost style={styles.homeButton}>
             Get Started
           </Button>
