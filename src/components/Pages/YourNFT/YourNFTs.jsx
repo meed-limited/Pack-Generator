@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
+import { menuItems } from "../../Chains/Chains";
 import ClaimSingleNFT from "./ClaimSingleNFT";
 import { getMarketplaceAddress, marketABI } from "../../../Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
@@ -40,6 +41,7 @@ const styles = {
 
 function YourNFTs() {
   const { chainId, isAuthenticated } = useMoralis();
+  const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
   const marketAddress = getMarketplaceAddress(chainId);
   const NFTsPerPage = 50;
   const [offset, setOffset] = useState(0);
@@ -183,7 +185,7 @@ function YourNFTs() {
       <ChainVerification />
       
       <div style={styles.NFTs}>
-        {isAuthenticated && !NFTBalances && (
+        {isAuthenticated && !NFTBalances && onSupportedChain && (
           <Space>
             <Spin size='large' />
           </Space>

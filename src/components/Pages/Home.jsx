@@ -8,10 +8,10 @@ import TEXT_LEPLOGO from "../../../src/assets/Home/TEXT_LEPLOGO.svg";
 const styles = {
   grid: {
     display: "grid",
-    width: "65vw",
+    width: "inherit",
     gridTemplateColumns: "60% 40%",
     height: "-webkit-fill-available",
-    paddingTop: "100px"
+    paddingTop: "50px"
   },
   imageDLC: {
     margin: "auto",

@@ -109,6 +109,10 @@
   background-size: cover !important;
 }
 
+.ant-modal-footer {
+  background: #fff !important;
+}
+
 .ant-card {
   background: #6762e0 !important;
   border-radius: 10px !important;

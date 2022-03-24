@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
+import { menuItems } from "../../Chains/Chains";
+import AccountVerification from "components/Account/AccountVerification";
+import ChainVerification from "components/Chains/ChainVerification";
 import SinglePack from "./SinglePack";
 import BatchPack from "./BatchPacks";
 import PackClaim from "./ClaimPack";
-import AccountVerification from "components/Account/AccountVerification";
-import ChainVerification from "components/Chains/ChainVerification";
 import StepsPane from "./StepPane";
 
 const styles = {
@@ -34,7 +35,8 @@ const styles = {
 };
 
 const Pack = ({ paneToShow }) => {
-  const { isAuthenticated } = useMoralis();
+  const { isAuthenticated, chainId } = useMoralis();
+  const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
   const [displayPaneMode, setDisplayPaneMode] = useState("tokens");
   const [titleText, setTitleText] = useState("");
   const [isBatch, setIsBatch] = useState(false);
@@ -68,7 +70,7 @@ const Pack = ({ paneToShow }) => {
     <div style={styles.content}>
       <AccountVerification param={"pack"} />
       <ChainVerification />
-      {isAuthenticated && (
+      {isAuthenticated && onSupportedChain && (
         <>
           <div style={styles.title}>
             <p>{titleText}</p>

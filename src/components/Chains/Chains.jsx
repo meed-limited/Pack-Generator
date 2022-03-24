@@ -1,22 +1,22 @@
 import { useEffect, useState } from "react";
+import { useMoralis } from "react-moralis";
 import useChain from "hooks/useChain";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { PolygonLogo, ETHLogo, LeprichainLogo } from "./Logos";
-import { useMoralis } from "react-moralis";
-//import { AvaxLogo, PolygonLogo, BSCLogo, ETHLogo } from "./Logos";
+//import { AvaxLogo, PolygonLogo, BSCLogo } from "./Logos";
 
 /*eslint no-dupe-keys: "Off"*/
 const styles = {
   item: {
     display: "flex",
     alignItems: "center",
-    height: "42px",
-    fontWeight: "500",
-    fontFamily: "Roboto, sans-serif",
-    fontSize: "14px",
-    color: "white",
     padding: "0 10px",
+    height: "42px",
+    fontFamily: "Sora, sans-serif",
+    fontSize: "14px",
+    fontWeight: "500",
+    color: "white",
     backgroundColor: "transparent",
     background: "rgba(240, 248, 255, 0.10)",
     background:
@@ -97,7 +97,7 @@ export const menuItems = [
 
 function Chains() {
   const { switchNetwork } = useChain();
-  const { chainId } = useMoralis();
+  const { isAuthenticated, chainId } = useMoralis();
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
@@ -122,11 +122,14 @@ function Chains() {
     </Menu>
   );
 
+  if (!chainId || !isAuthenticated) return null;
+
   return (
     <>
       <Dropdown overlay={menu} trigger={["click"]}>
         <Button key={selected?.key} icon={selected?.icon} style={{ ...styles.button, ...styles.item }}>
-          <span style={{ marginLeft: "5px" }}>{selected?.value}</span>
+          {!selected && <span style={{ marginLeft: "5px" }}>Select Chain</span>}
+          {selected && <span style={{ marginLeft: "5px" }}>{selected?.value}</span>}
           <DownOutlined />
         </Button>
       </Dropdown>
