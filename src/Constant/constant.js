@@ -11,6 +11,11 @@ const assemblyAddressPolygon = "";
 const factoryAddressPolygon = "";
 const marketAddressPolygon = "";
 
+// Contracts deployed on BSC
+const assemblyAddressBSC = "";
+const factoryAddressBSC = "";
+const marketAddressBSC = "";
+
 // Contracts deployed on Mumbaï
 const assemblyAddressMumbai = "0xBd91943d0C230C6ff199eefB9808B0155EC72Ba0"; //OK
 const factoryAddressMumbai = "0xB6F50CF87dfB7fE5beA65404Ce70fb5929C6e7F1"; //OK
@@ -44,6 +49,8 @@ export const getAssemblyAddress = (chainId) => {
     return assemblyAddressEthereum;
   } else if (chainId === "0x89") {
     return assemblyAddressPolygon;
+  } else if (chainId === "0x38") {
+    return assemblyAddressBSC;
   } else if (chainId === "0x13881") {
     return assemblyAddressMumbai;
   }
@@ -54,6 +61,8 @@ export const getMarketplaceAddress = (chainId) => {
     return marketAddressEthereum;
   } else if (chainId === "0x89") {
     return marketAddressPolygon;
+  } else if (chainId === "0x38") {
+    return marketAddressBSC;
   } else if (chainId === "0x13881") {
     return marketAddressMumbai;
   }
@@ -64,6 +73,8 @@ export const getFactoryAddress = (chainId) => {
     return factoryAddressEthereum;
   } else if (chainId === "0x89") {
     return factoryAddressPolygon;
+  } else if (chainId === "0x38") {
+    return factoryAddressBSC;
   } else if (chainId === "0x13881") {
     return factoryAddressMumbai;
   }

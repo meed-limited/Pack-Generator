@@ -3,8 +3,8 @@ import { useMoralis } from "react-moralis";
 import useChain from "hooks/useChain";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { PolygonLogo, ETHLogo, LeprichainLogo } from "./Logos";
-//import { AvaxLogo, PolygonLogo, BSCLogo } from "./Logos";
+import { PolygonLogo, ETHLogo, BSCLogo, LeprichainLogo } from "./Logos";
+//import { AvaxLogo, PolygonLogo,  } from "./Logos";
 
 /*eslint no-dupe-keys: "Off"*/
 const styles = {
@@ -63,11 +63,11 @@ export const menuItems = [
   //   value: "Goerli Testnet",
   //   icon: <ETHLogo />,
   // },
-  // {
-  //   key: "0x38",
-  //   value: "Binance",
-  //   icon: <BSCLogo />,
-  // },
+  {
+    key: "0x38",
+    value: "Binance",
+    icon: <BSCLogo />,
+  },
   // {
   //   key: "0x61",
   //   value: "Smart Chain Testnet",
