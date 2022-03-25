@@ -11,7 +11,7 @@ import Transactions from "components/Pages/Transactions";
 import Chains from "components/Chains";
 import NativeBalance from "components/NativeBalance";
 import Account from "components/Account/Account";
-import Community from "components/Community";
+import Community from "components/CommunityItems";
 import background from "./assets/background.jpg";
 import headerBackground from "./assets/headerBackground.jpg";
 import footerBackground from "./assets/footerBackground.jpg";

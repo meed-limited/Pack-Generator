@@ -1,7 +1,7 @@
 /*eslint no-dupe-keys: "Off"*/
 import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import { useNativeBalance } from "react-moralis";
-import AssetSelector from "../../../Wallet/AssetSelector";
+import AssetSelector from "./AssetSelector";
 import { Input, Button, InputNumber } from "antd";
 import Text from "antd/lib/typography/Text";
 
