@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Redirect, Link } from "react-router-dom";
 import { useMoralis } from "react-moralis";
 //import AdminPane from "./AdminPane";
 import Home from "components/Pages/Home";
@@ -16,10 +16,10 @@ import background from "./assets/background.jpg";
 import headerBackground from "./assets/headerBackground.jpg";
 import footerBackground from "./assets/footerBackground.jpg";
 import PG_Logo from "./assets/PG_Logo.png";
-import { Menu, Layout } from "antd";
+import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "./style.css";
-const { SubMenu } = Menu;
+import MenuItems from "components/MenuItems";
 const { Header, Footer } = Layout;
 
 const styles = {
@@ -59,16 +59,6 @@ const styles = {
     fontSize: "14px",
     fontWeight: "500"
   },
-  menuItems: {
-    display: "flex",
-    fontSize: "15px",
-    letterSpacing: "0.7px",
-    borderBottom: "none",
-    justifyContent: "center",
-    margin: "auto",
-    paddingTop: "10px",
-    backgroundColor: "transparent"
-  },
   footer: {
     backgroundImage: `url(${footerBackground})`,
     backgroundSize: "cover",
@@ -95,32 +85,7 @@ const App = () => {
           <Link to='/Home'>
             <Logo />
           </Link>
-          <Menu mode='horizontal' style={styles.menuItems} defaultSelectedKeys={["/Home"]} defaultOpenKeys={["/Home"]}>
-            {/* <Menu.Item key='batchMinter'>
-              <NavLink to='/BatchMinter'>Minter</NavLink>
-            </Menu.Item> */}
-
-            <SubMenu key='SubMenu' title='Pack'>
-              <Menu.Item key='SinglePack'>
-                <NavLink to='/Pack/SinglePack'>Single Pack</NavLink>
-              </Menu.Item>
-              <Menu.Item key='BatchPacks'>
-                <NavLink to='/Pack/BatchPacks'>Batch Packs</NavLink>
-              </Menu.Item>
-              <Menu.Item key='ClaimPack'>
-                <NavLink to='/Pack/ClaimPack'>Claim Pack</NavLink>
-              </Menu.Item>
-            </SubMenu>
-            <Menu.Item key='nftMarket'>
-              <NavLink to='/MarketPlace'>MarketPlace</NavLink>
-            </Menu.Item>
-            <Menu.Item key='nft'>
-              <NavLink to='/YourNFTs'>Your NFTs</NavLink>
-            </Menu.Item>
-            <Menu.Item key='transactions'>
-              <NavLink to='/Transactions'>Transactions</NavLink>
-            </Menu.Item>
-          </Menu>
+          <MenuItems />
 
           <div style={styles.headerRight}>
             <Chains />
@@ -136,7 +101,6 @@ const App = () => {
             {/* <Route exact path='BatchMinter'>
               <BatchMinter />
             </Route> */}
-
             <Route exact path='/Pack/SinglePack'>
               <Pack paneToShow={"single"} />
             </Route>
