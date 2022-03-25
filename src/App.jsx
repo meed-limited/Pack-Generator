@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, NavLink, Redirect, Link } from "react-router-dom";
 import { useMoralis } from "react-moralis";
+//import AdminPane from "./AdminPane";
 import Home from "components/Pages/Home";
 //import BatchMinter from "components/BatchMinter";
 import Pack from "components/Pages/Pack/Pack";
@@ -10,16 +11,12 @@ import Transactions from "components/Pages/Transactions";
 import Chains from "components/Chains";
 import NativeBalance from "components/NativeBalance";
 import Account from "components/Account/Account";
-import Text from "antd/lib/typography/Text";
+import Community from "components/Community";
 import background from "./assets/background.jpg";
 import headerBackground from "./assets/headerBackground.jpg";
 import footerBackground from "./assets/footerBackground.jpg";
 import PG_Logo from "./assets/PG_Logo.png";
-import LepriconLogo_Black from "./assets/LepriconLogo_Black.png";
-import discord from "./assets/discord.png";
-import telegram from "./assets/telegram.png";
 import { Menu, Layout } from "antd";
-import { FacebookOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
 import "antd/dist/antd.css";
 import "./style.css";
 const { SubMenu } = Menu;
@@ -107,7 +104,6 @@ const App = () => {
               <Menu.Item key='SinglePack'>
                 <NavLink to='/Pack/SinglePack'>Single Pack</NavLink>
               </Menu.Item>
-
               <Menu.Item key='BatchPacks'>
                 <NavLink to='/Pack/BatchPacks'>Batch Packs</NavLink>
               </Menu.Item>
@@ -115,7 +111,6 @@ const App = () => {
                 <NavLink to='/Pack/ClaimPack'>Claim Pack</NavLink>
               </Menu.Item>
             </SubMenu>
-
             <Menu.Item key='nftMarket'>
               <NavLink to='/MarketPlace'>MarketPlace</NavLink>
             </Menu.Item>
@@ -166,42 +161,7 @@ const App = () => {
         </div>
       </Router>
       <Footer style={styles.footer}>
-        <Text style={{ display: "flex", color: "white", float: "left" }}>
-          Powered by |
-          <a href='https://lepricon.io/' target='_blank' rel='noopener noreferrer'>
-            <div style={{ width: "90px", paddingLeft: "10px" }}>
-              <img src={LepriconLogo_Black} alt='LepriconLogo_Black' />
-            </div>
-          </a>
-        </Text>
-        <Text style={{ display: "flex", color: "white", float: "right" }}>
-          Community |
-          <a href='https://twitter.com/lepriconio' target='_blank' rel='noopener noreferrer'>
-            <div style={{ padding: "0 10px 0 15px" }}>
-              <TwitterOutlined style={{ color: "white" }} />
-            </div>
-          </a>
-          <a href='http://discord.gg/lepricon' target='_blank' rel='noopener noreferrer'>
-            <div style={{ padding: "4px 10px 0 10px" }}>
-              <img src={discord} alt='discord' />
-            </div>
-          </a>
-          <a href='https://t.me/lepriconio' target='_blank' rel='noopener noreferrer'>
-            <div style={{ padding: "4px 10px 0 10px" }}>
-              <img src={telegram} alt='telegram' />
-            </div>
-          </a>
-          <a href='https://www.facebook.com/lepriconio' target='_blank' rel='noopener noreferrer'>
-            <div style={{ padding: "0 10px" }}>
-              <FacebookOutlined style={{ color: "white" }} />
-            </div>
-          </a>
-          <a href='https://sc.linkedin.com/company/lepricon-io' target='_blank' rel='noopener noreferrer'>
-            <div style={{ padding: "0 10px" }}>
-              <LinkedinOutlined style={{ color: "white" }} />
-            </div>
-          </a>
-        </Text>
+        <Community />
       </Footer>
     </Layout>
   );
