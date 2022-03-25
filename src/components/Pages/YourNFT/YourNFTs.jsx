@@ -64,6 +64,8 @@ function YourNFTs() {
   const listItemFunction = "createMarketItem";
   const ItemImage = Moralis.Object.extend("ItemImages");
 
+  console.log(NFTBalances)
+
   const addFetchedNFTs = () => {
     if (NFTBalances) {
       setIsNFTLoading(true);
@@ -190,6 +192,7 @@ function YourNFTs() {
             <Spin size='large' />
           </Space>
         )}
+        {NFTBalances?.total === 0 && <Alert type='info' showIcon message={"No NFTs found on this account"} />}
         {fetchedNFTs &&
           fetchedNFTs?.map((nft, index) => {
             nft = verifyMetadata(nft);
