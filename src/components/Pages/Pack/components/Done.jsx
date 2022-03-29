@@ -21,7 +21,7 @@ const styles = {
         <p style={styles.title}>Done !</p>
         <p style={styles.text}>
           Your assets have been succesfully {isClaim ? "un" : ""}packed !!!<br></br>
-          <a href={packReceipt.link} target='_blank' rel='noreferrer noopener'>
+          <a href={packReceipt?.link} target='_blank' rel='noreferrer noopener'>
             View in explorer: &nbsp;
             <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
           </a>

@@ -36,7 +36,7 @@ const styles = {
   }
 };
 
-const TokenSelection = forwardRef(({ getAssetValues }, ref) => {
+const TokenSelection = forwardRef(({ handleAssets }, ref) => {
   const [nativeAmount, setNativeAmount] = useState();
   const [tokenAmount, setTokenAmount] = useState();
   const [ERC20Tokens, setERC20Tokens] = useState([]);
@@ -79,7 +79,7 @@ const TokenSelection = forwardRef(({ getAssetValues }, ref) => {
 
   useEffect(() => {
     const native = nativeAmount === undefined ? 0 : nativeAmount;
-    getAssetValues(native, ERC20Tokens);
+    handleAssets(native, ERC20Tokens);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nativeAmount, ERC20Tokens]);
 
@@ -114,7 +114,7 @@ const TokenSelection = forwardRef(({ getAssetValues }, ref) => {
         <Text style={{ marginTop: "60px", fontSize: "16px", marginBottom: "5px" }}>
           Amount of ERC20 Tokens per pack:
         </Text>
-        <AssetSelector setAsset={onChangeToken} style={{ width: "auto", minWidth: "300px", marginBottom: "10px" }} />
+        <AssetSelector setAsset={onChangeToken} style={{ width: "300px", margin: "auto", marginBottom: "10px" }} />
 
         <div style={{ margin: "auto", marginBottom: "20px", width: "300px", alignItems: "center" }}>
           <Input

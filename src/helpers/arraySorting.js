@@ -186,7 +186,7 @@ export function updateTokenIdsInArray(importedJson, multiNumArr, packNum, amount
         arr[j] = importedJson[k].token_id;
 
         if (importedJson[k].contract_type === "ERC1155") {
-          arr[first1155Amount] = importedJson[k].amount;
+          arr[first1155Amount] = importedJson[k].amount === undefined ? 1 : importedJson[k].amount;
           first1155Amount++;
         }
         k++;

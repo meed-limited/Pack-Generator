@@ -27,14 +27,17 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
 
   useEffect(() => {
     if (displayPaneMode === "factory") {
-        setText("Select an existing collection, create a new one, or click on 'NEXT' to skip and use our integrated one.");
-      }
-    else if (displayPaneMode === "tokens") {
+      setText(
+        "Select an existing collection, create a new one, or click on 'NEXT' to skip and use our integrated one."
+      );
+    } else if (displayPaneMode === "tokens") {
       setText("Select some of your ERC20 tokens, or all, or none, and click on 'NEXT' when you're done.");
     } else if (displayPaneMode === "nfts") {
       setText("Select some of your NFTs, or all, or none, and click on 'NEXT' when you're done.");
     } else if (displayPaneMode === "confirm") {
       setText("Check everything before packing");
+    } else if (displayPaneMode === "pack") {
+      setText("Select the service fee payment method and create your pack(s)!");
     } else if (displayPaneMode === "done") {
       setText("Pack(s) succesfully created!");
     }
@@ -52,8 +55,10 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
           return 2;
         case "confirm":
           return 3;
-        case "done":
+        case "pack":
           return 4;
+        case "done":
+          return 6;
         default:
           return 0;
       }
@@ -65,8 +70,10 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
           return 1;
         case "confirm":
           return 2;
-        case "done":
+        case "pack":
           return 3;
+        case "done":
+          return 5;
         default:
           return 0;
       }
@@ -80,6 +87,7 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
         <Step title='Choose Tokens' description={displayPaneMode === "tokens" ? `${text}` : ""} />
         <Step title='Choose NFTs' description={displayPaneMode === "nfts" ? `${text}` : ""} />
         <Step title='Recap' description={displayPaneMode === "confirm" ? `${text}` : ""} />
+        <Step title='Pack' description={displayPaneMode === "pack" ? `${text}` : ""} />
         <Step title='Done' description={displayPaneMode === "done" ? `${text}` : ""} />
       </Steps>
     </div>

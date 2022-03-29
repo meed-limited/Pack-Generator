@@ -1,25 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
-import { getAssemblyAddress, customAssemblyABI } from "../../../Constant/constant";
-import cloneDeep from "lodash/cloneDeep";
+import { L3P_TOKEN_ADDRESS, getAssemblyAddress, customAssemblyABI } from "../../../Constant/constant";
 import CollectionSelector from "./components/CollectionSelector";
 import TokenSelection from "./components/TokenSelection";
 import Uploader from "./components/Uploader";
+import NumOfNftPerPack from "./components/NumOfNftPerPack";
 import PackConfirm from "./components/PackConfirm";
+import FeeSelector from "./components/FeeSelector";
 import Done from "./components/Done";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
-import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
+import {
+  checkERC20allowance,
+  approveERC20contract,
+  approveNFTcontract,
+  checkMultipleAssetsApproval
+} from "../../../helpers/approval";
 import { openNotification } from "../../../helpers/notifications";
 import { getExplorer } from "helpers/networks";
+import cloneDeep from "lodash/cloneDeep";
 import { Button, Input, Spin, Tooltip } from "antd";
-import { FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { DownloadOutlined, FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import styles from "./styles";
 
 const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { account, chainId } = useMoralis();
   const customAssemblyABIJson = JSON.parse(customAssemblyABI);
+  const [serviceFee, setServiceFee] = useState();
   const [customCollectionData, setCustomCollectionData] = useState([]); // Address, Name, Symbol, Supply from CollectionSelector
   const [isJSON, setIsJSON] = useState(false);
   const [jsonFile, setJsonFile] = useState("");
@@ -30,9 +38,9 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const [packNumber, setPackNumber] = useState();
   const tokenSelectionRef = React.useRef();
   const customCollectionInfoRef = React.useRef();
-  const uploaderRef = React.useRef();
   const [packReceipt, setPackReceipt] = useState([]);
   const [waiting, setWaiting] = useState(false);
+  const uploaderRef = React.useRef();
 
   useEffect(() => {
     setDisplayPaneMode("factory");
@@ -52,8 +60,9 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
       return getAssemblyAddress(chainId);
     }
   };
+  const contractAddress = getContractAddress();
 
-  const getAssetValues = (ethAmt, Erc20) => {
+  const handleAssets = (ethAmt, Erc20) => {
     setEthAmount(ethAmt);
     setSelectedTokens(Erc20);
   };
@@ -76,6 +85,53 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
   const isJsonFile = (bool) => {
     setIsJSON(bool);
+  };
+
+  const handleNext = () => {
+    if (displayPaneMode === "factory") {
+      setDisplayPaneMode("tokens");
+    } else if (displayPaneMode === "tokens") {
+      setDisplayPaneMode("nfts");
+    } else if (displayPaneMode === "nfts") {
+      setDisplayPaneMode("confirm");
+    } else if (displayPaneMode === "confirm") {
+      setDisplayPaneMode("pack");
+    } else if (displayPaneMode === "pack") {
+      setDisplayPaneMode("done");
+    }
+  };
+
+  const handleBack = () => {
+    if (displayPaneMode === "tokens") {
+      setDisplayPaneMode("factory");
+    } else if (displayPaneMode === "nfts") {
+      setDisplayPaneMode("tokens");
+    } else if (displayPaneMode === "confirm") {
+      setDisplayPaneMode("nfts");
+    } else if (displayPaneMode === "pack") {
+      setDisplayPaneMode("confirm");
+    }
+  };
+
+  const handleReset = () => {
+    setCustomCollectionData([]);
+    setERC721Number(0);
+    setERC1155Number(0);
+    setPackNumber();
+    setIsJSON(false);
+    setJsonFile();
+    setEthAmount(0);
+    setSelectedTokens([]);
+    setDisplayPaneMode("factory");
+    if (tokenSelectionRef && tokenSelectionRef.current) {
+      tokenSelectionRef.current.reset();
+    }
+    if (customCollectionInfoRef && customCollectionInfoRef.current) {
+      customCollectionInfoRef.current.reset();
+    }
+    if (uploaderRef && uploaderRef.current) {
+      uploaderRef.current.reset();
+    }
   };
 
   const getMultiplePackArrays = (fileContent) => {
@@ -116,21 +172,26 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     }
   }
 
-  async function multiplePackMint(assetContracts, assetNumbers, packNum, contractAddr) {
+  async function multiplePackMint(assetContracts, assetNumbers, packNum, nativeFee, contractAddr) {
     setWaiting(true);
     const addressArr = cloneDeep(assetContracts);
+    const msgValue = (
+      parseInt(assetNumbers[0]) * parseInt(packNum) +
+      parseInt(nativeFee) * parseInt(packNum)
+    ).toString();
     var txHash;
 
     const sendOptions = {
       contractAddress: contractAddr,
       functionName: "batchMint",
       abi: customAssemblyABIJson,
-      msgValue: parseInt(assetNumbers[0]) * parseInt(packNum),
+      msgValue: msgValue,
       params: {
         _to: account,
         _addresses: addressArr,
         _arrayOfNumbers: assetNumbers,
-        _amountOfPacks: packNum
+        _amountOfPacks: packNum,
+        _totalOfPacks: packNumber
       }
     };
 
@@ -151,8 +212,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
           </a>
         </>
       );
-      setWaiting(false);
-      setDisplayPaneMode("done");
       openNotification("success", title, msg);
       console.log(`${packNum} packs have been minted`);
 
@@ -161,11 +220,15 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
       createdBatchPack.set("address", contractAddr);
       createdBatchPack.set("owner", account);
+      createdBatchPack.set("chainId", chainId);
       createdBatchPack.set("amountOfPack", packNumber);
       createdBatchPack.set("transaction_hash", txHash);
       createdBatchPack.set("collectionName", customCollectionData[1] ? customCollectionData[1] : "Pack-Generator-NFT");
       createdBatchPack.set("collectionSymbol", customCollectionData[2] ? customCollectionData[2] : "PGNFT");
       createdBatchPack.save();
+
+      setWaiting(false);
+      setDisplayPaneMode("done");
     } catch (error) {
       let title = "Unexpected error";
       let msg = "Oops, something went wrong while batch bundling! Please, check your input datas";
@@ -177,6 +240,13 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
   const handleMultiplePack = async () => {
     setWaiting(true);
+    const feeAmount = getFeeAmountPerPack(packNumber); // Check potential discount
+    const nativeAmount = serviceFee.type === "native" ? feeAmount * "1e18" : 0; // Apply discount if fee in native
+
+    if (serviceFee.type === "L3P") {
+      await ifServiceFeeInL3P(feeAmount);
+    }
+
     if (!isJSON) {
       let title = "No CSV submitted";
       let msg =
@@ -201,9 +271,15 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
         for (let i = 0; i < counter; i++) {
           if (contractNumbersArray.length > PACK_LIMIT) {
             let temp = contractNumbersArray.splice(0, PACK_LIMIT);
-            multiplePackMint(assetsArray, temp, PACK_LIMIT, contractAddress);
+            multiplePackMint(assetsArray, temp, PACK_LIMIT, nativeAmount.toString(), contractAddress);
           } else {
-            multiplePackMint(assetsArray, contractNumbersArray, contractNumbersArray.length, contractAddress);
+            multiplePackMint(
+              assetsArray,
+              contractNumbersArray,
+              contractNumbersArray.length,
+              nativeAmount.toString(),
+              contractAddress
+            );
           }
         }
       });
@@ -216,50 +292,38 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     }
   };
 
-  const handleNext = () => {
-    if (displayPaneMode === "factory") {
-      setDisplayPaneMode("tokens");
-    } else if (displayPaneMode === "tokens") {
-      setDisplayPaneMode("nfts");
-    } else if (displayPaneMode === "nfts") {
-      setDisplayPaneMode("confirm");
-    } else if (displayPaneMode === "confirm") {
-      setDisplayPaneMode("pack");
-    } else if (displayPaneMode === "pack") {
-      setDisplayPaneMode("done");
-    }
+  const getFeeAmountPerPack = (packNumber) => {
+    if (packNumber > 5000) {
+      return serviceFee.amount * 0.6;
+    } else if (packNumber > 1000 && packNumber < 5001) {
+      return serviceFee.amount * 0.8;
+    } else return serviceFee.amount;
   };
 
-  const onClickReset = () => {
-    setCustomCollectionData([]);
-    setERC721Number(0);
-    setERC1155Number(0);
-    setPackNumber();
-    setIsJSON(false);
-    setJsonFile();
-    setEthAmount(0);
-    setSelectedTokens([]);
-    setDisplayPaneMode("factory");
-    if (tokenSelectionRef && tokenSelectionRef.current) {
-      tokenSelectionRef.current.reset();
-    }
-    if (customCollectionInfoRef && customCollectionInfoRef.current) {
-      customCollectionInfoRef.current.reset();
-    }
-    if (uploaderRef && uploaderRef.current) {
-      uploaderRef.current.reset();
+  const ifServiceFeeInL3P = async (feeAmount) => {
+    const currentAllowance = await checkERC20allowance(account, L3P_TOKEN_ADDRESS, contractAddress);
+    const neededAllowance = feeAmount * packNumber;
+    if (currentAllowance < neededAllowance) {
+      approveERC20contract(L3P_TOKEN_ADDRESS, neededAllowance, contractAddress);
     }
   };
 
   return (
     <div style={styles.mainPackContainer}>
-      <div>
+      <div style={{ width: "90%" }}>
         {displayPaneMode === "factory" && (
-          <CollectionSelector customCollectionInfo={customCollectionInfo} ref={customCollectionInfoRef} />
+          <>
+            <CollectionSelector customCollectionInfo={customCollectionInfo} ref={customCollectionInfoRef} />
+            <div style={{ marginTop: "15px" }}>
+              <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+                NEXT
+              </Button>
+            </div>
+          </>
         )}
         {displayPaneMode === "tokens" && (
           <TokenSelection
-            getAssetValues={getAssetValues}
+            handleAssets={handleAssets}
             onFinishSelection={() => setDisplayPaneMode("nfts")}
             ref={tokenSelectionRef}
           />
@@ -269,50 +333,18 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
           <div style={styles.transparentContainerInside}>
             <div style={{ margin: "auto" }}>
               <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
-              <p style={{ fontSize: "12px" }}>
-                Number of ERC721 per pack:
-                <Tooltip
-                  title='Enter the number of ERC721 NFT that will be contained inside each pack (up to 50 ERC721 per pack).'
-                  style={{ position: "absolute", top: "35px", right: "80px" }}
-                >
-                  <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
-                </Tooltip>
-              </p>
-              <p>
-                <Input
-                  style={styles.transparentInput}
-                  type='number'
-                  min='0'
-                  max='50'
-                  value={ERC721Number}
-                  onChange={handleERC721Number}
-                />
-              </p>
-              <p style={{ fontSize: "12px", marginTop: "20px" }}>
-                Number of ERC1155 per pack:
-                <Tooltip
-                  title='Enter the number of ERC1155 NFT that will be contained inside each pack (up to 50 ERC1155 per pack).'
-                  style={{ position: "absolute", top: "35px", right: "80px" }}
-                >
-                  <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
-                </Tooltip>
-              </p>
-              <p>
-                <Input
-                  style={styles.transparentInput}
-                  type='number'
-                  min='0'
-                  max='50'
-                  value={ERC1155Number}
-                  onChange={handleERC1155Number}
-                />
-              </p>
+              <NumOfNftPerPack
+                ERC721Number={ERC721Number}
+                handleERC721Number={handleERC721Number}
+                ERC1155Number={ERC1155Number}
+                handleERC1155Number={handleERC1155Number}
+              />
             </div>
           </div>
         )}
 
         {displayPaneMode === "confirm" && (
-          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+          <>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{ display: "inline-flex", marginBottom: "5px" }}>
                 <Text style={{ fontSize: "16px" }}>Number of packs to mint:</Text>
@@ -345,25 +377,43 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 />
               </div>
             )}
+          </>
+        )}
 
-            <div style={{ marginTop: "10px" }}>
-              <Button shape='round' style={styles.resetButton} onClick={onClickReset}>
-                RESET
+        {displayPaneMode === "pack" && (
+          <>
+            <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+              <div style={{ ...styles.transparentContainerInside, padding: "20px" }}>
+                <FeeSelector
+                  serviceFee={serviceFee}
+                  setServiceFee={setServiceFee}
+                  customCollectionData={customCollectionData}
+                  isBatch={true}
+                  packNumber={packNumber}
+                />
+                <Button shape='round' style={styles.runFunctionButton} onClick={handleMultiplePack}>
+                  BATCH-PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
+                </Button>
+              </div>
+            </Spin>
+            <div style={{ marginTop: "15px" }}>
+              <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
+                BACK
               </Button>
-              <Button shape='round' style={styles.runFunctionButton} onClick={handleMultiplePack}>
-                PACK
+              <Button style={styles.resetButton} shape='round' onClick={handleReset}>
+                RESTART
               </Button>
             </div>
-          </Spin>
+          </>
         )}
 
         {displayPaneMode === "done" && <Done packReceipt={packReceipt} isClaim={false} />}
       </div>
 
-      {displayPaneMode !== "confirm" && displayPaneMode !== "done" && (
+      {displayPaneMode !== "factory" && displayPaneMode !== "pack" && displayPaneMode !== "done" && (
         <div style={{ marginTop: "15px" }}>
-          <Button shape='round' style={styles.resetButton} onClick={onClickReset}>
-            RESET
+          <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+            BACK
           </Button>
           <Button shape='round' style={styles.resetButton} onClick={handleNext}>
             NEXT

@@ -5,7 +5,7 @@ import AccountVerification from "components/Account/AccountVerification";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
 import { getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
-import { getContractName } from "helpers/generalContractCall";
+import { getContractName } from "helpers/contractCall";
 import { Table, Spin } from "antd";
 import moment from "moment";
 import styles from "./Pack/styles";

@@ -61,10 +61,7 @@ function YourNFTs() {
   const [loading, setLoading] = useState(false);
   const [isNFTloading, setIsNFTLoading] = useState(false);
   const marketABIJson = JSON.parse(marketABI);
-  const listItemFunction = "createMarketItem";
   const ItemImage = Moralis.Object.extend("ItemImages");
-
-  console.log(NFTBalances)
 
   const addFetchedNFTs = () => {
     if (NFTBalances) {
@@ -86,6 +83,12 @@ function YourNFTs() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, isFetching]);
 
+  useEffect(() => {
+    setOffset(0);
+    addFetchedNFTs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [NFTBalances?.total]);
+
   const handleLoadMore = async () => {
     setIsNFTLoading(true);
     await getNFTBalances({ params: { chainId: chainId, limit: NFTsPerPage, offset: offset + NFTsPerPage } });
@@ -97,7 +100,7 @@ function YourNFTs() {
     const p = listPrice * ("1e" + 18);
     const sendOptions = {
       contractAddress: marketAddress,
-      functionName: listItemFunction,
+      functionName: "createMarketItem",
       abi: marketABIJson,
       params: {
         nftContract: nft.token_address,
@@ -157,12 +160,10 @@ function YourNFTs() {
 
   function addItemImage() {
     const itemImage = new ItemImage();
-
     itemImage.set("image", nftToSend.image);
     itemImage.set("nftContract", nftToSend.token_address);
     itemImage.set("tokenId", nftToSend.token_id);
     itemImage.set("name", nftToSend.name);
-
     itemImage.save();
   }
 
@@ -172,7 +173,7 @@ function YourNFTs() {
   };
 
   const isClaimable = (nft) => {
-    if (packCollections.includes(nft.token_address.toLowerCase()) === true) {
+    if (packCollections?.includes(nft.token_address.toLowerCase()) === true) {
       return (
         <Tooltip title='Claim Pack'>
           <KeyOutlined onClick={() => handleClaimClick(nft)} />
@@ -185,7 +186,7 @@ function YourNFTs() {
     <>
       <AccountVerification param={"yourNfts"} />
       <ChainVerification />
-      
+
       <div style={styles.NFTs}>
         {isAuthenticated && !NFTBalances && onSupportedChain && (
           <Space>
@@ -229,7 +230,6 @@ function YourNFTs() {
             );
           })}
       </div>
-      
 
       <Modal
         title={`List "${nftToSend?.name} #${getEllipsisTxt(nftToSend?.token_id, 6)}" For Sale`}

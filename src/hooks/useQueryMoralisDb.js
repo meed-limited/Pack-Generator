@@ -3,14 +3,6 @@ import { useMoralis } from "react-moralis";
 export const useQueryMoralisDb = () => {
   const { Moralis } = useMoralis();
 
-  const getCreatedCollectionData = async (owner) => {
-    const CreatedCollections = Moralis.Object.extend("CreatedCollections");
-    const query = new Moralis.Query(CreatedCollections);
-    query.equalTo("owner", owner);
-    const res = await query.find();
-    return res;
-  };
-
   const getCreatedPackData = async (owner) => {
     const CreatedSinglePacks = Moralis.Object.extend("CreatedSinglePacks");
     const query = new Moralis.Query(CreatedSinglePacks);
@@ -42,6 +34,14 @@ export const useQueryMoralisDb = () => {
     return res;
   };
 
+  const getAllCollectionDataPerChain = async (chainId) => {
+    const CustomCollections = Moralis.Object.extend("CustomCollections");
+    const query = new Moralis.Query(CustomCollections);
+    query.equalTo("chainId", chainId);
+    const res = await query.find();
+    return res;
+  };
+
   const getCustomCollectionData = async (owner) => {
     const CustomCollections = Moralis.Object.extend("CustomCollections");
     const query = new Moralis.Query(CustomCollections);
@@ -62,6 +62,11 @@ export const useQueryMoralisDb = () => {
     return parsedData;
   };
 
+  const parseChainData = async (res, chainId) => {
+    const parsedData = await JSON.parse(JSON.stringify(res)).filter((item) => item.chainId === chainId);
+    return parsedData;
+  };
+
   const parseData = async (res, owner) => {
     const parsedData = await JSON.parse(JSON.stringify(res)).filter((item) => item.owner === owner);
     return parsedData;
@@ -73,14 +78,15 @@ export const useQueryMoralisDb = () => {
   };
 
   return {
-    getCreatedCollectionData,
     getCreatedPackData,
     getCreatedBatchPackData,
     getClaimedPackData,
     getAllCollectionData,
+    getAllCollectionDataPerChain,
     getCustomCollectionData,
     getMarketItemData,
     parseAllData,
+    parseChainData,
     parseData,
     parseCreatedPackData
   };

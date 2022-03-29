@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis, useNativeBalance } from "react-moralis";
-import { getContractName } from "../../../../helpers/generalContractCall";
+import { getContractName } from "../../../../helpers/contractCall";
 import { getEllipsisTxt } from "../../../../helpers/formatters";
 import { Alert, Table } from "antd";
 import Text from "antd/lib/typography/Text";
@@ -144,14 +144,20 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
       >
         <div style={{ margin: "10px" }}>
           {NFTdata.length === 0 && (ethAmount === null || ethAmount === 0) && selectedTokens.length === 0 && (
-            <Alert type='warning' showIcon message={`Nothing! The pack${isBatch ? "s" : ""} will be empty. Are you sure?`} />
+            <Alert
+              type='warning'
+              showIcon
+              message={`Nothing! The pack${isBatch ? "s" : ""} will be empty. Are you sure?`}
+            />
           )}
           {NFTdata && NFTdata.length > 0 && (
-            <p>
-              <b>NFTs</b>
-            </p>
+            <>
+              <p>
+                <b>NFTs</b>
+              </p>
+              <Table dataSource={NFTdata} columns={NFTcolumns} pagination={false} />
+            </>
           )}
-          {NFTdata && NFTdata.length > 0 && <Table dataSource={NFTdata} columns={NFTcolumns} pagination={false} />}
         </div>
         <div style={{ margin: "10px" }}>
           {((ethAmount && ethAmount > 0) || selectedTokens.length > 0) && (

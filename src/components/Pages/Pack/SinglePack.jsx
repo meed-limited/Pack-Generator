@@ -1,27 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { Moralis } from "moralis";
-import { getAssemblyAddress, assemblyABI } from "../../../Constant/constant";
+import { L3P_TOKEN_ADDRESS, getAssemblyAddress, assemblyABI } from "../../../Constant/constant";
 import TokenSelection from "./components/TokenSelection";
 import NFTsSelection from "./components/NFTsSelection";
 import PackConfirm from "./components/PackConfirm";
+import FeeSelector from "./components/FeeSelector";
 import Done from "./components/Done";
+import { singleApproveAll, singlePackMint } from "helpers/contractCall";
 import { sortSingleArrays } from "../../../helpers/arraySorting";
-import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "../../../helpers/approval";
+import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
 import { openNotification } from "../../../helpers/notifications";
-import { getExplorer } from "helpers/networks";
 import cloneDeep from "lodash/cloneDeep";
 import { Button, Spin } from "antd";
 import styles from "./styles";
+import { DownloadOutlined } from "@ant-design/icons";
 
 function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
   const { account, chainId } = useMoralis();
   const assemblyABIJson = JSON.parse(assemblyABI);
+  const contractAddress = getAssemblyAddress(chainId);
+  const [serviceFee, setServiceFee] = useState();
   const [ethAmount, setEthAmount] = useState(0);
   const [selectedTokens, setSelectedTokens] = useState([]);
   const [NFTsArr, setNFTsArr] = useState([]);
-  const [waiting, setWaiting] = useState(false);
   const [packReceipt, setPackReceipt] = useState([]);
+  const [waiting, setWaiting] = useState(false);
   const tokenSelectionRef = React.useRef();
 
   useEffect(() => {
@@ -29,11 +32,11 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleNFTOk = (selectedItems) => {
+  const handleNFT = (selectedItems) => {
     setNFTsArr(selectedItems);
   };
 
-  const getAssetValues = (ethAmt, Erc20) => {
+  const handleAssets = (ethAmt, Erc20) => {
     setEthAmount(ethAmt);
     setSelectedTokens(Erc20);
   };
@@ -50,7 +53,17 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
     }
   };
 
-  const onClickReset = () => {
+  const handleBack = () => {
+    if (displayPaneMode === "nfts") {
+      setDisplayPaneMode("tokens");
+    } else if (displayPaneMode === "confirm") {
+      setDisplayPaneMode("nfts");
+    } else if (displayPaneMode === "pack") {
+      setDisplayPaneMode("confirm");
+    }
+  };
+
+  const handleReset = () => {
     setEthAmount(0);
     setSelectedTokens([]);
     setNFTsArr([]);
@@ -60,26 +73,44 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
     }
   };
 
+  const ifServiceFeeInL3P = async () => {
+    const currentAllowance = await checkERC20allowance(account, L3P_TOKEN_ADDRESS, contractAddress);
+    if (currentAllowance < serviceFee.amount) {
+      approveERC20contract(L3P_TOKEN_ADDRESS, serviceFee.amount, contractAddress);
+    }
+  };
+
   const getSinglePackArrays = () => {
     let data = sortSingleArrays(ethAmount, selectedTokens, NFTsArr);
     return [data[0], data[1]];
   };
 
   const handleSinglePack = async () => {
-    const contractAddress = getAssemblyAddress(chainId);
+    setWaiting(true);
     const result = getSinglePackArrays();
+    const nativeAmount = serviceFee.type === "native" ? serviceFee.amount * "1e18" : 0;
+
+    if (serviceFee.type === "L3P") {
+      await ifServiceFeeInL3P();
+    }
 
     try {
       const addressArr = result[0];
       const assetNumbers = result[1];
+      const msgValue = assetNumbers[0] + nativeAmount;
       const clonedArray = cloneDeep(addressArr);
 
-      await singleApproveAll(clonedArray, assetNumbers, contractAddress).then(() => {
-        singlePackMint(addressArr, assetNumbers, contractAddress).then(() => {
-          setDisplayPaneMode("done");
-        });
+      await singleApproveAll(account, clonedArray, assetNumbers, contractAddress).then(() => {
+        singlePackMint(assemblyABIJson, chainId, account, msgValue, addressArr, assetNumbers, contractAddress).then(
+          (result) => {
+            setPackReceipt(result);
+            setDisplayPaneMode("done");
+            setWaiting(false);
+          }
+        );
       });
     } catch (err) {
+      setWaiting(false);
       let title = "Single Pack error";
       let msg = "Something went wrong while doing your pack. Please check your inputs.";
       openNotification("error", title, msg);
@@ -87,82 +118,26 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
     }
   };
 
-  async function singlePackMint(assetContracts, assetNumbers, contractAddr) {
-    setWaiting(true);
-    const sendOptions = {
-      contractAddress: contractAddr,
-      functionName: "mint",
-      abi: assemblyABIJson,
-      msgValue: assetNumbers[0],
-      params: {
-        _to: account,
-        _addresses: assetContracts,
-        _numbers: assetNumbers
-      }
-    };
-
-    try {
-      const transaction = await Moralis.executeFunction(sendOptions);
-      const receipt = await transaction.wait(2);
-      setPackReceipt({ txHash: receipt.transactionHash, link: `${getExplorer(chainId)}tx/${receipt.transactionHash}` });
-      setWaiting(false);
-    } catch (error) {
-      let title = "Unexpected error";
-      let msg = "Oops, something went wrong while creating your pack!";
-      openNotification("error", title, msg);
-      console.log(error);
-      setWaiting(false);
-    }
-  }
-
-  async function singleApproveAll(address, numbers, contractAddr) {
-    setWaiting(true);
-    const addressArr = cloneDeep(address);
-    const currentApproval = await checkMultipleAssetsApproval(addressArr, numbers, account, contractAddr);
-
-    var ERC20add = [];
-    var count = 4;
-    ERC20add = address.splice(0, numbers[1]);
-    try {
-      for (let i = 0; i < ERC20add.length; i++) {
-        let toAllow = numbers[count].toString();
-        if (parseInt(currentApproval[i]) < parseInt(toAllow)) {
-          await approveERC20contract(ERC20add[i], toAllow, contractAddr);
-          count++;
-        }
-      }
-
-      var pointerNFT = numbers[1];
-      let uniqueAddrs = [...new Set(address)];
-      for (let i = 0; i < uniqueAddrs.length; i++) {
-        if (currentApproval[pointerNFT] === false) {
-          await approveNFTcontract(uniqueAddrs[i], contractAddr);
-        }
-        pointerNFT++;
-      }
-      setWaiting(false);
-    } catch (error) {
-      let title = "Approval error";
-      let msg = "Oops, something went wrong while approving some of your pack's assets!";
-      openNotification("error", title, msg);
-      console.log(error);
-      setWaiting(false);
-    }
-  }
-
   return (
     <div style={styles.mainPackContainer}>
-      <div>
+      <div style={{ width: "90%" }}>
         {displayPaneMode === "tokens" && (
-          <TokenSelection
-            getAssetValues={getAssetValues}
-            onFinishSelection={() => setDisplayPaneMode("nfts")}
-            ref={tokenSelectionRef}
-          />
+          <>
+            <TokenSelection
+              handleAssets={handleAssets}
+              onFinishSelection={() => setDisplayPaneMode("nfts")}
+              ref={tokenSelectionRef}
+            />
+            <div style={{ marginTop: "15px" }}>
+              <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+                NEXT
+              </Button>
+            </div>
+          </>
         )}
         {displayPaneMode === "nfts" && (
           <NFTsSelection
-            handleNFTOk={handleNFTOk}
+            handleNFT={handleNFT}
             isMultiple={true}
             NFTsPerPage={100}
             isPackOnly={false}
@@ -171,27 +146,40 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
         )}
         {displayPaneMode === "confirm" && (
           <>
+            <div style={styles.transparentContainerInside}>
+              <PackConfirm NFTsArr={NFTsArr} ethAmount={ethAmount} selectedTokens={selectedTokens} isBatch={false} />
+            </div>
+          </>
+        )}
+
+        {displayPaneMode === "pack" && (
+          <>
             <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
-              <div style={styles.transparentContainerInside}>
-                <PackConfirm NFTsArr={NFTsArr} ethAmount={ethAmount} selectedTokens={selectedTokens} isBatch={false} />
-              </div>
-              <div style={{ marginTop: "10px" }}>
-                <Button shape='round' style={styles.resetButton} onClick={onClickReset}>
-                  RESET
-                </Button>
+              <div style={{ ...styles.transparentContainerInside, padding: "40px" }}>
+              <FeeSelector setServiceFee={setServiceFee} isBatch={false} />
                 <Button shape='round' style={styles.runFunctionButton} onClick={handleSinglePack}>
-                  PACK
+                  PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
                 </Button>
               </div>
             </Spin>
+            <div style={{ marginTop: "15px" }}>
+              <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
+                BACK
+              </Button>
+              <Button style={styles.resetButton} shape='round' onClick={handleReset}>
+                RESTART
+              </Button>
+            </div>
           </>
         )}
+
         {displayPaneMode === "done" && <Done packReceipt={packReceipt} isClaim={false} />}
       </div>
-      {displayPaneMode !== "confirm" && displayPaneMode !== "done" && (
+
+      {displayPaneMode !== "tokens" && displayPaneMode !== "pack" && displayPaneMode !== "done" && (
         <div style={{ marginTop: "15px" }}>
-          <Button shape='round' style={styles.resetButton} onClick={onClickReset}>
-            RESET
+          <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+            BACK
           </Button>
           <Button shape='round' style={styles.resetButton} onClick={handleNext}>
             NEXT

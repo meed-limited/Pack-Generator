@@ -7,9 +7,16 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/utils/ERC721Holder.sol";
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interface/IAssemblyNFT.sol";
 
-contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
+contract AssemblyNFT is
+    ERC721,
+    ERC721Holder,
+    ERC1155Holder,
+    IAssemblyNFT,
+    Ownable
+{
     using SafeERC20 for IERC20;
     using Strings for uint256;
 
@@ -25,6 +32,10 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
             ERC1155Receiver.supportsInterface(interfaceId);
     }
 
+    address private L3P = 0xdeF1da03061DDd2A5Ef6c59220C135dec623116d; // L3P contract address (only available on Ethereum && BSC);
+    address payable private feeReceiver; //
+    uint256 public feeETH = 0.01 ether; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
+    uint256 public feeL3P = 100000000000000000000; // Fees charged on TXs, if paid in L3P, default === 100 L3P
     uint256 public maxPackSupply;
     uint256 nonce;
     string public _baseURIextended;
@@ -42,6 +53,7 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
     ) ERC721(_name, _symbol) {
         maxPackSupply = _maxPackSupply;
         _baseURIextended = baseURIextended;
+        transferOwnership(msg.sender);
     }
 
     function tokenURI(uint256 tokenId)
@@ -88,7 +100,41 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         uint256[] memory _numbers
     ) external payable returns (uint256 tokenId) {
         require(_to != address(0), "can't mint to address(0)");
-        require(msg.value == _numbers[0], "value not match");
+
+        // Fee in native (ETH, MATIC, BNB)
+        if (msg.value > _numbers[0]) {
+            require(
+                msg.value == (_numbers[0] + feeETH),
+                "wrong native fee amount"
+            );
+            (bool feeInEth, ) = feeReceiver.call{value: feeETH}("");
+            require(feeInEth, "ETH payment failed");
+            require(
+                msg.value - feeETH == _numbers[0],
+                "native value do not match"
+            );
+        }
+        // Fee in L3P (for BSC and ETH chains)
+        else if (msg.value == _numbers[0]) {
+            require(
+                IERC20(L3P).balanceOf(msg.sender) >= feeL3P,
+                "Not enough L3P to pay the fee"
+            );
+            require(
+                IERC20(L3P).allowance(msg.sender, address(this)) >= feeL3P,
+                "Not authorized"
+            );
+            bool feeInL3P = IERC20(L3P).transferFrom(
+                msg.sender,
+                feeReceiver,
+                feeL3P
+            );
+            require(feeInL3P, "L3P payment failed");
+            require(msg.value == _numbers[0], "value not match");
+        }
+        // revert anything else
+        else revert("value sent do not match");
+
         require(
             _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],
             "2 array length not match"
@@ -138,7 +184,41 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         uint256[] memory _numbers
     ) external payable override returns (uint256 tokenId) {
         require(_to != address(0), "can't mint to address(0)");
-        require(msg.value == _numbers[0], "value not match");
+
+        // Fee in native (ETH, MATIC, BNB)
+        if (msg.value > _numbers[0]) {
+            require(
+                msg.value == (_numbers[0] + feeETH),
+                "wrong native fee amount"
+            );
+            (bool feeInEth, ) = feeReceiver.call{value: feeETH}("");
+            require(feeInEth, "ETH payment failed");
+            require(
+                msg.value - feeETH == _numbers[0],
+                "native value do not match"
+            );
+        }
+        // Fee in L3P (for BSC and ETH chains)
+        else if (msg.value == _numbers[0]) {
+            require(
+                IERC20(L3P).balanceOf(msg.sender) >= feeL3P,
+                "Not enough L3P to pay the fee"
+            );
+            require(
+                IERC20(L3P).allowance(msg.sender, address(this)) >= feeL3P,
+                "Not authorized"
+            );
+            bool feeInL3P = IERC20(L3P).transferFrom(
+                msg.sender,
+                feeReceiver,
+                feeL3P
+            );
+            require(feeInL3P, "L3P payment failed");
+            require(msg.value == _numbers[0], "value not match");
+        }
+        // revert anything else
+        else revert("value sent do not match");
+
         require(
             _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],
             "2 array length not match"
@@ -274,11 +354,50 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         address _to,
         address[] memory _addresses,
         uint256[][] memory _arrayOfNumbers,
-        uint256 _amountOfPacks
+        uint256 _amountOfPacks,
+        uint256 _totalOfPacks
     ) external payable {
         require(_to != address(0), "can't mint to address(0)");
         uint256 totalEth = _arrayOfNumbers[0][0] * _amountOfPacks;
-        require(msg.value == totalEth, "value not match");
+
+        // Fee in native (ETH, MATIC, BNB)
+        if (msg.value > totalEth) {
+            uint256 totalFees = _amountOfPacks *
+                _discountPercentInETH(_totalOfPacks);
+            require(
+                msg.value == (totalEth + totalFees),
+                "wrong native fee amount"
+            );
+            (bool feeInEth, ) = payable(feeReceiver).call{value: totalFees}("");
+            require(feeInEth, "ETH payment failed");
+            require(
+                msg.value - totalFees == totalEth,
+                "native value do not match"
+            );
+        }
+        // Fee in L3P (for BSC and ETH chains)
+        else if (msg.value == totalEth) {
+            uint256 totalFees = _amountOfPacks *
+                _discountPercentInL3P(_totalOfPacks);
+            require(
+                IERC20(L3P).balanceOf(msg.sender) >= totalFees,
+                "Not enough L3P to pay the fee"
+            );
+            require(
+                IERC20(L3P).allowance(msg.sender, address(this)) >= totalFees,
+                "Not authorized"
+            );
+            bool feeInL3P = IERC20(L3P).transferFrom(
+                msg.sender,
+                feeReceiver,
+                totalFees
+            );
+            require(feeInL3P, "L3P payment failed");
+            require(msg.value == totalEth, "value not match");
+        }
+        // revert anything else
+        else revert("value sent do not match");
+
         if (maxPackSupply != 0) {
             require(
                 nonce + _amountOfPacks <= maxPackSupply,
@@ -291,5 +410,54 @@ contract AssemblyNFT is ERC721, ERC721Holder, ERC1155Holder, IAssemblyNFT {
         }
 
         emit BatchAssemblyAsset(_to, _amountOfPacks);
+    }
+
+    /* Private functions:
+     ***********************/
+
+    function _discountPercentInETH(uint256 _totalOfPacks)
+        private
+        view
+        returns (uint256)
+    {
+        if (_totalOfPacks > 0 && _totalOfPacks < 1001) {
+            return feeETH;
+        } else if (_totalOfPacks >= 1001 && _totalOfPacks < 5001) {
+            return (feeETH * 80) / 100;
+        } else return (feeETH * 60) / 100;
+    }
+
+    function _discountPercentInL3P(uint256 _totalOfPacks)
+        private
+        view
+        returns (uint256)
+    {
+        if (_totalOfPacks > 0 && _totalOfPacks < 1001) {
+            return feeL3P;
+        } else if (_totalOfPacks >= 1001 && _totalOfPacks < 5001) {
+            return (feeL3P * 80) / 100;
+        } else return (feeL3P * 60) / 100;
+    }
+
+    /* Restricted functions:
+     *************************/
+
+    function setFeeETH(uint256 _newEthFee) external onlyOwner {
+        feeETH = _newEthFee;
+    }
+
+    function setFeeL3P(uint256 _newL3PFee) external onlyOwner {
+        feeL3P = _newL3PFee;
+    }
+
+    function setFeeReceiver(address payable _newFeeReceiver)
+        external
+        onlyOwner
+    {
+        feeReceiver = _newFeeReceiver;
+    }
+
+    function setTokenURI(string memory _newTokenURI) external onlyOwner {
+        _baseURIextended = _newTokenURI;
     }
 }

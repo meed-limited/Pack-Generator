@@ -258,7 +258,7 @@ function Marketplace() {
               ))}
 
             {collectionAddr !== undefined &&
-              Marketplace.slice(0, 20).map((nft, index) => (
+              Marketplace.slice(0, 50).map((nft, index) => (
                 <Card
                   hoverable
                   size='small'
@@ -305,12 +305,7 @@ function Marketplace() {
               okText='Buy'
             >
               <Spin spinning={loading}>
-                <div
-                  style={{
-                    width: "250px",
-                    margin: "auto"
-                  }}
-                >
+                <div style={{ width: "250px", margin: "auto" }}>
                   <Badge.Ribbon
                     color='green'
                     text={`${getMarketItem(nftToBuy).price / ("1e" + 18)} ${nativeToken?.name}`}

@@ -15,6 +15,25 @@ const allowanceABI = [
   }
 ];
 
+export const checkERC20allowance = async (_owner, ERC20address, contractAddress) => {
+  const readOptions = {
+    contractAddress: ERC20address,
+    functionName: "allowance",
+    abi: allowanceABI,
+    params: {
+      owner: _owner,
+      spender: contractAddress
+    }
+  };
+
+  try {
+    const res = await Moralis.executeFunction(readOptions);
+    return res.toString();
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // Allow a specific amount of an ERC20 address
 export const approveERC20contract = async (ERC20address, allowance, contractAddress) => {
   const sendOptions = {

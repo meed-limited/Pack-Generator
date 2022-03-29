@@ -40,7 +40,7 @@ const styles = {
   }
 };
 
-const NFTsSelection = forwardRef(({ handleNFTOk, isMultiple = false, NFTsPerPage, isPackOnly }, ref) => {
+const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, isPackOnly }, ref) => {
   const { chainId } = useMoralis();
   const [offset, setOffset] = useState(0);
   const [isNFTloading, setIsNFTloading] = useState(true);
@@ -126,14 +126,14 @@ const NFTsSelection = forwardRef(({ handleNFTOk, isMultiple = false, NFTsPerPage
   useImperativeHandle(ref, () => ({
     reset() {
       setSelectedNFTs([]);
-      handleNFTOk([]);
+      handleNFT([]);
     }
   }));
 
   const NftToShow = !isPackOnly ? fetchedNFTs : packToClaim;
 
   useEffect(() => {
-    handleNFTOk(selectedNFTs);
+    handleNFT(selectedNFTs);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [NftToShow, selectedNFTs]);
 

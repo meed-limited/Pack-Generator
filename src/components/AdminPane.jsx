@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNativeBalance } from "react-moralis";
-import { openNotification } from "helpers/notifications";
+import AddressInput from "./AddressInput";
+import { openNotification } from "../helpers/notifications";
+import { assemblyABI, getAssemblyAddress } from "../Constant/constant";
 import { Button, Input } from "antd";
-import { ABI, getContractAddress } from "helpers/constant";
-import AddressInput from "./DisplayPane/TransferPane/AddressInput";
 
 const styles = {
   container: {
@@ -38,18 +38,18 @@ const styles = {
   }
 };
 
-const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
+const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
   const { chainId } = useMoralis();
-  const contractAddress = getContractAddress(chainId);
+  const contractAddress = getAssemblyAddress(chainId);
+  const assemblyABIJson = JSON.parse(assemblyABI);
   const { nativeToken } = useNativeBalance(chainId);
   const [ethAmount, setEthAmount] = useState();
   const [L3PAmount, setL3PAmount] = useState();
   const [address, setAddress] = useState(null);
   const [IPFSurl, setIPFSurl] = useState("");
-  const [adminAddress, setAdminAddress] = useState(null);
+  const [newAdminAdd, setNewAdminAdd] = useState();
 
   const handleBackClic = () => {
-    setDisplayPaneMode("start");
     setIsAdminPaneOpen(false);
   };
 
@@ -60,7 +60,7 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
       const sendOptions = {
         contractAddress: contractAddress,
         functionName: "setFeeETH",
-        abi: ABI.abi,
+        abi: assemblyABIJson,
         params: {
           _newEthFee: nativeAmount
         }
@@ -87,7 +87,7 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
       const sendOptions = {
         contractAddress: contractAddress,
         functionName: "setFeeL3P",
-        abi: ABI.abi,
+        abi: assemblyABIJson,
         params: {
           _newL3PFee: tokenAmount
         }
@@ -113,7 +113,7 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
       const sendOptions = {
         contractAddress: contractAddress,
         functionName: "setFeeReceiver",
-        abi: ABI.abi,
+        abi: assemblyABIJson,
         params: {
           _newFeeReceiver: address.toString()
         }
@@ -139,7 +139,7 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
       const sendOptions = {
         contractAddress: contractAddress,
         functionName: "setTokenURI",
-        abi: ABI.abi,
+        abi: assemblyABIJson,
         params: {
           _newTokenURI: IPFSurl.toString()
         }
@@ -165,9 +165,9 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
       const sendOptions = {
         contractAddress: contractAddress,
         functionName: "transferOwnership",
-        abi: ABI.abi,
+        abi: assemblyABIJson,
         params: {
-          newOwner: adminAddress.toString()
+          newOwner: newAdminAdd.toString()
         }
       };
 
@@ -183,11 +183,12 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
         console.log(error);
       }
       setAdminAddress(null);
+      setIsAdminPaneOpen(false);
     }
   };
 
   return (
-    <div style={styles.container}>
+    <div style={{ ...styles.container, marginTop: "60px" }}>
       <div style={styles.title}>Admin Panel</div>
       <div style={{ width: "60%", margin: "auto" }}>
         <Input
@@ -230,7 +231,7 @@ const AdminPane = ({ setDisplayPaneMode, setIsAdminPaneOpen }) => {
           style={{ marginBottom: "5px" }}
           placeholder='Enter the new admin address'
           autoFocus
-          onChange={setAdminAddress}
+          onChange={setNewAdminAdd}
         />
         <Button type='primary' onClick={setNewAdmin} style={{ marginBottom: "20px" }}>
           Set admin address

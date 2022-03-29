@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { useMoralis } from "react-moralis";
 import MenuItems from "components/Header/components/MenuItems";
 import Chains from "components/Chains/Chains";
 import NativeBalance from "components/Header/components/NativeBalance";
 import Account from "components/Account/Account";
 import headerBackground from "../../assets/headerBackground.jpg";
 import PG_Logo from "../../assets/PG_Logo.png";
+import { Button } from "antd";
 import { Header } from "antd/lib/layout/layout";
 
 const styles = {
@@ -28,10 +31,32 @@ const styles = {
     alignItems: "center",
     fontSize: "14px",
     fontWeight: "500"
+  },
+  adminButton: {
+    height: "40px",
+    padding: "0 20px",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: "15px",
+    margin: "20px 20px",
+    border: "none",
+    background: "black",
+    color: "white",
+    fontFamily: "Sora, sans-serif"
   }
 };
 
-const CustomHeader = () => {
+const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
+  const { isAuthenticated, isAuthUndefined } = useMoralis();
+
+  useEffect(() => {}, [isAdmin, isAuthenticated]);
+
+  const openAdminPane = () => {
+    if (!isAdminPaneOpen) {
+      setIsAdminPaneOpen(true);
+    } else setIsAdminPaneOpen(false);
+  };
+
   return (
     <Header style={styles.header}>
       <Link to='/Home'>
@@ -40,6 +65,13 @@ const CustomHeader = () => {
       <MenuItems />
 
       <div style={styles.headerRight}>
+        {!isAuthUndefined && isAdmin && isAuthenticated && (
+          <div>
+            <Button style={styles.adminButton} shape='round' onClick={openAdminPane}>
+              Admin
+            </Button>
+          </div>
+        )}
         <Chains />
         <NativeBalance />
         <Account />

@@ -23,7 +23,7 @@ const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleNFTOk = (pack) => {
+  const handleNFT = (pack) => {
     setSelectedPack(pack);
   };
   
@@ -93,7 +93,7 @@ const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     <div style={styles.mainPackContainer}>
       {displayPaneMode !== "done" && (
         <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
-          <NFTsSelection handleNFTOk={handleNFTOk} isMultiple={false} NFTsPerPage={500} isPackOnly={true} />
+          <NFTsSelection handleNFT={handleNFT} isMultiple={false} NFTsPerPage={500} isPackOnly={true} />
           <Button shape='round' style={styles.resetButton} onClick={handleClaim}>
             CLAIM PACK
           </Button>
