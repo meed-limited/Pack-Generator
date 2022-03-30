@@ -10,12 +10,8 @@ import PackConfirm from "./components/PackConfirm";
 import FeeSelector from "./components/FeeSelector";
 import Done from "./components/Done";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
-import {
-  checkERC20allowance,
-  approveERC20contract,
-  approveNFTcontract,
-  checkMultipleAssetsApproval
-} from "../../../helpers/approval";
+import { multipleApproveAll } from "helpers/contractCall";
+import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
 import { openNotification } from "../../../helpers/notifications";
 import { getExplorer } from "helpers/networks";
 import cloneDeep from "lodash/cloneDeep";
@@ -28,7 +24,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { account, chainId } = useMoralis();
   const customAssemblyABIJson = JSON.parse(customAssemblyABI);
   const [serviceFee, setServiceFee] = useState();
-  const [customCollectionData, setCustomCollectionData] = useState([]); // Address, Name, Symbol, Supply from CollectionSelector
+  const [customCollectionData, setCustomCollectionData] = useState({}); // Address, Name, Symbol, Supply from CollectionSelector
   const [isJSON, setIsJSON] = useState(false);
   const [jsonFile, setJsonFile] = useState("");
   const [ethAmount, setEthAmount] = useState(0);
@@ -49,13 +45,13 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
   const customCollectionInfo = (info) => {
     if (info !== undefined) {
-      setCustomCollectionData([info[0], info[1], info[2], info[3]]);
+      setCustomCollectionData({ address: info[0], name: info[1], symbol: info[2], supply: info[3] });
     }
   };
 
   const getContractAddress = () => {
-    if (customCollectionData[0] && customCollectionData[0].length > 0) {
-      return customCollectionData[0];
+    if (customCollectionData.address && customCollectionData.address.length > 0) {
+      return customCollectionData.address;
     } else {
       return getAssemblyAddress(chainId);
     }
@@ -114,7 +110,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   };
 
   const handleReset = () => {
-    setCustomCollectionData([]);
+    setCustomCollectionData({});
     setERC721Number(0);
     setERC1155Number(0);
     setPackNumber();
@@ -138,39 +134,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     let data = sortMultipleArrays(ethAmount, selectedTokens, fileContent, ERC721Number, ERC1155Number);
     return [data[0], data[1]];
   };
-
-  async function multipleApproveAll(address, numbers, contractAddr) {
-    setWaiting(true);
-    const currentMultipleApproval = await checkMultipleAssetsApproval(address, numbers, account, contractAddr);
-    var ERC20add = [];
-    var count = 4;
-    ERC20add = address.splice(0, numbers[1]);
-    try {
-      for (let i = 0; i < ERC20add.length; i++) {
-        let toAllow = (numbers[count] * packNumber).toString();
-        if (parseInt(currentMultipleApproval[i]) < parseInt(toAllow)) {
-          await approveERC20contract(ERC20add[i], toAllow, contractAddr);
-          count++;
-        }
-      }
-
-      var pointerNFT = numbers[1];
-      let uniqueAddrs = [...new Set(address)];
-
-      for (let i = 0; i < uniqueAddrs.length; i++) {
-        if (currentMultipleApproval[pointerNFT] === false) {
-          await approveNFTcontract(uniqueAddrs[i], contractAddr);
-        }
-        pointerNFT++;
-      }
-    } catch (error) {
-      let title = "Approval error";
-      let msg = "Oops, something went wrong while approving some of your packs's assets!";
-      openNotification("error", title, msg);
-      console.log(error);
-      setWaiting(false);
-    }
-  }
 
   async function multiplePackMint(assetContracts, assetNumbers, packNum, nativeFee, contractAddr) {
     setWaiting(true);
@@ -221,10 +184,14 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
       createdBatchPack.set("address", contractAddr);
       createdBatchPack.set("owner", account);
       createdBatchPack.set("chainId", chainId);
-      createdBatchPack.set("amountOfPack", packNumber);
+      createdBatchPack.set("amountOfPack", packNum.toString());
+      createdBatchPack.set("totalOfPack", packNumber.toString());
       createdBatchPack.set("transaction_hash", txHash);
-      createdBatchPack.set("collectionName", customCollectionData[1] ? customCollectionData[1] : "Pack-Generator-NFT");
-      createdBatchPack.set("collectionSymbol", customCollectionData[2] ? customCollectionData[2] : "PGNFT");
+      createdBatchPack.set(
+        "collectionName",
+        customCollectionData.name ? customCollectionData.name : "Pack-Generator-NFT"
+      );
+      createdBatchPack.set("collectionSymbol", customCollectionData.symbol ? customCollectionData.symbol : "PGNFT");
       createdBatchPack.save();
 
       setWaiting(false);
@@ -240,6 +207,8 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
   const handleMultiplePack = async () => {
     setWaiting(true);
+    const PACK_LIMIT = 200;
+    const contractAddress = await getContractAddress();
     const feeAmount = getFeeAmountPerPack(packNumber); // Check potential discount
     const nativeAmount = serviceFee.type === "native" ? feeAmount * "1e18" : 0; // Apply discount if fee in native
 
@@ -249,22 +218,18 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
     if (!isJSON) {
       let title = "No CSV submitted";
-      let msg =
-        "You haven't submitted any CSV file. Your packs won't contain any NFTs. Reject all transactions to cancel.";
+      let msg = "No CSV file submitted. Your packs won't contain any NFTs. Reject all transactions to cancel.";
       openNotification("warning", title, msg);
     }
-    const PACK_LIMIT = 200;
-    const contractAddress = await getContractAddress();
+
     try {
       const sortedData = getMultiplePackArrays(jsonFile);
       const assetsArray = sortedData[0];
       const numbersArray = sortedData[1];
       const contractNumbersArray = updateTokenIdsInArray(jsonFile, numbersArray, packNumber, ERC1155Number);
-
-      /*SMART-CONTRACT CALL:
-       **********************/
       const clonedArray = cloneDeep(assetsArray);
-      await multipleApproveAll(clonedArray, numbersArray, contractAddress).then(() => {
+
+      await multipleApproveAll(account, clonedArray, numbersArray, packNumber, contractAddress).then(() => {
         let counter = contractNumbersArray.length / PACK_LIMIT;
         counter = Math.ceil(counter);
 
@@ -288,7 +253,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
       let msg = "Something went wrong while doing your batch packs. Please check your inputs.";
       openNotification("error", title, msg);
       console.log(err);
-      setWaiting(false);
     }
   };
 

@@ -64,6 +64,7 @@ export const singleApproveAll = async (account, address, numbers, contractAddr) 
   }
 };
 
+// Mint Single Pack
 export const singlePackMint = async (ABI, chainId, account, msgValue, assetContracts, assetNumbers, contractAddr) => {
   var receipt = [];
   const sendOptions = {
@@ -96,3 +97,36 @@ export const singlePackMint = async (ABI, chainId, account, msgValue, assetContr
     console.log(error);
   }
 };
+
+
+// Approve all assets for Batch Pack
+export const multipleApproveAll = async (account, address, numbers, packNumber, contractAddr) => {
+  const currentMultipleApproval = await checkMultipleAssetsApproval(address, numbers, account, contractAddr);
+  var ERC20add = [];
+  var count = 4;
+  ERC20add = address.splice(0, numbers[1]);
+  try {
+    for (let i = 0; i < ERC20add.length; i++) {
+      let toAllow = (numbers[count] * packNumber).toString();
+      if (parseInt(currentMultipleApproval[i]) < parseInt(toAllow)) {
+        await approveERC20contract(ERC20add[i], toAllow, contractAddr);
+        count++;
+      }
+    }
+
+    var pointerNFT = numbers[1];
+    let uniqueAddrs = [...new Set(address)];
+
+    for (let i = 0; i < uniqueAddrs.length; i++) {
+      if (currentMultipleApproval[pointerNFT] === false) {
+        await approveNFTcontract(uniqueAddrs[i], contractAddr);
+      }
+      pointerNFT++;
+    }
+  } catch (error) {
+    let title = "Approval error";
+    let msg = "Oops, something went wrong while approving some of your packs's assets!";
+    openNotification("error", title, msg);
+    console.log(error);
+  }
+}

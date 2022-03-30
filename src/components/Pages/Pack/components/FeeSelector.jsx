@@ -40,8 +40,8 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
   const onLP3Chain = CHAINS_WITH_L3P_SUPPORT.includes(chainId);
 
   const getContractAddress = () => {
-    if (customCollectionData !== undefined && customCollectionData[0] && customCollectionData[0].length > 0) {
-      return customCollectionData[0];
+    if (customCollectionData !== undefined && customCollectionData.address && customCollectionData.address.length > 0) {
+      return customCollectionData.address;
     } else {
       return getAssemblyAddress(chainId);
     }
@@ -78,6 +78,19 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
       setFeeinL3P(feeL3P);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const isL3Psupported = () => {
+    if (!onLP3Chain) {
+      return (
+        <Alert
+          type='info'
+          style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
+          showIcon
+          message={`L3P payment is not available on ${chainName} yet.`}
+        />
+      );
     }
   };
 
@@ -134,14 +147,7 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
             ></Switch>
             {feeInL3P} L3P
           </div>
-          {!onLP3Chain && (
-            <Alert
-              type='info'
-              style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
-              showIcon
-              message={`L3P payment is not available on ${chainName} yet.`}
-            />
-          )}
+          {isL3Psupported()}
         </>
       )}
       {isBatch && (
@@ -160,27 +166,13 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
             ></Switch>
             {feeInL3P} L3P
           </div>
-          {!onLP3Chain && (
-            <Alert
-              type='info'
-              style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
-              showIcon
-              message={`L3P payment is not available on ${chainName} yet.`}
-            />
-          )}
-          {serviceFee?.type === "native" && (
-            <div style={{ margin: "20px auto", fontSize: "18px", color: "yellow" }}>
-              Service fee for {packNumber} packs {displayDiscount(discount)} :<br></br>
-              {packNumber * (feeInETH * discount)} {nativeToken?.symbol}
-            </div>
-          )}
-          {serviceFee?.type === "L3P" && (
-            <div style={{ margin: "20px auto", fontSize: "18px", color: "yellow" }}>
-              Service fee for {packNumber} packs {displayDiscount(discount)} :<br></br>
-              {packNumber * (feeInL3P * discount)} L3P
-            </div>
-          )}
-          <div></div>
+          {isL3Psupported()}
+
+          <div style={{ margin: "20px auto", fontSize: "18px", color: "yellow" }}>
+            Service fee for {packNumber} packs {displayDiscount(discount)} :<br></br>
+            {packNumber * (`${serviceFee?.type === "native" ? feeInETH : feeInL3P}` * discount)}
+            {serviceFee?.type === "native" ? " " + nativeToken?.symbol : " L3P"}
+          </div>
         </>
       )}
     </>

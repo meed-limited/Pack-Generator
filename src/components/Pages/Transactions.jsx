@@ -176,7 +176,7 @@ function Transactions() {
     date: moment(item.updatedAt).format("YYYY-MM-DD HH:mm"),
     collection: item.collectionName.slice(0, 15),
     item: item.collectionSymbol,
-    tags: `Batch-Pack x${item.amountOfPack} Created`,
+    tags: `Batch-Pack x${item.amountOfPack} (${item.totalOfPack}) Created`,
     link: item.transaction_hash
   }));
 
