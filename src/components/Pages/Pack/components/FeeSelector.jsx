@@ -123,16 +123,26 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
     <>
       <Text style={{ fontSize: "20px", textAlign: "center" }}>Service fees payment options:</Text>
       {!isBatch && (
-        <div style={styles.feeSelection}>
-          {feeInETH} {nativeToken?.symbol}
-          <Switch
-            onChange={onSwitchChange}
-            disabled={!onLP3Chain}
-            checked={onLP3Chain ? true : false}
-            style={{ margin: "0 15px", padding: "0 10px" }}
-          ></Switch>
-          {feeInL3P} L3P
-        </div>
+        <>
+          <div style={styles.feeSelection}>
+            {feeInETH} {nativeToken?.symbol}
+            <Switch
+              onChange={onSwitchChange}
+              disabled={!onLP3Chain}
+              checked={onLP3Chain ? true : false}
+              style={{ margin: "0 15px", padding: "0 10px" }}
+            ></Switch>
+            {feeInL3P} L3P
+          </div>
+          {!onLP3Chain && (
+            <Alert
+              type='info'
+              style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
+              showIcon
+              message={`L3P payment is not available on ${chainName} yet.`}
+            />
+          )}
+        </>
       )}
       {isBatch && (
         <>
