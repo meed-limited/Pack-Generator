@@ -45,14 +45,17 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
       id: "_id_",
       amount: "-"
     };
+
+    const ERC1155amount =
+      csv &&
+      csv.filter((item) => item.contract_type === "ERC1155").length > 0 &&
+      csv.filter((item) => item.contract_type === "ERC1155")[0].amount;
+
     const ERC1155element = {
       contract_type: "ERC1155",
       name: "-",
       id: "_id_",
-      amount:
-        csv &&
-        csv.filter((item) => item.contract_type === "ERC1155").length > 0 &&
-        csv.filter((item) => item.contract_type === "ERC1155")[0].amount
+      amount: isNaN(ERC1155amount) ? 1 : ERC1155amount
     };
     let arr = [];
     for (let i = 0; i < ERC721Number; i++) {

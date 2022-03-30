@@ -135,12 +135,12 @@ export function sortMultipleArrays(ethValue, selectedERC20, importedJson, numOfE
           }
         }
       }
-      // Set ERC1155 ids
+      // Set ERC1155 ids and amounts
       if (numOfErc1155 > 0) {
         for (let i = 0; i < numOfNft; i++) {
           if (importedJson[i].contract_type === "ERC1155") {
             let tmpId = importedJson[i].token_id;
-            let tmpAmt = importedJson[i].amount;
+            let tmpAmt = isNaN(importedJson[i].amount) ? 1 : importedJson[i].amount;
             assetsNumbers.push(parseInt(tmpId));
             amountOf1155.push(tmpAmt);
           }
@@ -186,7 +186,7 @@ export function updateTokenIdsInArray(importedJson, multiNumArr, packNum, amount
         arr[j] = importedJson[k].token_id;
 
         if (importedJson[k].contract_type === "ERC1155") {
-          arr[first1155Amount] = importedJson[k].amount === undefined ? 1 : importedJson[k].amount;
+          arr[first1155Amount] = isNaN(importedJson[k].amount) ? 1 : importedJson[k].amount;
           first1155Amount++;
         }
         k++;
