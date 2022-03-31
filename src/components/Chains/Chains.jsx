@@ -3,8 +3,8 @@ import { useMoralis } from "react-moralis";
 import useChain from "hooks/useChain";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
-import { PolygonLogo, ETHLogo, BSCLogo, LeprichainLogo } from "./Logos";
-//import { AvaxLogo, PolygonLogo,  } from "./Logos";
+import { PolygonLogo, ETHLogo, BSCLogo } from "./Logos";
+//import { AvaxLogo, PolygonLogo, LeprichainLogo  } from "./Logos";
 
 /*eslint no-dupe-keys: "Off"*/
 const styles = {

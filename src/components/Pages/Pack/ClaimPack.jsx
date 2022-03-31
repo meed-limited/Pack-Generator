@@ -10,20 +10,20 @@ import styles from "./styles";
 
 const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { chainId, account } = useMoralis();
-  const { retrieveCreatedAssemblyEvent } = useContractEvents();
+  const { getPackData } = useContractEvents();
   const [selectedPack, setSelectedPack] = useState([]);
   const [waiting, setWaiting] = useState(false);
   const [packReceipt, setPackReceipt] = useState([]);
 
   const getContractAddress = () => {
     const defaultAssemblyAddress = getAssemblyAddress(chainId);
-    if (selectedPack && selectedPack[0].token_address !== defaultAssemblyAddress) {
+    if (selectedPack && selectedPack[0]?.token_address !== defaultAssemblyAddress) {
       return selectedPack[0].token_address;
     } else {
       return defaultAssemblyAddress;
     }
   };
-
+  
   useEffect(() => {
     setDisplayPaneMode("claim");
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -36,7 +36,7 @@ const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const handleClaim = async () => {
     setWaiting(true);
     const contractAddress = getContractAddress();
-    const nftData = await retrieveCreatedAssemblyEvent(selectedPack, contractAddress);
+    const nftData = await getPackData(selectedPack, contractAddress);
     await claimPack(selectedPack[0], contractAddress, nftData, account, chainId).then((result) => {
       if (result.isSuccess === true) {
         setPackReceipt(result);

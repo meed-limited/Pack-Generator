@@ -4,7 +4,7 @@ import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import { menuItems } from "../../Chains/Chains";
 import ClaimSingleNFT from "./ClaimSingleNFT";
-import { getMarketplaceAddress, marketABI } from "../../../Constant/constant";
+import { getMarketplaceAddress } from "../../../Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import { usePackCollections } from "hooks/usePackCollections";
@@ -12,10 +12,10 @@ import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
 import { approveNFTcontract } from "../../../helpers/approval";
-import { openNotification } from "../../../helpers/notifications";
 import { Card, Image, Tooltip, Modal, Input, Spin, Button, Alert, Space } from "antd";
 import { FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 import ShowNFTModal from "../../ShowNFTModal";
+import { listOnMarketPlace } from "helpers/contractCall";
 
 const { Meta } = Card;
 
@@ -60,7 +60,6 @@ function YourNFTs() {
   const [price, setPrice] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isNFTloading, setIsNFTLoading] = useState(false);
-  const marketABIJson = JSON.parse(marketABI);
   const ItemImage = Moralis.Object.extend("ItemImages");
 
   const addFetchedNFTs = () => {
@@ -95,39 +94,15 @@ function YourNFTs() {
     setOffset(offset + NFTsPerPage);
   };
 
-  async function list(nft, listPrice) {
+  const list = async (nft, listPrice) => {
     setLoading(true);
-    const p = listPrice * ("1e" + 18);
-    const sendOptions = {
-      contractAddress: marketAddress,
-      functionName: "createMarketItem",
-      abi: marketABIJson,
-      params: {
-        nftContract: nft.token_address,
-        tokenId: nft.token_id,
-        price: String(p)
-      }
-    };
-
-    try {
-      const transaction = await Moralis.executeFunction(sendOptions);
-      await transaction.wait(2);
-
-      setLoading(false);
+    const isSuccess = await listOnMarketPlace(nft, listPrice, marketAddress);
+    if (isSuccess === true) {
       setVisibility(false);
       addItemImage();
-      let title = "NFTs listed succesfully";
-      let msg = "Your NFT has been succesfully listed to the marketplace.";
-      openNotification("success", title, msg);
-      console.log("NFTs listed succesfully");
-    } catch (error) {
-      setLoading(false);
-      let title = "Error during listing!";
-      let msg = "Something went wrong while listing your NFT to the marketplace. Please try again.";
-      openNotification("error", title, msg);
-      console.log(error);
     }
-  }
+    setLoading(false);
+  };
 
   const approveAll = async (nft) => {
     setLoading(true);

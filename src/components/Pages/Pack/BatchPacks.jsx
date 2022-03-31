@@ -142,7 +142,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
   const handleBatch = async () => {
     setWaiting(true);
-    const contractAddress = await getContractAddress();
     const feeAmount = getFeeAmountPerPack(packNumber); // Check potential discount
     const nativeAmount = serviceFee.type === "native" ? feeAmount * "1e18" : 0; // Apply discount if fee in native
     isJson();

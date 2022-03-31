@@ -1,66 +1,34 @@
-import { useMoralis } from "react-moralis";
-import { assemblyABI, getAssemblyAddress } from "Constant/constant";
-const Web3 = require("web3");
-const web3 = new Web3(Web3.givenProvider);
+import { assemblyABI } from "Constant/constant";
 
 export const useContractEvents = () => {
-  const { account, chainId } = useMoralis();
+  const ethers = require("ethers");
   const assemblyABIJson = JSON.parse(assemblyABI);
 
-  /*TEST with ethers.js: */
-  const contractAddress = getAssemblyAddress(chainId);
-  const ethers = require("ethers");
-  const provider = new ethers.providers.Web3Provider(window.ethereum);
-  const contract = new ethers.Contract(contractAddress, assemblyABIJson, provider);
-  /*END TEST with ethers.js: */
-
-  var arrayOfAddress;
-  var arrayOfNumber;
-  var salt;
-
-  const retrieveCreatedAssemblyEvent = async (_pack, _contractAdd) => {
-    const instance = await new web3.eth.Contract(assemblyABIJson, _contractAdd, { from: account });
+  const getPackData = async (_pack, contractAddress) => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(contractAddress, assemblyABIJson, provider);
     var pack;
-
-    _pack.length > 0 ? (pack = _pack[0]) : (pack = _pack);
-
-    await instance
-      .getPastEvents("AssemblyAsset", {
-        filter: { tokenId: pack.token_id },
-        fromBlock: pack.block_number,
-        toBlock: pack.block_number
-      })
-      .then((event) => {
-        arrayOfAddress = event[0].returnValues.addresses;
-        arrayOfNumber = event[0].returnValues.numbers;
-        salt = event[0].returnValues.salt;
-      });
-
-    return [arrayOfAddress, arrayOfNumber, salt];
-  };
-
-  /*TEST with ethers.js: */
-  const getPackData = async (_pack) => {
-    var pack;
-    
     _pack?.length > 0 ? (pack = _pack[0]) : (pack = _pack);
 
-    let packID = pack.token_id;
-    let hexPackID = ethers.utils.hexlify(packID);
+    const bn = ethers.BigNumber.from(pack.token_id);
 
-    const filter = {
-      address: contractAddress,
-      topics: [
-        ethers.utils.id("AssemblyAsset(address,uint256,uint256,address[],uint256[])"),
-        null,
-        hexPackID
-      ]};
+    const filter = contract.filters.AssemblyAsset(null, bn);
+    const block = parseInt(pack.block_number);
+    const events = await contract.queryFilter(filter, block, block);
 
-    //const filterPack = contract.filters.AssemblyAsset([null, packID]);
-    const result = await contract.queryFilter(filter, pack.block_number, pack.block_number);
-    console.log(result);
+    const addrs = events[0].args.addresses.toString();
+    const arrayOfAddress = addrs.split(",");
+    const numbers = events[0].args.numbers.toString();
+    const arrayOfNumber = numbers.split(",");
+    const salt = events[0].args.salt.toString();
+
+    const packData = {
+      arrayOfAddress: arrayOfAddress,
+      arrayOfNumber: arrayOfNumber,
+      salt: salt
+    };
+    return packData;
   };
-  /*END TEST with ethers.js: */
 
-  return { retrieveCreatedAssemblyEvent, getPackData };
+  return { getPackData };
 };

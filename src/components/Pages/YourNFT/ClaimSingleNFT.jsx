@@ -21,7 +21,7 @@ const styles = {
 
 const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
   const { chainId, account } = useMoralis();
-  const { retrieveCreatedAssemblyEvent } = useContractEvents();
+  const { getPackData } = useContractEvents();
   const [waiting, setWaiting] = useState(false);
 
   const getContractAddress = () => {
@@ -39,7 +39,7 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
     setWaiting(true);
     getClaimStatut(true);
     const contractAddress = getContractAddress();
-    const nftData = await retrieveCreatedAssemblyEvent(nftToClaim, contractAddress);
+    const nftData = await getPackData(nftToClaim, contractAddress);
     await claimPack(nftToClaim, contractAddress, nftData, account, chainId).then((result) => {
       if (result.isSuccess === true) {
         getClaimStatut(false);

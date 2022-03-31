@@ -1,6 +1,6 @@
 import { Moralis } from "moralis";
 import cloneDeep from "lodash/cloneDeep";
-import { assemblyABI, customAssemblyABI } from "../Constant/constant";
+import { assemblyABI, customAssemblyABI, marketABI } from "../Constant/constant";
 import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./approval";
 import { getExplorer } from "./networks";
 import { openNotification } from "./notifications";
@@ -8,6 +8,7 @@ import { FileSearchOutlined } from "@ant-design/icons";
 
 const assemblyABIJson = JSON.parse(assemblyABI);
 const customAssemblyABIJson = JSON.parse(customAssemblyABI);
+const marketABIJson = JSON.parse(marketABI);
 const getNameABI = [
   {
     inputs: [],
@@ -219,9 +220,9 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
     params: {
       _to: account,
       _tokenId: nftToClaim.token_id,
-      _salt: nftData[2],
-      _addresses: nftData[0],
-      _numbers: nftData[1]
+      _salt: nftData.salt,
+      _addresses: nftData.arrayOfAddress,
+      _numbers: nftData.arrayOfNumber
     }
   };
 
@@ -250,8 +251,9 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
     claimedPacks.set("chainId", chainId);
     claimedPacks.set("tokenId", nftToClaim.token_id);
     claimedPacks.set("transaction_hash", receipt.transactionHash);
-    claimedPacks.set("addresses", nftData[0]);
-    claimedPacks.set("numbers", nftData[1]);
+    claimedPacks.set("addresses", nftData.arrayOfAddress);
+    claimedPacks.set("numbers", nftData.arrayOfNumber);
+    claimedPacks.set("salt", nftData.salt);
     claimedPacks.save();
     packReceipt = {
       isSuccess: true,
@@ -266,4 +268,38 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
     packReceipt = { isSuccess: false };
   }
   return packReceipt;
+};
+
+// List pack for sale on the MarketPlace
+export const listOnMarketPlace = async (nft, listPrice, contractAddress) => {
+  var isSuccess;
+  const p = listPrice * ("1e" + 18);
+  const sendOptions = {
+    contractAddress: contractAddress,
+    functionName: "createMarketItem",
+    abi: marketABIJson,
+    params: {
+      nftContract: nft.token_address,
+      tokenId: nft.token_id,
+      price: String(p)
+    }
+  };
+
+  try {
+    const transaction = await Moralis.executeFunction(sendOptions);
+    await transaction.wait(2);
+
+    let title = "NFTs listed succesfully";
+    let msg = "Your NFT has been succesfully listed to the marketplace.";
+    openNotification("success", title, msg);
+    console.log("NFTs listed succesfully");
+    isSuccess = true;
+  } catch (error) {
+    let title = "Error during listing!";
+    let msg = "Something went wrong while listing your NFT to the marketplace. Please try again.";
+    openNotification("error", title, msg);
+    console.log(error);
+    isSuccess = false;
+  }
+  return isSuccess;
 };
