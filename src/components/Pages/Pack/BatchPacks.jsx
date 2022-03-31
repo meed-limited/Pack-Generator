@@ -127,6 +127,14 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     }
   };
 
+  const isJson = () => {
+    if (!isJSON) {
+      let title = "No CSV submitted";
+      let msg = "No CSV file submitted. Your packs won't contain any NFTs. Reject all transactions to cancel.";
+      openNotification("warning", title, msg);
+    }
+  };
+
   const getMultiplePackArrays = (fileContent) => {
     let data = sortMultipleArrays(ethAmount, selectedTokens, fileContent, ERC721Number, ERC1155Number);
     return [data[0], data[1]];
@@ -137,15 +145,9 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     const contractAddress = await getContractAddress();
     const feeAmount = getFeeAmountPerPack(packNumber); // Check potential discount
     const nativeAmount = serviceFee.type === "native" ? feeAmount * "1e18" : 0; // Apply discount if fee in native
-
+    isJson();
     if (serviceFee.type === "L3P") {
       await ifServiceFeeInL3P(feeAmount);
-    }
-
-    if (!isJSON) {
-      let title = "No CSV submitted";
-      let msg = "No CSV file submitted. Your packs won't contain any NFTs. Reject all transactions to cancel.";
-      openNotification("warning", title, msg);
     }
 
     try {
@@ -244,7 +246,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
             ref={tokenSelectionRef}
           />
         )}
-
         {displayPaneMode === "nfts" && (
           <div style={styles.transparentContainerInside}>
             <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
@@ -256,13 +257,11 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
             />
           </div>
         )}
-
         {displayPaneMode === "confirm" && (
           <>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{ display: "inline-flex", marginBottom: "5px" }}>
                 <Text style={{ fontSize: "16px" }}>Number of packs to mint:</Text>
-
                 <Tooltip title='Enter the total amount of packs to be minted. Up to 200 packs per Txs, up to 10,000 in total (10,000 = 50 Txs).'>
                   <QuestionCircleOutlined style={{ marginLeft: "15px" }} />
                 </Tooltip>
@@ -276,7 +275,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 onChange={handlePackNumber}
               />
             </div>
-
             {packNumber !== undefined && (
               <div style={{ ...styles.transparentContainerInside, marginTop: "15px" }}>
                 <PackConfirm
@@ -293,7 +291,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
             )}
           </>
         )}
-
         {displayPaneMode === "pack" && (
           <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
             <div style={{ ...styles.transparentContainerInside, padding: "20px" }}>
@@ -308,7 +305,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 BATCH-PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
               </Button>
             </div>
-
             <div style={{ marginTop: "15px" }}>
               <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
                 BACK
@@ -319,10 +315,8 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
             </div>
           </Spin>
         )}
-
         {displayPaneMode === "done" && <Done packReceipt={packReceipt} isClaim={false} />}
       </div>
-
       {displayPaneMode !== "factory" && displayPaneMode !== "pack" && displayPaneMode !== "done" && (
         <div style={{ marginTop: "15px" }}>
           <Button shape='round' style={styles.resetButton} onClick={handleBack}>
