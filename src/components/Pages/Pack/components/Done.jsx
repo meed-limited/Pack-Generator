@@ -1,4 +1,5 @@
 import { FileSearchOutlined } from "@ant-design/icons";
+import Text from "antd/lib/typography/Text";
 
 const styles = {
    

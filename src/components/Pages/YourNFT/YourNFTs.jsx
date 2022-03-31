@@ -150,12 +150,7 @@ function YourNFTs() {
   };
 
   useEffect(() => {
-    const cleanupFunction2 = () => {
-      if (isClaimSuccess) {
-        setClaimModalvisible(false);
-      }
-    };
-    cleanupFunction2();
+    setClaimModalvisible(isClaimSuccess);
   }, [isClaimSuccess]);
 
   function addItemImage() {

@@ -1,40 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Moralis } from "moralis";
 import { useMoralis } from "react-moralis";
-import { assemblyABI, getAssemblyAddress } from "../../../Constant/constant";
+import { getAssemblyAddress } from "../../../Constant/constant";
 import NFTsSelection from "./components/NFTsSelection";
+import Done from "./components/Done";
 import { useContractEvents } from "hooks/useContractEvents";
-import { getExplorer } from "helpers/networks";
-import { openNotification } from "../../../helpers/notifications";
+import { claimPack } from "helpers/contractCall";
 import { Button, Spin } from "antd";
 import styles from "./styles";
-import Done from "./components/Done";
 
 const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { chainId, account } = useMoralis();
-  const { retrieveCreatedAssemblyEvent, getPackData } = useContractEvents();
-  const assemblyABIJson = JSON.parse(assemblyABI);
-  const [selectedPack, setSelectedPack] = useState({});
+  const { retrieveCreatedAssemblyEvent } = useContractEvents();
+  const [selectedPack, setSelectedPack] = useState([]);
   const [waiting, setWaiting] = useState(false);
   const [packReceipt, setPackReceipt] = useState([]);
-
-  useEffect(() => {
-    setDisplayPaneMode("claim");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const handleNFT = (pack) => {
-    setSelectedPack(pack);
-  };
-  
-  const handleClaim = () => {
-    unpack();
-    //getPackData(selectedPack);
-  };
-
-  const resetOnClaim = () => {
-    setSelectedPack();
-  };
 
   const getContractAddress = () => {
     const defaultAssemblyAddress = getAssemblyAddress(chainId);
@@ -45,48 +24,31 @@ const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     }
   };
 
-  const unpack = async () => {
+  useEffect(() => {
+    setDisplayPaneMode("claim");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleNFT = (pack) => {
+    setSelectedPack(pack);
+  };
+
+  const handleClaim = async () => {
     setWaiting(true);
     const contractAddress = getContractAddress();
-    const data = await retrieveCreatedAssemblyEvent(selectedPack, contractAddress);
-
-    const sendOptions = {
-      contractAddress: contractAddress,
-      functionName: "burn",
-      abi: assemblyABIJson,
-      params: {
-        _to: account,
-        _tokenId: selectedPack[0].token_id,
-        _salt: data[2],
-        _addresses: data[0],
-        _numbers: data[1]
+    const nftData = await retrieveCreatedAssemblyEvent(selectedPack, contractAddress);
+    await claimPack(selectedPack[0], contractAddress, nftData, account, chainId).then((result) => {
+      if (result.isSuccess === true) {
+        setPackReceipt(result);
+        resetOnClaim();
+        setDisplayPaneMode("done");
       }
-    };
+    });
+    setWaiting(false);
+  };
 
-    try {
-      const transaction = await Moralis.executeFunction(sendOptions);
-      const receipt = await transaction.wait(2);
-      setPackReceipt({ txHash: receipt.transactionHash, link: `${getExplorer(chainId)}tx/${receipt.transactionHash}` });
-      resetOnClaim();
-      setWaiting(false);
-      setDisplayPaneMode("done");
-
-      const ClaimedPacks = Moralis.Object.extend("ClaimedPacks");
-      const claimedPacks = new ClaimedPacks();
-      claimedPacks.set("address", contractAddress);
-      claimedPacks.set("owner", account);
-      claimedPacks.set("tokenId", selectedPack[0].token_id);
-      claimedPacks.set("transaction_hash", receipt.transactionHash);
-      claimedPacks.set("addresses", data[0]);
-      claimedPacks.set("numbers", data[1]);
-      claimedPacks.save();
-    } catch (error) {
-      let title = "Unexpected error";
-      let msg = "Oops, something went wrong while unpacking your pack!";
-      openNotification("error", title, msg);
-      console.log(error);
-      setWaiting(false);
-    }
+  const resetOnClaim = () => {
+    setSelectedPack();
   };
 
   return (

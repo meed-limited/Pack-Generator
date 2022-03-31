@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { Moralis } from "moralis";
-import { L3P_TOKEN_ADDRESS, getAssemblyAddress, customAssemblyABI } from "../../../Constant/constant";
+import { L3P_TOKEN_ADDRESS, getAssemblyAddress, PACK_LIMIT } from "../../../Constant/constant";
 import CollectionSelector from "./components/CollectionSelector";
 import TokenSelection from "./components/TokenSelection";
 import Uploader from "./components/Uploader";
@@ -10,19 +9,17 @@ import PackConfirm from "./components/PackConfirm";
 import FeeSelector from "./components/FeeSelector";
 import Done from "./components/Done";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
-import { multipleApproveAll } from "helpers/contractCall";
+import { multipleApproveAll, multiplePackMint } from "helpers/contractCall";
 import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
 import { openNotification } from "../../../helpers/notifications";
-import { getExplorer } from "helpers/networks";
 import cloneDeep from "lodash/cloneDeep";
 import { Button, Input, Spin, Tooltip } from "antd";
-import { DownloadOutlined, FileSearchOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { DownloadOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import styles from "./styles";
 
 const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { account, chainId } = useMoralis();
-  const customAssemblyABIJson = JSON.parse(customAssemblyABI);
   const [serviceFee, setServiceFee] = useState();
   const [customCollectionData, setCustomCollectionData] = useState({}); // Address, Name, Symbol, Supply from CollectionSelector
   const [isJSON, setIsJSON] = useState(false);
@@ -135,79 +132,8 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     return [data[0], data[1]];
   };
 
-  async function multiplePackMint(assetContracts, assetNumbers, packNum, nativeFee, contractAddr) {
+  const handleBatch = async () => {
     setWaiting(true);
-    const addressArr = cloneDeep(assetContracts);
-    const msgValue = (
-      parseInt(assetNumbers[0]) * parseInt(packNum) +
-      parseInt(nativeFee) * parseInt(packNum)
-    ).toString();
-    var txHash;
-
-    const sendOptions = {
-      contractAddress: contractAddr,
-      functionName: "batchMint",
-      abi: customAssemblyABIJson,
-      msgValue: msgValue,
-      params: {
-        _to: account,
-        _addresses: addressArr,
-        _arrayOfNumbers: assetNumbers,
-        _amountOfPacks: packNum,
-        _totalOfPacks: packNumber
-      }
-    };
-
-    try {
-      const transaction = await Moralis.executeFunction(sendOptions);
-      const receipt = await transaction.wait(2);
-      txHash = receipt.transactionHash;
-      let link = `${getExplorer(chainId)}tx/${txHash}`;
-      setPackReceipt({ txHash: txHash, link: link, PackAmount: packNumber });
-      let title = `Packs minted!`;
-      let msg = (
-        <>
-          Congrats!!! {packNum} packs have just been minted and sent to your wallet!
-          <br></br>
-          <a href={link} target='_blank' rel='noreferrer noopener'>
-            View in explorer: &nbsp;
-            <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
-          </a>
-        </>
-      );
-      openNotification("success", title, msg);
-      console.log(`${packNum} packs have been minted`);
-
-      const CreatedBatchPack = Moralis.Object.extend("CreatedBatchPack");
-      const createdBatchPack = new CreatedBatchPack();
-
-      createdBatchPack.set("address", contractAddr);
-      createdBatchPack.set("owner", account);
-      createdBatchPack.set("chainId", chainId);
-      createdBatchPack.set("amountOfPack", packNum.toString());
-      createdBatchPack.set("totalOfPack", packNumber.toString());
-      createdBatchPack.set("transaction_hash", txHash);
-      createdBatchPack.set(
-        "collectionName",
-        customCollectionData.name ? customCollectionData.name : "Pack-Generator-NFT"
-      );
-      createdBatchPack.set("collectionSymbol", customCollectionData.symbol ? customCollectionData.symbol : "PGNFT");
-      createdBatchPack.save();
-
-      setWaiting(false);
-      setDisplayPaneMode("done");
-    } catch (error) {
-      let title = "Unexpected error";
-      let msg = "Oops, something went wrong while batch bundling! Please, check your input datas";
-      openNotification("error", title, msg);
-      console.log(error);
-      setWaiting(false);
-    }
-  }
-
-  const handleMultiplePack = async () => {
-    setWaiting(true);
-    const PACK_LIMIT = 200;
     const contractAddress = await getContractAddress();
     const feeAmount = getFeeAmountPerPack(packNumber); // Check potential discount
     const nativeAmount = serviceFee.type === "native" ? feeAmount * "1e18" : 0; // Apply discount if fee in native
@@ -230,29 +156,55 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
       const clonedArray = cloneDeep(assetsArray);
 
       await multipleApproveAll(account, clonedArray, numbersArray, packNumber, contractAddress).then(() => {
+        const promises = [];
         let counter = contractNumbersArray.length / PACK_LIMIT;
         counter = Math.ceil(counter);
 
         for (let i = 0; i < counter; i++) {
           if (contractNumbersArray.length > PACK_LIMIT) {
             let temp = contractNumbersArray.splice(0, PACK_LIMIT);
-            multiplePackMint(assetsArray, temp, PACK_LIMIT, nativeAmount.toString(), contractAddress);
+            promises.push(
+              multiplePackMint(
+                assetsArray,
+                temp,
+                PACK_LIMIT,
+                nativeAmount.toString(),
+                contractAddress,
+                account,
+                packNumber,
+                chainId,
+                customCollectionData
+              )
+            );
           } else {
-            multiplePackMint(
-              assetsArray,
-              contractNumbersArray,
-              contractNumbersArray.length,
-              nativeAmount.toString(),
-              contractAddress
+            promises.push(
+              multiplePackMint(
+                assetsArray,
+                contractNumbersArray,
+                contractNumbersArray.length,
+                nativeAmount.toString(),
+                contractAddress,
+                account,
+                packNumber,
+                chainId,
+                customCollectionData
+              )
             );
           }
         }
+
+        Promise.all(promises).then((res) => {
+          setPackReceipt(res[0]);
+          setDisplayPaneMode("done");
+          setWaiting(false);
+        });
       });
     } catch (err) {
-      let title = "Batch Pack error";
-      let msg = "Something went wrong while doing your batch packs. Please check your inputs.";
+      let title = "Unexpected error";
+      let msg = "Oops, something went wrong while batch-packing. Please check your inputs.";
       openNotification("error", title, msg);
       console.log(err);
+      setWaiting(false);
     }
   };
 
@@ -295,15 +247,13 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
         {displayPaneMode === "nfts" && (
           <div style={styles.transparentContainerInside}>
-            <div style={{ margin: "auto" }}>
-              <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
-              <NumOfNftPerPack
-                ERC721Number={ERC721Number}
-                handleERC721Number={handleERC721Number}
-                ERC1155Number={ERC1155Number}
-                handleERC1155Number={handleERC1155Number}
-              />
-            </div>
+            <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
+            <NumOfNftPerPack
+              ERC721Number={ERC721Number}
+              handleERC721Number={handleERC721Number}
+              ERC1155Number={ERC1155Number}
+              handleERC1155Number={handleERC1155Number}
+            />
           </div>
         )}
 
@@ -345,21 +295,20 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
         )}
 
         {displayPaneMode === "pack" && (
-          <>
-            <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
-              <div style={{ ...styles.transparentContainerInside, padding: "20px" }}>
-                <FeeSelector
-                  serviceFee={serviceFee}
-                  setServiceFee={setServiceFee}
-                  customCollectionData={customCollectionData}
-                  isBatch={true}
-                  packNumber={packNumber}
-                />
-                <Button shape='round' style={styles.runFunctionButton} onClick={handleMultiplePack}>
-                  BATCH-PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
-                </Button>
-              </div>
-            </Spin>
+          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+            <div style={{ ...styles.transparentContainerInside, padding: "20px" }}>
+              <FeeSelector
+                serviceFee={serviceFee}
+                setServiceFee={setServiceFee}
+                customCollectionData={customCollectionData}
+                isBatch={true}
+                packNumber={packNumber}
+              />
+              <Button shape='round' style={styles.runFunctionButton} onClick={handleBatch}>
+                BATCH-PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
+              </Button>
+            </div>
+
             <div style={{ marginTop: "15px" }}>
               <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
                 BACK
@@ -368,7 +317,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 RESTART
               </Button>
             </div>
-          </>
+          </Spin>
         )}
 
         {displayPaneMode === "done" && <Done packReceipt={packReceipt} isClaim={false} />}

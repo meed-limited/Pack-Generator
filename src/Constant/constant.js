@@ -1,5 +1,6 @@
 export const CHAINS_WITH_L3P_SUPPORT = [ "0x1", "0x38"];
 export const L3P_TOKEN_ADDRESS = "0xdeF1da03061DDd2A5Ef6c59220C135dec623116d";
+export const PACK_LIMIT = 200;
 
 /* CONTRACT ADDRESS:
  ********************/

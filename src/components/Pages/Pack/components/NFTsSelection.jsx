@@ -140,7 +140,7 @@ const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, 
   return (
     <>
       <div style={styles.NFTSelection}>
-        <div style={{ ...styles.scrollArea, overflowY: isNFTloading ? "hidden" : "scroll" }}>
+        <div style={{ ...styles.scrollArea, overflowY: isNFTloading ? "hidden" : "auto" }}>
           <div style={styles.NFTs}>
             {NFTBalances?.total === 0 && <Alert type='info' showIcon message={"No NFTs/Pack found on this account"} />}
             {NftToShow &&
