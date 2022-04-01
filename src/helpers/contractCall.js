@@ -6,6 +6,7 @@ import { getExplorer } from "./networks";
 import { openNotification } from "./notifications";
 import { FileSearchOutlined } from "@ant-design/icons";
 
+const ethers = require("ethers");
 const assemblyABIJson = JSON.parse(assemblyABI);
 const customAssemblyABIJson = JSON.parse(customAssemblyABI);
 const marketABIJson = JSON.parse(marketABI);
@@ -70,12 +71,12 @@ export const singleApproveAll = async (account, address, numbers, contractAddr) 
 };
 
 // Mint Single Pack
-export const singlePackMint = async (ABI, chainId, account, msgValue, assetContracts, assetNumbers, contractAddr) => {
+export const singlePackMint = async (chainId, account, msgValue, assetContracts, assetNumbers, contractAddr) => {
   var receipt = [];
   const sendOptions = {
     contractAddress: contractAddr,
     functionName: "mint",
-    abi: ABI,
+    abi: assemblyABIJson,
     msgValue: msgValue,
     params: {
       _to: account,
@@ -86,14 +87,28 @@ export const singlePackMint = async (ABI, chainId, account, msgValue, assetContr
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    await transaction
-      .wait(2)
-      .then((result) => {
-        receipt = { txHash: result.transactionHash, link: `${getExplorer(chainId)}tx/${result.transactionHash}` };
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    await transaction.wait(2).then((result) => {
+      receipt = { txHash: result.transactionHash, link: `${getExplorer(chainId)}tx/${result.transactionHash}` };
+
+      const encodedTopic = result.events.filter((item) => item.event === "AssemblyAsset"); // Get AssemblyAsset event log
+      const iface = new ethers.utils.Interface(assemblyABIJson); // Initiate interface(ABI)
+      const data = encodedTopic[0].data; // Get log.data
+      const topics = encodedTopic[0].topics; // Get log.topics
+      const decodedTopic = iface.parseLog({ data, topics }); // Decode data + topics
+      const temp = decodedTopic.args[1]._hex; // Get tokenId in hex BN format
+      const packId = ethers.BigNumber.from(temp).toString(); // Convert to readable tokenId hash
+
+      const CreatedSinglePacks = Moralis.Object.extend("CreatedSinglePacks");
+      const createdSinglePacks = new CreatedSinglePacks();
+      createdSinglePacks.set("address", contractAddr);
+      createdSinglePacks.set("firstHolder", account);
+      createdSinglePacks.set("chainId", chainId);
+      createdSinglePacks.set("addresses", assetContracts);
+      createdSinglePacks.set("numbers", assetNumbers);
+      createdSinglePacks.set("transaction_hash", result.transactionHash);
+      createdSinglePacks.set("tokenId", packId);
+      createdSinglePacks.save();
+    });
     return receipt;
   } catch (error) {
     let title = "Unexpected error";

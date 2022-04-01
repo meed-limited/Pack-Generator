@@ -129,7 +129,6 @@ function Marketplace() {
       setVisibility(false);
       updateSoldMarketItem();
       succPurchase();
-      console.log("success");
     } catch (error) {
       setLoading(false);
       failPurchase();

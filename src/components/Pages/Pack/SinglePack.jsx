@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { L3P_TOKEN_ADDRESS, getAssemblyAddress, assemblyABI } from "../../../Constant/constant";
+import { L3P_TOKEN_ADDRESS, getAssemblyAddress } from "../../../Constant/constant";
 import TokenSelection from "./components/TokenSelection";
 import NFTsSelection from "./components/NFTsSelection";
 import PackConfirm from "./components/PackConfirm";
@@ -17,7 +17,6 @@ import { DownloadOutlined } from "@ant-design/icons";
 
 function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
   const { account, chainId } = useMoralis();
-  const assemblyABIJson = JSON.parse(assemblyABI);
   const contractAddress = getAssemblyAddress(chainId);
   const [serviceFee, setServiceFee] = useState();
   const [ethAmount, setEthAmount] = useState(0);
@@ -101,13 +100,11 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
       const clonedArray = cloneDeep(addressArr);
 
       await singleApproveAll(account, clonedArray, assetNumbers, contractAddress).then(() => {
-        singlePackMint(assemblyABIJson, chainId, account, msgValue, addressArr, assetNumbers, contractAddress).then(
-          (result) => {
-            setPackReceipt(result);
-            setDisplayPaneMode("done");
-            setWaiting(false);
-          }
-        );
+        singlePackMint(chainId, account, msgValue, addressArr, assetNumbers, contractAddress).then((result) => {
+          setPackReceipt(result);
+          setDisplayPaneMode("done");
+          setWaiting(false);
+        });
       });
     } catch (err) {
       setWaiting(false);
@@ -153,15 +150,13 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
         )}
 
         {displayPaneMode === "pack" && (
-          <>
-            <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
-              <div style={{ ...styles.transparentContainerInside, padding: "40px" }}>
+          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+            <div style={{ ...styles.transparentContainerInside, padding: "40px" }}>
               <FeeSelector setServiceFee={setServiceFee} isBatch={false} />
-                <Button shape='round' style={styles.runFunctionButton} onClick={handleSinglePack}>
-                  PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
-                </Button>
-              </div>
-            </Spin>
+              <Button shape='round' style={styles.runFunctionButton} onClick={handleSinglePack}>
+                PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
+              </Button>
+            </div>
             <div style={{ marginTop: "15px" }}>
               <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
                 BACK
@@ -170,7 +165,7 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
                 RESTART
               </Button>
             </div>
-          </>
+          </Spin>
         )}
 
         {displayPaneMode === "done" && <Done packReceipt={packReceipt} isClaim={false} />}
