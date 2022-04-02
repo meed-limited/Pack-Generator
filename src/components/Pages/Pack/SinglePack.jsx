@@ -93,26 +93,20 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
       await ifServiceFeeInL3P();
     }
 
-    try {
-      const addressArr = result[0];
-      const assetNumbers = result[1];
-      const msgValue = assetNumbers[0] + nativeAmount;
-      const clonedArray = cloneDeep(addressArr);
+    const addressArr = result[0];
+    const assetNumbers = result[1];
+    const msgValue = assetNumbers[0] + nativeAmount;
+    const clonedArray = cloneDeep(addressArr);
 
-      await singleApproveAll(account, clonedArray, assetNumbers, contractAddress).then(() => {
-        singlePackMint(chainId, account, msgValue, addressArr, assetNumbers, contractAddress).then((result) => {
+    await singleApproveAll(account, clonedArray, assetNumbers, contractAddress).then(() => {
+      singlePackMint(chainId, account, msgValue, addressArr, assetNumbers, contractAddress).then((result) => {
+        setWaiting(false);
+        if (result.isSuccess) {
           setPackReceipt(result);
           setDisplayPaneMode("done");
-          setWaiting(false);
-        });
+        }
       });
-    } catch (err) {
-      setWaiting(false);
-      let title = "Single Pack error";
-      let msg = "Something went wrong while doing your pack. Please check your inputs.";
-      openNotification("error", title, msg);
-      console.log(err);
-    }
+    });
   };
 
   return (

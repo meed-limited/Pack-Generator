@@ -88,34 +88,38 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
     await transaction.wait(2).then((result) => {
-      receipt = { txHash: result.transactionHash, link: `${getExplorer(chainId)}tx/${result.transactionHash}` };
-
+      receipt = { isSuccess: true, txHash: result.transactionHash, link: `${getExplorer(chainId)}tx/${result.transactionHash}` };
       const encodedTopic = result.events.filter((item) => item.event === "AssemblyAsset"); // Get AssemblyAsset event log
       const iface = new ethers.utils.Interface(assemblyABIJson); // Initiate interface(ABI)
       const data = encodedTopic[0].data; // Get log.data
       const topics = encodedTopic[0].topics; // Get log.topics
       const decodedTopic = iface.parseLog({ data, topics }); // Decode data + topics
-      const temp = decodedTopic.args[1]._hex; // Get tokenId in hex BN format
-      const packId = ethers.BigNumber.from(temp).toString(); // Convert to readable tokenId hash
+      const packId = decodedTopic.args[1].toString();
+      const salt = decodedTopic.args[2].toString();
+      //const temp = decodedTopic.args[1]._hex; // Get tokenId in hex BN format
+      //const packId = ethers.BigNumber.from(temp).toString(); // Convert to readable tokenId hash
 
       const CreatedSinglePacks = Moralis.Object.extend("CreatedSinglePacks");
       const createdSinglePacks = new CreatedSinglePacks();
       createdSinglePacks.set("address", contractAddr);
       createdSinglePacks.set("firstHolder", account);
       createdSinglePacks.set("chainId", chainId);
+      createdSinglePacks.set("block_number", result.blockNumber);
+      createdSinglePacks.set("salt", salt);
       createdSinglePacks.set("addresses", assetContracts);
       createdSinglePacks.set("numbers", assetNumbers);
       createdSinglePacks.set("transaction_hash", result.transactionHash);
       createdSinglePacks.set("tokenId", packId);
       createdSinglePacks.save();
     });
-    return receipt;
   } catch (error) {
+    receipt = { isSuccess: false}
     let title = "Unexpected error";
     let msg = "Oops, something went wrong while creating your pack!";
     openNotification("error", title, msg);
     console.log(error);
   }
+  return receipt;
 };
 
 // Approve all assets for Batch Pack

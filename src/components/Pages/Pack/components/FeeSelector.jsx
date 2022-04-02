@@ -58,8 +58,9 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
     try {
       let feeEth = await Moralis.executeFunction(readOptions);
       feeEth = parseFloat(feeEth) / "1e18";
-      setFeeinETH(feeEth);
-      setServiceFee({ type: "native", amount: feeEth }); //initialisation
+      // setFeeinETH(feeEth);
+      // setServiceFee({ type: "native", amount: feeEth }); //initialisation
+      return feeEth;
     } catch (error) {
       console.log(error);
     }
@@ -75,7 +76,8 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
     try {
       let feeL3P = await Moralis.executeFunction(readOptions);
       feeL3P = parseInt(feeL3P) / "1e18";
-      setFeeinL3P(feeL3P);
+      // setFeeinL3P(feeL3P);
+      return feeL3P;
     } catch (error) {
       console.log(error);
     }
@@ -109,10 +111,23 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
   };
 
   useEffect(() => {
+    let isMounted = true;
     if (isWeb3Enabled) {
-      getFeeinETH();
-      getFeeinL3P();
+      getFeeinETH().then((result) => {
+        if (isMounted) {
+          setFeeinETH(result);
+          setServiceFee({ type: "native", amount: result });
+        }
+      });
+      getFeeinL3P().then((result) => {
+        if (isMounted) {
+          setFeeinL3P(result);
+        }
+      });
     }
+    return () => {
+      isMounted = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWeb3Enabled, contractAddress]);
 
