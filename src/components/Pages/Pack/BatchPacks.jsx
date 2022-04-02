@@ -149,64 +149,58 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
       await ifServiceFeeInL3P(feeAmount);
     }
 
-    try {
-      const sortedData = getMultiplePackArrays(jsonFile);
-      const assetsArray = sortedData[0];
-      const numbersArray = sortedData[1];
-      const contractNumbersArray = updateTokenIdsInArray(jsonFile, numbersArray, packNumber, ERC1155Number);
-      const clonedArray = cloneDeep(assetsArray);
+    const sortedData = getMultiplePackArrays(jsonFile);
+    const assetsArray = sortedData[0];
+    const numbersArray = sortedData[1];
+    const contractNumbersArray = updateTokenIdsInArray(jsonFile, numbersArray, packNumber, ERC1155Number);
+    const clonedArray = cloneDeep(assetsArray);
 
-      await multipleApproveAll(account, clonedArray, numbersArray, packNumber, contractAddress).then(() => {
-        const promises = [];
-        let counter = contractNumbersArray.length / PACK_LIMIT;
-        counter = Math.ceil(counter);
+    await multipleApproveAll(account, clonedArray, numbersArray, packNumber, contractAddress).then(() => {
+      const promises = [];
+      let counter = contractNumbersArray.length / PACK_LIMIT;
+      counter = Math.ceil(counter);
 
-        for (let i = 0; i < counter; i++) {
-          if (contractNumbersArray.length > PACK_LIMIT) {
-            let temp = contractNumbersArray.splice(0, PACK_LIMIT);
-            promises.push(
-              multiplePackMint(
-                assetsArray,
-                temp,
-                PACK_LIMIT,
-                nativeAmount.toString(),
-                contractAddress,
-                account,
-                packNumber,
-                chainId,
-                customCollectionData
-              )
-            );
-          } else {
-            promises.push(
-              multiplePackMint(
-                assetsArray,
-                contractNumbersArray,
-                contractNumbersArray.length,
-                nativeAmount.toString(),
-                contractAddress,
-                account,
-                packNumber,
-                chainId,
-                customCollectionData
-              )
-            );
-          }
+      for (let i = 0; i < counter; i++) {
+        if (contractNumbersArray.length > PACK_LIMIT) {
+          let temp = contractNumbersArray.splice(0, PACK_LIMIT);
+          promises.push(
+            multiplePackMint(
+              assetsArray,
+              temp,
+              PACK_LIMIT,
+              nativeAmount.toString(),
+              contractAddress,
+              account,
+              packNumber,
+              chainId,
+              customCollectionData
+            )
+          );
+        } else {
+          promises.push(
+            multiplePackMint(
+              assetsArray,
+              contractNumbersArray,
+              contractNumbersArray.length,
+              nativeAmount.toString(),
+              contractAddress,
+              account,
+              packNumber,
+              chainId,
+              customCollectionData
+            )
+          );
         }
+      }
 
-        Promise.all(promises).then((res) => {
+      Promise.all(promises).then((res) => {
+        setWaiting(false);
+        if (res[0].isSuccess) {
           setPackReceipt(res[0]);
           setDisplayPaneMode("done");
-          setWaiting(false);
-        });
+        }
       });
-    } catch (err) {
-      let title = "Unexpected error";
-      let msg = "Oops, something went wrong while batch-packing. Please check your inputs.";
-      openNotification("error", title, msg);
-      console.log(err);
-      setWaiting(false);
-    }
+    });
   };
 
   const getFeeAmountPerPack = (packNumber) => {
@@ -225,6 +219,19 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     }
   };
 
+  const navButton = () => {
+    return (
+      <div style={{ marginTop: "15px" }}>
+        <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+          BACK
+        </Button>
+        <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+          NEXT
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div style={styles.mainPackContainer}>
       <div style={{ width: "90%" }}>
@@ -239,22 +246,28 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
           </>
         )}
         {displayPaneMode === "tokens" && (
-          <TokenSelection
-            handleAssets={handleAssets}
-            onFinishSelection={() => setDisplayPaneMode("nfts")}
-            ref={tokenSelectionRef}
-          />
+          <>
+            <TokenSelection
+              handleAssets={handleAssets}
+              onFinishSelection={() => setDisplayPaneMode("nfts")}
+              ref={tokenSelectionRef}
+            />
+            {navButton()}
+          </>
         )}
         {displayPaneMode === "nfts" && (
-          <div style={styles.transparentContainerInside}>
-            <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
-            <NumOfNftPerPack
-              ERC721Number={ERC721Number}
-              handleERC721Number={handleERC721Number}
-              ERC1155Number={ERC1155Number}
-              handleERC1155Number={handleERC1155Number}
-            />
-          </div>
+          <>
+            <div style={styles.transparentContainerInside}>
+              <Uploader isJsonFile={isJsonFile} getJsonFile={getJsonFile} ref={uploaderRef} />
+              <NumOfNftPerPack
+                ERC721Number={ERC721Number}
+                handleERC721Number={handleERC721Number}
+                ERC1155Number={ERC1155Number}
+                handleERC1155Number={handleERC1155Number}
+              />
+            </div>
+            {navButton()}
+          </>
         )}
         {displayPaneMode === "confirm" && (
           <>
@@ -274,7 +287,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 onChange={handlePackNumber}
               />
             </div>
-            {packNumber !== undefined && (
+            {packNumber && packNumber !== undefined && (
               <div style={{ ...styles.transparentContainerInside, marginTop: "15px" }}>
                 <PackConfirm
                   NFTsArr={[]}
@@ -288,6 +301,19 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 />
               </div>
             )}
+            <div style={{ marginTop: "15px" }}>
+              <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+                BACK
+              </Button>
+              <Button
+                shape='round'
+                style={styles.resetButton}
+                disabled={!packNumber ? true : false}
+                onClick={handleNext}
+              >
+                NEXT
+              </Button>
+            </div>
           </>
         )}
         {displayPaneMode === "pack" && (
@@ -316,16 +342,6 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
         )}
         {displayPaneMode === "done" && <Done packReceipt={packReceipt} isClaim={false} />}
       </div>
-      {displayPaneMode !== "factory" && displayPaneMode !== "pack" && displayPaneMode !== "done" && (
-        <div style={{ marginTop: "15px" }}>
-          <Button shape='round' style={styles.resetButton} onClick={handleBack}>
-            BACK
-          </Button>
-          <Button shape='round' style={styles.resetButton} onClick={handleNext}>
-            NEXT
-          </Button>
-        </div>
-      )}
     </div>
   );
 };

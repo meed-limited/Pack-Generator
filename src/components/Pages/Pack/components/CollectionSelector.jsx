@@ -165,7 +165,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
               padding: "20px"
             }}
           >
-            <Text style={{ fontSize: "20px" }}>Here are the details of the selected collection:</Text>
+            <Text style={{ fontSize: "20px" }}>Selected collection:</Text>
             <p style={{ fontSize: "15px", marginTop: "15px" }}>
               Name: <span style={{ color: "yellow" }}>{currentCollection[1]}</span>
               <br></br>
@@ -178,14 +178,14 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
             </p>
 
             <p style={{ textAlign: "center", fontSize: "16px" }}>
-              To start minting your packs, click on the "NEXT" button below to prepare their contents.
+              Click on the button "NEXT" to start preparing your packs's content.
             </p>
           </div>
         </>
       )}
 
-      {!displayFactory && (
-        <p style={{ fontSize: "11px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300", padding: "0 20px" }}>
+      {!displayFactory && !currentCollection[0] && (
+        <p style={{ fontSize: "12px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300", padding: "0 20px" }}>
           *Just leave everything blank and click on "NEXT" if you simply want to use our integrated PGNFT collection.
         </p>
       )}
