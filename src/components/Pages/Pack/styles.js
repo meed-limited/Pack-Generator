@@ -108,6 +108,7 @@ const styles = {
     textAlign: "left"
   },
   transparentContainerInside: {
+    borderRadius: "15px",
     margin: "auto 30px",
     padding: "20px 0px",
     background: "rgba(240, 248, 255, 0.10)",
@@ -118,7 +119,6 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
-    borderRadius: "15px",
     textAlign: "center"
   },
 
@@ -157,7 +157,8 @@ const styles = {
   // Pack tab
   uploadBox: {
     display: "flex-grid",
-    margin: "20px",
+    width: "90%",
+    margin: "auto",
     padding: "15px",
     background: "rgba(240, 248, 255, 0.10)",
     background:

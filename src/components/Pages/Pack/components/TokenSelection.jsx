@@ -8,7 +8,9 @@ import Text from "antd/lib/typography/Text";
 const styles = {
   transparentContainerInside: {
     borderRadius: "15px",
+    width: "80%",
     margin: "auto",
+    paddingBlock: "40px 15px",
     background: "rgba(240, 248, 255, 0.10)",
     background:
       "-moz-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
@@ -18,7 +20,7 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-    padding: "30px 50px 15px 50px"
+
   },
   transparentInput: {
     textAlign: "center",
