@@ -1,4 +1,4 @@
-import LepriconLogo_Black from "../assets/LepriconLogo_Black.png";
+import LepriconLogoWhite from "../assets/LepriconLogoWhite.png";
 import discord from "../assets/discord.png";
 import telegram from "../assets/telegram.png";
 import { FacebookOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
@@ -11,7 +11,7 @@ const Community = () => {
         Powered by |
         <a href='https://lepricon.io/' target='_blank' rel='noopener noreferrer'>
           <div style={{ width: "90px", paddingLeft: "10px" }}>
-            <img src={LepriconLogo_Black} alt='LepriconLogo_Black' />
+            <img src={LepriconLogoWhite} alt='LepriconLogoWhite' />
           </div>
         </a>
       </Text>

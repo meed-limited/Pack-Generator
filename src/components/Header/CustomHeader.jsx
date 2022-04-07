@@ -7,6 +7,7 @@ import NativeBalance from "components/Header/components/NativeBalance";
 import Account from "components/Account/Account";
 import headerBackground from "../../assets/headerBackground.jpg";
 import PG_Logo from "../../assets/PG_Logo.png";
+import beta from "../../assets/beta.png";
 import { Button } from "antd";
 import { Header } from "antd/lib/layout/layout";
 
@@ -81,8 +82,13 @@ const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
 };
 
 export const Logo = () => (
-  <div style={{ width: "260px" }}>
-    <img src={PG_Logo} alt='PG_Logo' />
+  <div style={{ display: "flex", alignSelf: "center" }}>
+    <div style={{ paddingTop: "0px", marginLeft: "-10px", width: "70px", height: "70px" }}>
+      <img src={beta} alt='beta' />
+    </div>
+    <div style={{ paddingTop: "22px", width: "260px" }}>
+      <img src={PG_Logo} alt='PG_Logo' />
+    </div>
   </div>
 );
 
