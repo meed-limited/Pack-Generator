@@ -10,7 +10,7 @@
 }
 
 .ant-menu-horizontal > .ant-menu-item-selected a {
-  color: #1890ff !important;
+  color: white !important;
 }
 
 .ant-menu-submenu-horizontal {
@@ -30,6 +30,10 @@
 }
 
 .ant-menu-item a {
+  color: white !important;
+}
+
+.ant-menu-title-content {
   color: white !important;
 }
 

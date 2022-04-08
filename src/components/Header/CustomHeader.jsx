@@ -86,7 +86,7 @@ export const Logo = () => (
     <div style={{ paddingTop: "0px", marginLeft: "-10px", width: "70px", height: "70px" }}>
       <img src={beta} alt='beta' />
     </div>
-    <div style={{ paddingTop: "22px", width: "260px" }}>
+    <div style={{ paddingTop: "25px", width: "220px" }}>
       <img src={PG_Logo} alt='PG_Logo' />
     </div>
   </div>

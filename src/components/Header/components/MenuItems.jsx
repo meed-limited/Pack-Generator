@@ -5,14 +5,14 @@ const { SubMenu } = Menu;
 
 const styles = {
   menuItems: {
+    backgroundColor: "transparent",
     display: "flex",
-    fontSize: "15px",
-    letterSpacing: "0.7px",
-    borderBottom: "none",
+    width: "100%",
     justifyContent: "center",
-    margin: "auto",
     paddingTop: "10px",
-    backgroundColor: "transparent"
+    borderBottom: "none",
+    fontSize: "15px",
+    color: "white"
   }
 };
 
@@ -44,6 +44,11 @@ function MenuItems() {
         </Menu.Item>
         <Menu.Item key='transactions'>
           <NavLink to='/Transactions'>Transactions</NavLink>
+        </Menu.Item>
+        <Menu.Item
+          onClick={() => window.open("https://lepricon.gitbook.io/pack-generator/", "_blank", "noopener noreferrer")}
+        >
+          Support
         </Menu.Item>
       </Menu>
     </>
