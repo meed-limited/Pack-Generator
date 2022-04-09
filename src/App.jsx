@@ -63,17 +63,21 @@ const App = () => {
 
     try {
       const owner = await Moralis.executeFunction(readOptions);
-      setAdminAddress(owner);
+      return owner;
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    if (isWeb3Enabled) {
-      getAdminAddress();
-      setIsAdminPaneOpen(false);
-    }
+    const launchApp = async () => {
+      if (isWeb3Enabled) {
+        const admin = await getAdminAddress();
+        setAdminAddress(admin);
+        setIsAdminPaneOpen(false);
+      }
+    };
+      launchApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWeb3Enabled, account]);
 

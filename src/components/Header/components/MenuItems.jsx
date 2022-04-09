@@ -45,7 +45,7 @@ function MenuItems() {
         <Menu.Item key='transactions'>
           <NavLink to='/Transactions'>Transactions</NavLink>
         </Menu.Item>
-        <Menu.Item
+        <Menu.Item key='support'
           onClick={() => window.open("https://lepricon.gitbook.io/pack-generator/", "_blank", "noopener noreferrer")}
         >
           Support

@@ -9,7 +9,6 @@ import Done from "./components/Done";
 import { singleApproveAll, singlePackMint } from "helpers/contractCall";
 import { sortSingleArrays } from "../../../helpers/arraySorting";
 import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
-import { openNotification } from "../../../helpers/notifications";
 import cloneDeep from "lodash/cloneDeep";
 import { Button, Spin } from "antd";
 import styles from "./styles";
