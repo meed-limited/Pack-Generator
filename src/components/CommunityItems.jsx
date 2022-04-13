@@ -4,6 +4,13 @@ import telegram from "../assets/telegram.png";
 import { FacebookOutlined, GithubOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 
+const styles = {
+  antdIcon: {
+    fontSize: "20px",
+    color: "white"
+  }
+};
+
 const Community = () => {
   return (
     <>
@@ -18,34 +25,34 @@ const Community = () => {
       <Text style={{ display: "flex", color: "white", float: "right" }}>
         <a href='https://twitter.com/lepriconio' target='_blank' rel='noopener noreferrer'>
           <div style={{ padding: "0 10px 0 15px" }}>
-            <TwitterOutlined style={{ color: "white" }} />
+            <TwitterOutlined style={styles.antdIcon} />
           </div>
         </a>
         <a href='http://discord.gg/lepricon' target='_blank' rel='noopener noreferrer'>
-          <div style={{ padding: "4px 10px 0 10px" }}>
+          <div style={{ paddingInline: "10px" }}>
             <img src={discord} alt='discord' />
           </div>
         </a>
         <a href='https://t.me/lepriconio' target='_blank' rel='noopener noreferrer'>
-          <div style={{ padding: "4px 10px 0 10px" }}>
+          <div style={{ paddingInline: "10px" }}>
             <img src={telegram} alt='telegram' />
           </div>
         </a>
         <a href='https://www.facebook.com/lepriconio' target='_blank' rel='noopener noreferrer'>
           <div style={{ padding: "0 10px" }}>
-            <FacebookOutlined style={{ color: "white" }} />
+            <FacebookOutlined style={styles.antdIcon} />
           </div>
         </a>
         <a href='https://sc.linkedin.com/company/lepricon-io' target='_blank' rel='noopener noreferrer'>
           <div style={{ padding: "0 10px" }}>
-            <LinkedinOutlined style={{ color: "white" }} />
+            <LinkedinOutlined style={styles.antdIcon} />
           </div>
         </a>
-        <a href='https://github.com/shamrockstudios/NFT-Bundle-WebApp' target='_blank' rel='noopener noreferrer'>
-              <div style={{ padding: "0 10px" }}>
-                <GithubOutlined style={{ color: "white" }} />
-              </div>
-            </a>
+        <a href='https://github.com/shamrockstudios/Pack-Generator' target='_blank' rel='noopener noreferrer'>
+          <div style={{ padding: "0 10px" }}>
+            <GithubOutlined style={styles.antdIcon} />
+          </div>
+        </a>
       </Text>
     </>
   );
