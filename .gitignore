@@ -32,4 +32,4 @@ typechain
 #Truffle files
 /Truffle/build
 /Truffle/data
-/Truffle/.secret
+/Truffle/secret.json

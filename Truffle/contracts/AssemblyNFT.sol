@@ -10,6 +10,14 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interface/IAssemblyNFT.sol";
 
+/** 
+@title Smart-contract designed to allow users to pack different assets (natif | ERC20 | ERC721 | ERC1155) into an NFT.
+@author @Pedrojok01
+@notice The contract act as a temporary escrow for the NFT content. Only the NFT emitted can "unlock" the assets.
+Anyone can freely use this contract, and there is no supply limit. The ERC721 NFTs created are not supposed to hold any value, except the content that
+they allow to claim.
+This contract is based on the EIP-3589: https://eips.ethereum.org/EIPS/eip-3589
+*/
 contract AssemblyNFT is
     ERC721,
     ERC721Holder,
@@ -92,90 +100,6 @@ contract AssemblyNFT is
         assembly {
             tokenId := signature
         }
-    }
-
-    function mint(
-        address _to,
-        address[] memory _addresses,
-        uint256[] memory _numbers
-    ) external payable returns (uint256 tokenId) {
-        require(_to != address(0), "can't mint to address(0)");
-
-        // Fee in native (ETH, MATIC, BNB)
-        if (msg.value > _numbers[0]) {
-            require(
-                msg.value == (_numbers[0] + feeETH),
-                "wrong native fee amount"
-            );
-            (bool feeInEth, ) = feeReceiver.call{value: feeETH}("");
-            require(feeInEth, "ETH payment failed");
-            require(
-                msg.value - feeETH == _numbers[0],
-                "native value do not match"
-            );
-        }
-        // Fee in L3P (for BSC and ETH chains)
-        else if (msg.value == _numbers[0]) {
-            require(
-                IERC20(L3P).balanceOf(msg.sender) >= feeL3P,
-                "Not enough L3P to pay the fee"
-            );
-            require(
-                IERC20(L3P).allowance(msg.sender, address(this)) >= feeL3P,
-                "Not authorized"
-            );
-            bool feeInL3P = IERC20(L3P).transferFrom(
-                msg.sender,
-                feeReceiver,
-                feeL3P
-            );
-            require(feeInL3P, "L3P payment failed");
-            require(msg.value == _numbers[0], "value not match");
-        }
-        // revert anything else
-        else revert("value sent do not match");
-
-        require(
-            _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],
-            "2 array length not match"
-        );
-        require(
-            _addresses.length == _numbers.length - 4 - _numbers[3],
-            "numbers length not match"
-        );
-        if (maxPackSupply != 0) {
-            require(nonce < maxPackSupply, "Max supply reached");
-        }
-        uint256 pointerA; //points to first erc20 address, if there is any
-        uint256 pointerB = 4; //points to first erc20 amount, if there is any
-        for (uint256 i = 0; i < _numbers[1]; i++) {
-            require(_numbers[pointerB] > 0, "transfer erc20 0 amount");
-            IERC20(_addresses[pointerA++]).safeTransferFrom(
-                _msgSender(),
-                address(this),
-                _numbers[pointerB++]
-            );
-        }
-        for (uint256 j = 0; j < _numbers[2]; j++) {
-            IERC721(_addresses[pointerA++]).safeTransferFrom(
-                _msgSender(),
-                address(this),
-                _numbers[pointerB++]
-            );
-        }
-        for (uint256 k = 0; k < _numbers[3]; k++) {
-            IERC1155(_addresses[pointerA++]).safeTransferFrom(
-                _msgSender(),
-                address(this),
-                _numbers[pointerB],
-                _numbers[_numbers[3] + pointerB++],
-                ""
-            );
-        }
-        tokenId = hash(nonce, _addresses, _numbers);
-        super._mint(_to, tokenId);
-        emit AssemblyAsset(_to, tokenId, nonce, _addresses, _numbers);
-        nonce++;
     }
 
     function safeMint(

@@ -10,6 +10,15 @@ import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interface/IAssemblyNFT.sol";
 
+/** 
+@title Smart-contract deployed via the PackFactory, and allow users to pack different assets (natif | ERC20 | ERC721 | ERC1155) into NFTs from their own collection.
+@author @Pedrojok01
+@notice The contract act as a temporary escrow for the NFT content. Only the NFT emitted can "unlock" the assets.
+Anyone can freely use this contract, and there is no supply limit. The ERC721 NFTs created are not supposed to hold any value, except the content that
+they allow to claim.
+Only the owner can mint Packs into a custom collection.
+This contract is based on the EIP-3589: https://eips.ethereum.org/EIPS/eip-3589
+*/
 contract CustomAssemblyNFT is
     ERC721,
     ERC721Holder,
@@ -34,8 +43,8 @@ contract CustomAssemblyNFT is
 
     address private L3P = 0xdeF1da03061DDd2A5Ef6c59220C135dec623116d; // L3P contract address (only available on Ethereum && BSC);
     address private feeReceiver = 0xF0eEaAB7153Ff42849aCb0E817efEe09fb078C1b; /// Todo: ADD Lepricon address !!!!!
-    uint256 public feeETH = 0.01 ether; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
-    uint256 public feeL3P = 100000000000000000000; // Fees charged on TXs, if paid in L3P, default === 100 L3P
+    uint256 public feeETH; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
+    uint256 public feeL3P; // Fees charged on TXs, if paid in L3P, default === 100 L3P
     uint256 public maxPackSupply;
     uint256 nonce;
     string public _baseURIextended;
@@ -50,10 +59,14 @@ contract CustomAssemblyNFT is
         string memory _symbol,
         uint256 _maxPackSupply,
         string memory baseURIextended,
+        uint256 _feeETH,
+        uint256 _feeL3P,
         address _owner
     ) ERC721(_name, _symbol) {
         maxPackSupply = _maxPackSupply;
         _baseURIextended = baseURIextended;
+        feeETH = _feeETH;
+        feeL3P = _feeL3P;
         transferOwnership(_owner);
     }
 
@@ -72,12 +85,16 @@ contract CustomAssemblyNFT is
     }
 
     /**
-     * layout of _addresses:
-     *     erc20 addresses | erc721 addresses | erc1155 addresses
-     * layout of _numbers:
-     *     eth | erc20.length | erc721.length | erc1155.length | erc20 amounts | erc721 ids | erc1155 ids | erc1155 amounts
+    @dev Generate a hash of all assets sent to the escrow contract. This hash is used as token_id and is the "key" to claim the assets back.
+    @param _salt Index-like parameter incremented by one with each new created NFT to prevent collision. 
+    @param _addresses Array containing all the contract addresses of every assets sent to the escrow contract. See layout below.
+    @param _numbers Array containing numbers, amounts and IDs for every assets sent to the escrow contract. See layout below.
+    
+    @notice layout of _addresses:
+        erc20 addresses | erc721 addresses | erc1155 addresses
+    @notice layout of _numbers:
+        eth | erc20.length | erc721.length | erc1155.length | erc20 amounts | erc721 ids | erc1155 ids | erc1155 amounts
      */
-
     function hash(
         uint256 _salt,
         address[] memory _addresses,
@@ -95,90 +112,11 @@ contract CustomAssemblyNFT is
         }
     }
 
-    function mint(
-        address _to,
-        address[] memory _addresses,
-        uint256[] memory _numbers
-    ) external payable override onlyOwner returns (uint256 tokenId) {
-        require(_to != address(0), "mint to zero address");
-
-        // Fee in native (ETH, MATIC, BNB)
-        if (msg.value > _numbers[0]) {
-            require(
-                msg.value == (_numbers[0] + feeETH),
-                "wrong native fee amount"
-            );
-            (bool feeInEth, ) = payable(feeReceiver).call{value: feeETH}("");
-            require(feeInEth, "ETH payment failed");
-            require(
-                msg.value - feeETH == _numbers[0],
-                "native value do not match"
-            );
-        }
-        // Fee in L3P (for BSC and ETH chains)
-        else if (msg.value == _numbers[0]) {
-            require(
-                IERC20(L3P).balanceOf(msg.sender) >= feeL3P,
-                "Not enough L3P to pay the fee"
-            );
-            require(
-                IERC20(L3P).allowance(msg.sender, address(this)) >= feeL3P,
-                "Not authorized"
-            );
-            bool feeInL3P = IERC20(L3P).transferFrom(
-                msg.sender,
-                feeReceiver,
-                feeL3P
-            );
-            require(feeInL3P, "L3P payment failed");
-            require(msg.value == _numbers[0], "value not match");
-        }
-        // revert anything else
-        else revert("value sent do not match");
-
-        require(
-            _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],
-            "2 array length not match"
-        );
-        require(
-            _addresses.length == _numbers.length - 4 - _numbers[3],
-            "numbers length not match"
-        );
-        if (maxPackSupply != 0) {
-            require(nonce < maxPackSupply, "Max supply reached");
-        }
-        uint256 pointerA; //points to first erc20 address, if there is any
-        uint256 pointerB = 4; //points to first erc20 amount, if there is any
-        for (uint256 i = 0; i < _numbers[1]; i++) {
-            require(_numbers[pointerB] > 0, "transfer erc20 0 amount");
-            IERC20(_addresses[pointerA++]).safeTransferFrom(
-                _msgSender(),
-                address(this),
-                _numbers[pointerB++]
-            );
-        }
-        for (uint256 j = 0; j < _numbers[2]; j++) {
-            IERC721(_addresses[pointerA++]).safeTransferFrom(
-                _msgSender(),
-                address(this),
-                _numbers[pointerB++]
-            );
-        }
-        for (uint256 k = 0; k < _numbers[3]; k++) {
-            IERC1155(_addresses[pointerA++]).safeTransferFrom(
-                _msgSender(),
-                address(this),
-                _numbers[pointerB],
-                _numbers[_numbers[3] + pointerB++],
-                ""
-            );
-        }
-        tokenId = hash(nonce, _addresses, _numbers);
-        super._mint(_to, tokenId);
-        emit AssemblyAsset(_to, tokenId, nonce, _addresses, _numbers);
-        nonce++;
-    }
-
+    /**
+    @dev Transfer all assets to the escrow contract and emit an ERC721 NFT with a hash as token_id.
+    @param _addresses Array containing all the contract addresses of every assets sent to the escrow contract.
+    @param _numbers Array containing numbers, amounts and IDs for every assets sent to the escrow contract.
+    */
     function safeMint(
         address _to,
         address[] memory _addresses,
@@ -266,6 +204,13 @@ contract CustomAssemblyNFT is
         nonce++;
     }
 
+    /**
+    @dev Burn a previously emitted NFT to claim all the associated assets from the escrow contract.
+    @param _tokenId === hash of all associated assets.
+    @param _salt === nonce. Emitted in the AssemblyAsset event (see interface).
+    @param _addresses Array containing all the contract addresses of every assets sent to the escrow contract. Emitted in the AssemblyAsset event (see interface).
+    @param _numbers Array containing numbers, amounts and IDs for every assets sent to the escrow contract. Emitted in the AssemblyAsset event (see interface).
+    */
     function burn(
         address _to,
         uint256 _tokenId,
@@ -306,6 +251,7 @@ contract CustomAssemblyNFT is
         emit AssemblyAssetClaimed(_tokenId, msg.sender, _addresses, _numbers);
     }
 
+    /// @dev Similar to the safeMint function, allows to batch-mint multiple pack per transaction
     function _batchMint(
         address _to,
         address[] memory _addresses,
@@ -352,6 +298,13 @@ contract CustomAssemblyNFT is
         nonce++;
     }
 
+    /**
+    @dev Burn a previously emitted NFT to claim all the associated assets from the escrow contract.
+    @param _addresses Array containing all the contract addresses of every assets sent to the escrow contract. Emitted in the AssemblyAsset event (see interface).
+    @param _arrayOfNumbers Array of arrays containing numbers, amounts and IDs for every batch of assets sent to the escrow contract.
+    @param _amountOfPacks === the number of packs that will be minted in this batch.
+    @param _totalOfPacks === the number of packs that will be minted in total. Batches can be cumulated to mint a lot of packs at once.
+    */
     function batchMint(
         address _to,
         address[] memory _addresses,
@@ -364,7 +317,7 @@ contract CustomAssemblyNFT is
 
         // Fee in native (ETH, MATIC, BNB)
         if (msg.value > totalEth) {
-            uint256 totalFees = _amountOfPacks *          
+            uint256 totalFees = _amountOfPacks *
                 _discountPercentInETH(_totalOfPacks);
             require(
                 msg.value == (totalEth + totalFees),
@@ -416,7 +369,7 @@ contract CustomAssemblyNFT is
 
     /* Private functions:
      ***********************/
-
+    /// @dev calculate a fee discount in native according to the number of pack minted at once
     function _discountPercentInETH(uint256 _totalOfPacks)
         private
         view
@@ -429,6 +382,7 @@ contract CustomAssemblyNFT is
         } else return (feeETH * 60) / 100;
     }
 
+    /// @dev calculate a fee discount on L3P according to the number of pack minted at once
     function _discountPercentInL3P(uint256 _totalOfPacks)
         private
         view

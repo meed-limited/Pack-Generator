@@ -75,7 +75,7 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
   var receipt = [];
   const sendOptions = {
     contractAddress: contractAddr,
-    functionName: "mint",
+    functionName: "safeMint",
     abi: assemblyABIJson,
     msgValue: msgValue,
     params: {

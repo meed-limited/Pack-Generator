@@ -1,7 +1,7 @@
 import LepriconLogoWhite from "../assets/LepriconLogoWhite.png";
 import discord from "../assets/discord.png";
 import telegram from "../assets/telegram.png";
-import { FacebookOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
+import { FacebookOutlined, GithubOutlined, LinkedinOutlined, TwitterOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 
 const Community = () => {
@@ -16,7 +16,6 @@ const Community = () => {
         </a>
       </Text>
       <Text style={{ display: "flex", color: "white", float: "right" }}>
-        Community |
         <a href='https://twitter.com/lepriconio' target='_blank' rel='noopener noreferrer'>
           <div style={{ padding: "0 10px 0 15px" }}>
             <TwitterOutlined style={{ color: "white" }} />
@@ -42,6 +41,11 @@ const Community = () => {
             <LinkedinOutlined style={{ color: "white" }} />
           </div>
         </a>
+        <a href='https://github.com/shamrockstudios/NFT-Bundle-WebApp' target='_blank' rel='noopener noreferrer'>
+              <div style={{ padding: "0 10px" }}>
+                <GithubOutlined style={{ color: "white" }} />
+              </div>
+            </a>
       </Text>
     </>
   );

@@ -1,8 +1,8 @@
 {
-  "name": "nft-bundle-webapp",
-  "version": "0.1.0",
-  "private": true,
+  "name": "pack-generator",
+  "version": "1.0.0",
   "author": "Pedrojok01",
+  "private": true,
   "dependencies": {
     "@ant-design/icons": "4.7.0",
     "@openzeppelin/contracts": "4.4.2",
@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "@truffle/hdwallet-provider": "2.0.4",
-    "dotenv": "^11.0.0",
+    "dotenv": "^16.0.0",
     "truffle-plugin-verify": "^0.5.21"
   }
 }
