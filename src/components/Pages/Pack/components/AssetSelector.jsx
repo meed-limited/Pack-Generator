@@ -1,7 +1,7 @@
-import { useERC20Balance } from "hooks/useERC20Balance";
-import { useMoralis } from "react-moralis";
-import { Image, Select } from "antd";
 import { useMemo } from "react";
+import { useMoralis } from "react-moralis";
+import { useERC20Balance } from "hooks/useERC20Balance";
+import { Image, Select } from "antd";
 
 export default function AssetSelector({ setAsset, style }) {
   const { assets } = useERC20Balance();

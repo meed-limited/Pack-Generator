@@ -1,5 +1,5 @@
 /*eslint no-dupe-keys: "Off"*/
-import React, { useState, useEffect, forwardRef, useImperativeHandle } from "react";
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from "react";
 import { useNativeBalance } from "react-moralis";
 import AssetSelector from "./AssetSelector";
 import { Input, Button, InputNumber } from "antd";
@@ -44,6 +44,7 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
   const [ERC20Tokens, setERC20Tokens] = useState([]);
   const [currentToken, setCurrentToken] = useState();
   const { data: balance, nativeToken } = useNativeBalance();
+  const mounted = useRef(false);
 
   const onChangeToken = (token) => {
     setCurrentToken({ ...currentToken, data: token });
@@ -80,8 +81,12 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
   };
 
   useEffect(() => {
+    mounted.current = true;
     const native = nativeAmount === undefined ? 0 : nativeAmount;
     handleAssets(native, ERC20Tokens);
+    return () => {
+      mounted.current = false;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nativeAmount, ERC20Tokens]);
 

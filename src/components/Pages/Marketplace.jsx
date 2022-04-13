@@ -1,5 +1,5 @@
 /*eslint no-dupe-keys: "Off"*/
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNativeBalance } from "react-moralis";
 import { menuItems } from "../Chains/Chains";
@@ -83,6 +83,7 @@ function Marketplace() {
   const [marketItems, setMarketItems] = useState([]);
   const marketABIJson = JSON.parse(marketABI);
   const purchaseItemFunction = "createMarketSale";
+  const mounted = useRef(false);
 
   const getMarketItems = async () => {
     const res = await getMarketItemData();
@@ -96,12 +97,11 @@ function Marketplace() {
   };
 
   useEffect(() => {
-    let isTriggered = true;
-    const getItems = async () => {
-      getMarketItems();
+    mounted.current = true;
+    getMarketItems();
+    return () => {
+      mounted.current = false;
     };
-    if (isTriggered) getItems();
-    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -1,5 +1,5 @@
 /*eslint no-dupe-keys: "Off"*/
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import { menuItems } from "../../Chains/Chains";
@@ -42,6 +42,7 @@ const styles = {
 function YourNFTs() {
   const { chainId, isAuthenticated } = useMoralis();
   const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
+  const mounted = useRef(false);
   const marketAddress = getMarketplaceAddress(chainId);
   const NFTsPerPage = 50;
   const [offset, setOffset] = useState(0);
@@ -73,12 +74,13 @@ function YourNFTs() {
   };
 
   useEffect(() => {
-    const cleanupFunction = () => {
-      if (!isLoading && !isFetching) {
-        addFetchedNFTs();
-      }
+    mounted.current = true;
+    if (!isLoading && !isFetching) {
+      addFetchedNFTs();
+    }
+    return () => {
+      mounted.current = false;
     };
-    cleanupFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, isFetching]);
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useMoralis, useMoralisQuery } from "react-moralis";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
@@ -29,6 +29,7 @@ function Transactions() {
   const fetchMarketItems = JSON.parse(JSON.stringify(queryMarketItems.data)).filter(
     (item) => item.sold === true && (item.seller === account || item.owner === account)
   );
+  const mounted = useRef(false);
 
   const getCollections = async () => {
     const res = await getCustomCollectionData(account);
@@ -71,50 +72,46 @@ function Transactions() {
   };
 
   useEffect(() => {
-    let isTriggered = true;
-    const getCollection = async () => {
-      if (!fetchCollections) {
-        getCollections();
-      }
+    mounted.current = true;
+    if (!fetchCollections) {
+      getCollections();
+    }
+    return () => {
+      mounted.current = false;
     };
-    if (isTriggered) getCollection();
-    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCollections]);
 
   useEffect(() => {
-    let isTriggered = true;
-    const getPacks = async () => {
-      if (!fetchCreatedPack) {
-        getCreatedPack();
-      }
+    mounted.current = true;
+    if (!fetchCreatedPack) {
+      getCreatedPack();
+    }
+    return () => {
+      mounted.current = false;
     };
-    if (isTriggered) getPacks();
-    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedPack]);
 
   useEffect(() => {
-    let isTriggered = true;
-    const getBatchPacks = async () => {
-      if (!fetchCreatedBatchPack) {
-        getCreatedBatchPack();
-      }
+    mounted.current = true;
+    if (!fetchCreatedBatchPack) {
+      getCreatedBatchPack();
+    }
+    return () => {
+      mounted.current = false;
     };
-    if (isTriggered) getBatchPacks();
-    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchCreatedBatchPack]);
 
   useEffect(() => {
-    let isTriggered = true;
-    const getClaimedPacks = async () => {
-      if (!fetchClaimedPack) {
-        getClaimedPack();
-      }
+    mounted.current = true;
+    if (!fetchClaimedPack) {
+      getClaimedPack();
+    }
+    return () => {
+      mounted.current = false;
     };
-    if (isTriggered) getClaimedPacks();
-    return () => (isTriggered = false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchClaimedPack]);
 
