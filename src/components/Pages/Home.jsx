@@ -8,10 +8,11 @@ import TEXT_LEPLOGO from "../../../src/assets/Home/TEXT_LEPLOGO.svg";
 const styles = {
   grid: {
     display: "grid",
-    width: "inherit",
-    gridTemplateColumns: "60% 40%",
-    height: "-webkit-fill-available",
-    paddingTop: "50px"
+    width: "90%",
+    margin: "auto",
+    gridTemplateColumns: "50% 50%",
+    paddingTop: "50px",
+    overflow: "hidden"
   },
   imageDLC: {
     margin: "auto",
@@ -57,9 +58,7 @@ const Home = () => {
         </Link>
       </div>
 
-      <div>
-        <img src={Homepage_pack} alt='' style={{ transform: "scale(2)", paddingTop: "30px", marginLeft: "100px" }} />
-      </div>
+      <img src={Homepage_pack} alt='' />
     </div>
   );
 };

@@ -13,7 +13,6 @@ import Transactions from "components/Pages/Transactions";
 import Community from "components/CommunityItems";
 import { assemblyABI, getAssemblyAddress } from "./Constant/constant";
 import background from "./assets/background.jpg";
-import footerBackground from "./assets/footerBackground.jpg";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "./style.css";
@@ -26,20 +25,18 @@ const styles = {
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     width: "100vw",
-    height: "95vh",
-    overflow: "auto"
+    height: "100vh", 
+    fontFamily: "Sora, sans-serif",
   },
   pageContent: {
     justifyContent: "top",
     width: "80%",
-    fontFamily: "Sora, sans-serif",
-    margin: "80px auto 20px auto"
+    height: "81vh",
+    margin: "80px auto 70px auto",
+    overflow: "auto",
+    overflowX: "hidden"
   },
   footer: {
-    backgroundImage: `url(${footerBackground})`,
-    backgroundSize: "cover",
-    height: "70px",
-    textAlign: "center",
     position: "fixed",
     width: "100%",
     bottom: "0",

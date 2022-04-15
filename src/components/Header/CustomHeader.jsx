@@ -5,7 +5,6 @@ import MenuItems from "components/Header/components/MenuItems";
 import Chains from "components/Chains/Chains";
 import NativeBalance from "components/Header/components/NativeBalance";
 import Account from "components/Account/Account";
-import headerBackground from "../../assets/headerBackground.jpg";
 import PG_Logo from "../../assets/PG_Logo.png";
 import beta from "../../assets/beta.png";
 import { Button } from "antd";
@@ -13,8 +12,6 @@ import { Header } from "antd/lib/layout/layout";
 
 const styles = {
   header: {
-    backgroundImage: `url(${headerBackground})`,
-    backgroundSize: "cover",
     height: "70px",
     position: "fixed",
     zIndex: 1,
