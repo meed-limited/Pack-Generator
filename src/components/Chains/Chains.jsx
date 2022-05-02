@@ -4,15 +4,11 @@ import useChain from "hooks/useChain";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { PolygonLogo, ETHLogo, BSCLogo } from "./Logos";
-//import { AvaxLogo, PolygonLogo, LeprichainLogo  } from "./Logos";
+//import { AvaxLogo, PolygonLogo } from "./Logos";
 
 /*eslint no-dupe-keys: "Off"*/
 const styles = {
   item: {
-    display: "flex",
-    alignItems: "center",
-    padding: "0 10px",
-    height: "42px",
     fontFamily: "Sora, sans-serif",
     fontSize: "14px",
     fontWeight: "500",
@@ -27,6 +23,9 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
   },
   button: {
+    display: "flex",
+    alignItems: "center",
+    height: "42px",
     border: "0",
     borderRadius: "12px"
   }
@@ -36,62 +35,74 @@ export const menuItems = [
   {
     key: "0x1",
     value: "Ethereum",
-    icon: <ETHLogo />
+    icon: <ETHLogo />,
+    label: "Ethereum"
   },
   // {
   //   key: "0x539",
   //   value: "Local Chain",
   //   icon: <ETHLogo />,
+  //   label: "Local Chain"
   // },
   // {
   //   key: "0x3",
   //   value: "Ropsten Testnet",
   //   icon: <ETHLogo />,
+  //   label: "Ropsten Testnet"
   // },
   // {
   //   key: "0x4",
   //   value: "Rinkeby Testnet",
   //   icon: <ETHLogo />,
+  //   label: "Rinkeby Testnet"
   // },
   // {
   //   key: "0x2a",
   //   value: "Kovan Testnet",
   //   icon: <ETHLogo />,
+  //   label: "Kovan Testnet"
   // },
   // {
   //   key: "0x5",
   //   value: "Goerli Testnet",
   //   icon: <ETHLogo />,
+  //   label: "Goerli Testnet"
   // },
   {
     key: "0x38",
     value: "Binance",
     icon: <BSCLogo />,
+    label: "Binance"
   },
-  // {
-  //   key: "0x61",
-  //   value: "Smart Chain Testnet",
-  //   icon: <BSCLogo />,
-  // },
+  {
+    key: "0x61",
+    value: "Smart Chain Testnet",
+    icon: <BSCLogo />,
+    label: "Smart Chain Testnet"
+  },
   {
     key: "0x89",
     value: "Polygon",
-    icon: <PolygonLogo />
+    icon: <PolygonLogo />,
+    label: "Polygon"
   },
   {
     key: "0x13881",
     value: "Mumbai",
-    icon: <PolygonLogo />
+    icon: <PolygonLogo />,
+    label: "Mumbai"
   }
   // {
   //   key: "0xa86a",
   //   value: "Avalanche",
   //   icon: <AvaxLogo />,
+  //   label: "Avalanche"
   // },
   // {
-  //   key: "0xc271",
-  //   value: "Leprichain",
-  //   icon: <LeprichainLogo />,
+  //   key: "0xa869",
+  //   value: "Avalanche Testnet",
+  //   icon: <AvaxLogo />,
+  //   label: "Avalanche Testnet""
   // },
 ];
 
@@ -112,15 +123,7 @@ function Chains() {
     switchNetwork(e.key);
   };
 
-  const menu = (
-    <Menu onClick={handleMenuClick}>
-      {menuItems?.map((item) => (
-        <Menu.Item key={item.key} icon={item.icon} style={styles.item}>
-          <span style={{ marginLeft: "5px" }}>{item.value}</span>
-        </Menu.Item>
-      ))}
-    </Menu>
-  );
+  const menu = <Menu onClick={handleMenuClick} items={menuItems} style={styles.item} />;
 
   if (!chainId || !isAuthenticated) return null;
 

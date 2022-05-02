@@ -33,6 +33,10 @@
   color: white !important;
 }
 
+.ant-menu-item-group-title {
+padding: 0px !important;
+}
+
 .ant-menu-title-content {
   color: white !important;
 }
@@ -213,3 +217,9 @@ input::placeholder {
   margin: auto !important;
   align-items: center !important;
 }
+
+
+.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
+  height: 42px;
+  gap: 5px
+  }

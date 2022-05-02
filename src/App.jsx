@@ -25,8 +25,8 @@ const styles = {
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     width: "100vw",
-    height: "100vh", 
-    fontFamily: "Sora, sans-serif",
+    height: "100vh",
+    fontFamily: "Sora, sans-serif"
   },
   pageContent: {
     justifyContent: "top",
@@ -74,7 +74,7 @@ const App = () => {
         setIsAdminPaneOpen(false);
       }
     };
-      launchApp();
+    launchApp();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWeb3Enabled, account]);
 
@@ -98,9 +98,6 @@ const App = () => {
           {!isAdminPaneOpen && (
             <>
               <Switch>
-                <Route path='/Home'>
-                  <Home />
-                </Route>
                 {/* <Route exact path='BatchMinter'>
                       <BatchMinter />
                     </Route> */}
@@ -122,8 +119,13 @@ const App = () => {
                 <Route exact path='/Transactions'>
                   <Transactions />
                 </Route>
+                <Route exact path='/'>
+                  <Home />
+                </Route>
+                <Route>
+                  <Redirect to='/' />
+                </Route>
               </Switch>
-              <Redirect to='/Home' />
             </>
           )}
         </div>

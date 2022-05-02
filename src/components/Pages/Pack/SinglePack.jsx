@@ -96,6 +96,7 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
     const assetNumbers = result[1];
     const msgValue = assetNumbers[0] + nativeAmount;
     const clonedArray = cloneDeep(addressArr);
+    console.log(assetNumbers)
 
     await singleApproveAll(account, clonedArray, assetNumbers, contractAddress).then(() => {
       singlePackMint(chainId, account, msgValue, addressArr, assetNumbers, contractAddress).then((result) => {
