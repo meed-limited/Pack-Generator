@@ -128,7 +128,7 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
             style={styles.transparentInput}
             type='number'
             min='0'
-            step={0.1}
+            step={0.01}
             placeholder='Enter selected token amount'
             onChange={(e) => onChangeERC20Amount(parseFloat(e.target.value))}
             value={tokenAmount}

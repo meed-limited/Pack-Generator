@@ -134,7 +134,7 @@ const CollectionFactory = ({
 
     try {
       const transaction = await Moralis.executeFunction(sendOptions);
-      const receipt = await transaction.wait(2);
+      const receipt = await transaction.wait();
 
       newAddress = receipt.events[0].address;
       let link = `${getExplorer(chainId)}tx/${receipt.transactionHash}`;

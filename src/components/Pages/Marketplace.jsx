@@ -124,7 +124,7 @@ function Marketplace() {
 
     try {
       const transaction = await Moralis.executeFunction(sendOptions);
-      await transaction.wait(2);
+      await transaction.wait();
       setLoading(false);
       setVisibility(false);
       updateSoldMarketItem();

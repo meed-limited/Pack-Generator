@@ -32,12 +32,12 @@ const styles = {
 };
 
 export const menuItems = [
-  {
-    key: "0x1",
-    value: "Ethereum",
-    icon: <ETHLogo />,
-    label: "Ethereum"
-  },
+  // {
+  //   key: "0x1",
+  //   value: "Ethereum",
+  //   icon: <ETHLogo />,
+  //   label: "Ethereum"
+  // },
   // {
   //   key: "0x539",
   //   value: "Local Chain",
@@ -74,12 +74,12 @@ export const menuItems = [
     icon: <BSCLogo />,
     label: "Binance"
   },
-  {
-    key: "0x61",
-    value: "Smart Chain Testnet",
-    icon: <BSCLogo />,
-    label: "Smart Chain Testnet"
-  },
+  // {
+  //   key: "0x61",
+  //   value: "Smart Chain Testnet",
+  //   icon: <BSCLogo />,
+  //   label: "Smart Chain Testnet"
+  // },
   {
     key: "0x89",
     value: "Polygon",

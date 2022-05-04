@@ -87,7 +87,7 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    await transaction.wait(2).then((result) => {
+    await transaction.wait().then((result) => {
       receipt = { isSuccess: true, txHash: result.transactionHash, link: `${getExplorer(chainId)}tx/${result.transactionHash}` };
       const encodedTopic = result.events.filter((item) => item.event === "AssemblyAsset"); // Get AssemblyAsset event log
       const iface = new ethers.utils.Interface(assemblyABIJson); // Initiate interface(ABI)
@@ -187,7 +187,7 @@ export const multiplePackMint = async (
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    const receipt = await transaction.wait(2);
+    const receipt = await transaction.wait();
     txHash = receipt.transactionHash;
     let link = `${getExplorer(chainId)}tx/${txHash}`;
     packReceipt = { isSuccess: true, txHash: txHash, link: link, PackAmount: packNum };
@@ -247,7 +247,7 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    const receipt = await transaction.wait(2);
+    const receipt = await transaction.wait();
     let link = `${getExplorer(chainId)}tx/${receipt.transactionHash}`;
     let title = "Pack claimed!";
     let msg = (
@@ -306,7 +306,7 @@ export const listOnMarketPlace = async (nft, listPrice, contractAddress) => {
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    await transaction.wait(2);
+    await transaction.wait();
 
     let title = "NFTs listed succesfully";
     let msg = "Your NFT has been succesfully listed to the marketplace.";

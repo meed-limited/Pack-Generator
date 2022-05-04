@@ -42,8 +42,9 @@ contract AssemblyNFT is
 
     address private L3P = 0xdeF1da03061DDd2A5Ef6c59220C135dec623116d; // L3P contract address (only available on Ethereum && BSC);
     address payable private feeReceiver; //
-    uint256 public feeETH = 0.01 ether; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
-    uint256 public feeL3P = 100000000000000000000; // Fees charged on TXs, if paid in L3P, default === 100 L3P
+    uint256 public feeETH = 0 ether; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
+    uint256 public feeL3P = 0; // Fees charged on TXs, if paid in L3P, default === 100 L3P | (100000000000000000000)
+    
     uint256 public maxPackSupply;
     uint256 nonce;
     string public _baseURIextended;
@@ -110,38 +111,42 @@ contract AssemblyNFT is
         require(_to != address(0), "can't mint to address(0)");
 
         // Fee in native (ETH, MATIC, BNB)
-        if (msg.value > _numbers[0]) {
-            require(
-                msg.value == (_numbers[0] + feeETH),
-                "wrong native fee amount"
-            );
-            (bool feeInEth, ) = feeReceiver.call{value: feeETH}("");
-            require(feeInEth, "ETH payment failed");
-            require(
-                msg.value - feeETH == _numbers[0],
-                "native value do not match"
-            );
-        }
-        // Fee in L3P (for BSC and ETH chains)
-        else if (msg.value == _numbers[0]) {
-            require(
-                IERC20(L3P).balanceOf(msg.sender) >= feeL3P,
-                "Not enough L3P to pay the fee"
-            );
-            require(
-                IERC20(L3P).allowance(msg.sender, address(this)) >= feeL3P,
-                "Not authorized"
-            );
-            bool feeInL3P = IERC20(L3P).transferFrom(
-                msg.sender,
-                feeReceiver,
-                feeL3P
-            );
-            require(feeInL3P, "L3P payment failed");
+        if (feeETH != 0) {
+            if (msg.value > _numbers[0]) {
+                require(
+                    msg.value == (_numbers[0] + feeETH),
+                    "wrong native fee amount"
+                );
+                (bool feeInEth, ) = feeReceiver.call{value: feeETH}("");
+                require(feeInEth, "ETH payment failed");
+                require(
+                    msg.value - feeETH == _numbers[0],
+                    "native value do not match"
+                );
+            }
+            // Fee in L3P (for BSC and ETH chains)
+            else if (msg.value == _numbers[0]) {
+                require(
+                    IERC20(L3P).balanceOf(msg.sender) >= feeL3P,
+                    "Not enough L3P to pay the fee"
+                );
+                require(
+                    IERC20(L3P).allowance(msg.sender, address(this)) >= feeL3P,
+                    "Not authorized"
+                );
+                bool feeInL3P = IERC20(L3P).transferFrom(
+                    msg.sender,
+                    feeReceiver,
+                    feeL3P
+                );
+                require(feeInL3P, "L3P payment failed");
+                require(msg.value == _numbers[0], "value not match");
+            }
+            // revert anything else
+            else revert("value sent do not match");
+        } else {
             require(msg.value == _numbers[0], "value not match");
         }
-        // revert anything else
-        else revert("value sent do not match");
 
         require(
             _addresses.length == _numbers[1] + _numbers[2] + _numbers[3],

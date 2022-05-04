@@ -44,11 +44,15 @@ function YourNFTs() {
   const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
   const mounted = useRef(false);
   const marketAddress = getMarketplaceAddress(chainId);
-  const NFTsPerPage = 50;
-  const [offset, setOffset] = useState(0);
+  const NFTsPerPage = 500;
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
   const { nativeToken } = useNativeBalance(chainId);
-  const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTsPerPage });
+  const {
+    getNFTBalances,
+    data: NFTBalances,
+    isLoading,
+    isFetching
+  } = useNFTBalances({ chainId: chainId, limit: NFTsPerPage });
   const { verifyMetadata } = useVerifyMetadata();
   const { packCollections } = usePackCollections();
   const [visible, setVisibility] = useState(false);
@@ -63,37 +67,42 @@ function YourNFTs() {
   const [isNFTloading, setIsNFTLoading] = useState(false);
   const ItemImage = Moralis.Object.extend("ItemImages");
 
-  const addFetchedNFTs = () => {
+  const addFetchedNFTs = (temp) => {
     if (NFTBalances) {
       setIsNFTLoading(true);
       let nextFetchedNFTs = fetchedNFTs;
-      nextFetchedNFTs.push(...NFTBalances.result);
-      setFetchedNFTs(nextFetchedNFTs);
+      if (temp === 0) {
+        nextFetchedNFTs.push(...NFTBalances.result);
+        setFetchedNFTs(nextFetchedNFTs);
+      } else {
+        nextFetchedNFTs.push(...temp.result);
+        setFetchedNFTs(nextFetchedNFTs);
+      }
       setIsNFTLoading(false);
     }
   };
 
+  // Load first 50 Nfts on page opening
   useEffect(() => {
     mounted.current = true;
     if (!isLoading && !isFetching) {
-      addFetchedNFTs();
+      addFetchedNFTs(0);
     }
     return () => {
       mounted.current = false;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoading, isFetching]);
+  }, []);
 
   useEffect(() => {
-    setOffset(0);
-    addFetchedNFTs();
+    addFetchedNFTs(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [NFTBalances?.total]);
 
   const handleLoadMore = async () => {
     setIsNFTLoading(true);
-    await getNFTBalances({ params: { chainId: chainId, limit: NFTsPerPage, offset: offset + NFTsPerPage } });
-    setOffset(offset + NFTsPerPage);
+    const temp = await getNFTBalances({ params: { chainId: chainId, cursor: NFTBalances.cursor } });
+    addFetchedNFTs(temp);
   };
 
   const list = async (nft, listPrice) => {

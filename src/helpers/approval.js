@@ -61,7 +61,7 @@ export const approveERC20contract = async (ERC20address, allowance, contractAddr
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    await transaction.wait(2);
+    await transaction.wait();
     let value = (allowance / ("1e" + 18)).toString();
     let title = "ERC20 Approval set";
     let msg = `The allowance of your ERC20 token has been succesfully set to ${value}.`;
@@ -100,7 +100,7 @@ export const approveNFTcontract = async (NFTaddress, contractAddress) => {
 
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
-    await transaction.wait(2);
+    await transaction.wait();
     let title = "NFT Approval set";
     let msg = "The allowance for your NFTs collection has been set.";
     openNotification("success", title, msg);

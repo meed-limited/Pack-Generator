@@ -6,7 +6,7 @@ const { Step } = Steps;
 const styles = {
   pane: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "flex-start",
     borderRadius: "20px",
     background: "rgba(240, 248, 255, 0.10)",
     background:
@@ -16,7 +16,7 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
-    padding: "20px 15px 20px 20px",
+    padding: "20px 15px 0px 20px",
     color: "white",
     overflow: "auto"
   }

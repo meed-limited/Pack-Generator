@@ -6,6 +6,8 @@ const mnemonic = require("./secret.json").mnemonic;
 const API_KEY_ETH = process.env.REACT_APP_MORALIS_SPEEDY_NODES_KEY_ETH;
 const API_KEY_BSC = process.env.REACT_APP_MORALIS_SPEEDY_NODES_KEY_BSC;
 const API_KEY_POLYGON = process.env.REACT_APP_MORALIS_SPEEDY_NODES_KEY_POLYGON;
+const API_KEY_BSC_TESTNET = process.env.REACT_APP_MORALIS_SPEEDY_NODES_KEY_BSC_TESTNET;
+const API_KEY_POLYGON_TESTNET = process.env.REACT_APP_MORALIS_SPEEDY_NODES_KEY_POLYGON_TESTNET;
 
 // Explorer API to verify contract
 const ETHERSCAN_API_KEY = process.env.REACT_APP_ETHERSCAN_API_KEY;
@@ -26,14 +28,13 @@ module.exports = {
     //   chainId: 1337,
     //   network_id: 1337,
     // },
-    // polygon_mumbai: {
-    //   provider: () =>
-    //     new HDWalletProvider(mnemonic, `https://speedy-nodes-nyc.moralis.io/${API_KEY}/polygon/mumbai/archive`),
-    //   network_id: 80001,
-    //   confirmations: 5,
-    //   timeoutBlocks: 200,
-    //   skipDryRun: true
-    // },
+    polygon_mumbai: {
+      provider: () => new HDWalletProvider(mnemonic, `${API_KEY_POLYGON_TESTNET}`),
+      network_id: 80001,
+      confirmations: 2,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
     ethereum_mainnet: {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_ETH}`),
       network_id: 1,
@@ -41,11 +42,11 @@ module.exports = {
       timeoutBlocks: 200,
       skipDryRun: true
     },
-    // bsc_testnet: {
-    //   provider: () => new HDWalletProvider(mnemonic, `https://data-seed-prebsc-1-s1.binance.org:8545`),
-    //   network_id: 97
-    //   // confirmations: 2
-    // },
+    bsc_testnet: {
+      provider: () => new HDWalletProvider(mnemonic, `${API_KEY_BSC_TESTNET}`),
+      network_id: 97
+      // confirmations: 2
+    },
     bsc_mainnet: {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_BSC}`),
       network_id: 56,

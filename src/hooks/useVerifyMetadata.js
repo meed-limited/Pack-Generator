@@ -39,8 +39,11 @@ export const useVerifyMetadata = () => {
     fetch(NFT.token_uri)
       .then((res) => res.json())
       .then((metadata) => {
+        if (!metadata) {
+          console.error("useVerifyMetadata.getMetadata() No Metadata found on URI:", { URI: NFT.token_uri, NFT });
+        }
         //Handle Setbacks
-        if (metadata?.detail && metadata.detail.includes("Request was throttled")) {
+        else if (metadata?.detail && metadata.detail.includes("Request was throttled")) {
           //Retry That Again after 1s
           setTimeout(function () {
             getMetadata(NFT);

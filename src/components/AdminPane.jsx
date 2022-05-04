@@ -3,8 +3,8 @@ import { Moralis } from "moralis";
 import { useMoralis, useNativeBalance } from "react-moralis";
 import AddressInput from "./AddressInput";
 import { openNotification } from "../helpers/notifications";
-import { assemblyABI, getAssemblyAddress } from "../Constant/constant";
-import { Button, Input } from "antd";
+import { assemblyABI, factoryABI, getAssemblyAddress, getFactoryAddress } from "../Constant/constant";
+import { Button, Divider, Input } from "antd";
 
 const styles = {
   container: {
@@ -42,32 +42,37 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
   const { chainId } = useMoralis();
   const contractAddress = getAssemblyAddress(chainId);
   const assemblyABIJson = JSON.parse(assemblyABI);
+  const factoryAddress = getFactoryAddress(chainId);
+  const factoryABIJson = JSON.parse(factoryABI);
   const { nativeToken } = useNativeBalance(chainId);
   const [ethAmount, setEthAmount] = useState();
   const [L3PAmount, setL3PAmount] = useState();
   const [address, setAddress] = useState(null);
   const [IPFSurl, setIPFSurl] = useState("");
   const [newAdminAdd, setNewAdminAdd] = useState();
+  const [customEthAmount, setCustomEthAmount] = useState();
+  const [customL3PAmount, setCustomL3PAmount] = useState();
 
   const handleBackClic = () => {
     setIsAdminPaneOpen(false);
   };
 
-  const setEthFee = async () => {
-    if (ethAmount && ethAmount >= 0) {
-      const nativeAmount = (ethAmount * "1e18").toString();
+  const setEthFee = async (contractAdd, abi, amount) => {
+    if (amount && amount >= 0) {
+      const nativeAmount = (amount * "1e18").toString();
 
       const sendOptions = {
-        contractAddress: contractAddress,
+        contractAddress: contractAdd,
         functionName: "setFeeETH",
-        abi: assemblyABIJson,
+        abi: abi,
         params: {
           _newEthFee: nativeAmount
         }
       };
 
       try {
-        await Moralis.executeFunction(sendOptions);
+        const transaction = await Moralis.executeFunction(sendOptions);
+        await transaction.wait();
         let title = "All set!";
         let msg = `${nativeToken.symbol} fee set successfully.`;
         openNotification("success", title, msg);
@@ -81,20 +86,21 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
     }
   };
 
-  const setL3PFee = async () => {
-    if (L3PAmount && L3PAmount >= 0) {
-      const tokenAmount = (L3PAmount * "1e18").toString();
+  const setL3PFee = async (contractAdd, abi, amount) => {
+    if (amount && amount >= 0) {
+      const tokenAmount = (amount * "1e18").toString();
       const sendOptions = {
-        contractAddress: contractAddress,
+        contractAddress: contractAdd,
         functionName: "setFeeL3P",
-        abi: assemblyABIJson,
+        abi: abi,
         params: {
           _newL3PFee: tokenAmount
         }
       };
 
       try {
-        await Moralis.executeFunction(sendOptions);
+        const transaction = await Moralis.executeFunction(sendOptions);
+        await transaction.wait();
         let title = "All set!";
         let msg = "L3P fee set successfully.";
         openNotification("success", title, msg);
@@ -120,7 +126,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
       };
 
       try {
-        await Moralis.executeFunction(sendOptions);
+        const transaction = await Moralis.executeFunction(sendOptions);
+        await transaction.wait();
         let title = "All set!";
         let msg = "New receiver address set successfully.";
         openNotification("success", title, msg);
@@ -146,7 +153,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
       };
 
       try {
-        await Moralis.executeFunction(sendOptions);
+        const transaction = await Moralis.executeFunction(sendOptions);
+        await transaction.wait();
         let title = "All set!";
         let msg = "New metadata set successfully.";
         openNotification("success", title, msg);
@@ -172,7 +180,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
       };
 
       try {
-        await Moralis.executeFunction(sendOptions);
+        const transaction = await Moralis.executeFunction(sendOptions);
+        await transaction.wait();
         let title = "All set!";
         let msg = "New admin set successfully.";
         openNotification("success", title, msg);
@@ -190,6 +199,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
   return (
     <div style={{ ...styles.container, marginTop: "60px" }}>
       <div style={styles.title}>Admin Panel</div>
+      <Divider />
+      <p style={{ color: "white", fontSize: "15px", paddingBottom: "10px" }}>Variables for Lepricon Main Collection</p>
       <div style={{ width: "60%", margin: "auto" }}>
         <Input
           type='number'
@@ -197,7 +208,11 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
           style={{ marginBottom: "5px" }}
           onChange={(e) => setEthAmount(e.target.value)}
         />
-        <Button type='primary' onClick={setEthFee} style={{ marginBottom: "20px" }}>
+        <Button
+          type='primary'
+          onClick={() => setEthFee(contractAddress, assemblyABIJson, ethAmount)}
+          style={{ marginBottom: "20px" }}
+        >
           Set {nativeToken.symbol} fee
         </Button>
         {chainId === 0x1 && chainId === 0x38 && (
@@ -208,7 +223,11 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
               style={{ marginBottom: "5px" }}
               onChange={(e) => setL3PAmount(e.target.value)}
             />
-            <Button type='primary' onClick={setL3PFee} style={{ marginBottom: "20px" }}>
+            <Button
+              type='primary'
+              onClick={() => setL3PFee(contractAddress, assemblyABIJson, L3PAmount)}
+              style={{ marginBottom: "20px" }}
+            >
               Set L3P fee
             </Button>
           </>
@@ -239,6 +258,35 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         />
         <Button type='primary' onClick={setNewAdmin} style={{ marginBottom: "20px" }}>
           Set admin address
+        </Button>
+
+        <Divider />
+        <p style={{ color: "white", fontSize: "15px", paddingBottom: "10px" }}>Variables for Custom Collections</p>
+        <Input
+          type='number'
+          placeholder={`Enter the new fee in ${nativeToken.symbol}`}
+          style={{ marginBottom: "5px" }}
+          onChange={(e) => setCustomEthAmount(e.target.value)}
+        />
+        <Button
+          type='primary'
+          onClick={() => setEthFee(factoryAddress, factoryABIJson, customEthAmount)}
+          style={{ marginBottom: "20px" }}
+        >
+          Custom Collection: Set {nativeToken.symbol} fee
+        </Button>
+        <Input
+          type='number'
+          placeholder={`Enter the new fee in ${nativeToken.symbol}`}
+          style={{ marginBottom: "5px" }}
+          onChange={(e) => setCustomL3PAmount(e.target.value)}
+        />
+        <Button
+          type='primary'
+          onClick={() => setL3PFee(factoryAddress, factoryABIJson, customL3PAmount)}
+          style={{ marginBottom: "20px" }}
+        >
+          Custom Collection: Set L3P fee
         </Button>
       </div>
 
