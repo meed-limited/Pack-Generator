@@ -11,7 +11,8 @@ const styles = {
     width: "90%",
     margin: "auto",
     gridTemplateColumns: "50% 50%",
-    paddingTop: "50px",
+    alignItems: "center",
+    justifyItems: "inherit",
     overflow: "hidden"
   },
   imageDLC: {
