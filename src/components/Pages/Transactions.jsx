@@ -3,7 +3,7 @@ import { useMoralis, useMoralisQuery } from "react-moralis";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
-import { getEllipsisTxt } from "helpers/formatters";
+import { getChainName, getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
 import { getContractName } from "helpers/contractCall";
 import { Table, Spin } from "antd";
@@ -137,6 +137,11 @@ function Transactions() {
       dataIndex: "tags"
     },
     {
+      title: "CHAIN",
+      key: "key",
+      dataIndex: "chain"
+    },
+    {
       title: "TXs HASH",
       key: "link",
       dataIndex: "link",
@@ -155,6 +160,7 @@ function Transactions() {
       collection: item.name,
       item: item.symbol,
       tags: "Collection Created",
+      chain: getChainName(item.chainId),
       link: item.transaction_hash
     }))
     .sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
@@ -165,6 +171,7 @@ function Transactions() {
       collection: item.collectionName,
       item: getEllipsisTxt(item.tokenId, 4),
       tags: "Pack Created",
+      chain: getChainName(item.chainId),
       link: item.transaction_hash
     }))
     .sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
@@ -174,6 +181,7 @@ function Transactions() {
     collection: item.collectionName.slice(0, 15),
     item: item.collectionSymbol,
     tags: `Batch-Pack x${item.amountOfPack} (${item.totalOfPack}) Created`,
+    chain: getChainName(item.chainId),
     link: item.transaction_hash
   }));
 
@@ -182,6 +190,7 @@ function Transactions() {
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 4),
     tags: "Pack Claimed",
+    chain: getChainName(item.chainId),
     link: item.transaction_hash
   }));
 
