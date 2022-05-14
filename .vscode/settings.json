@@ -1,3 +1,4 @@
 {
-    "solidity-va.diagnostics.cdili_json.import": false
+    "solidity-va.diagnostics.cdili_json.import": false,
+    "editor.formatOnSave": true
 }

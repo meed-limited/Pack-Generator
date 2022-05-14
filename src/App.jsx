@@ -16,6 +16,7 @@ import background from "./assets/background.jpg";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "./style.css";
+import NoMobile from "components/NoMobile";
 const { Footer } = Layout;
 
 const styles = {
@@ -50,6 +51,20 @@ const App = () => {
   const [isAdminPaneOpen, setIsAdminPaneOpen] = useState(false);
   const [adminAddress, setAdminAddress] = useState();
   const isAdmin = account?.toLowerCase() === adminAddress?.toLowerCase() ? true : false;
+  const [width, setWidth] = useState(window.innerWidth);
+
+  const handleWindowSizeChange = () => {
+    setWidth(window.innerWidth);
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleWindowSizeChange);
+    return () => {
+      window.removeEventListener("resize", handleWindowSizeChange);
+    };
+  }, []);
+
+  const isMobile = width <= 768;
 
   const getAdminAddress = async () => {
     const readOptions = {
@@ -85,54 +100,59 @@ const App = () => {
 
   return (
     <Layout style={styles.layout}>
-      <Router>
-        <CustomHeader isAdmin={isAdmin} isAdminPaneOpen={isAdminPaneOpen} setIsAdminPaneOpen={setIsAdminPaneOpen} />
-        <div style={styles.pageContent}>
-          {isAdmin && isAdminPaneOpen && (
-            <AdminPane
-              adminAddress={adminAddress}
-              setAdminAddress={setAdminAddress}
-              setIsAdminPaneOpen={setIsAdminPaneOpen}
-            />
-          )}
-          {!isAdminPaneOpen && (
-            <>
-              <Switch>
-                {/* <Route exact path='BatchMinter'>
+      {isMobile && <NoMobile />}
+      {!isMobile && (
+        <>
+          <Router>
+            <CustomHeader isAdmin={isAdmin} isAdminPaneOpen={isAdminPaneOpen} setIsAdminPaneOpen={setIsAdminPaneOpen} />
+            <div style={styles.pageContent}>
+              {isAdmin && isAdminPaneOpen && (
+                <AdminPane
+                  adminAddress={adminAddress}
+                  setAdminAddress={setAdminAddress}
+                  setIsAdminPaneOpen={setIsAdminPaneOpen}
+                />
+              )}
+              {!isAdminPaneOpen && (
+                <>
+                  <Switch>
+                    {/* <Route exact path='BatchMinter'>
                       <BatchMinter />
                     </Route> */}
-                <Route exact path='/Pack/SinglePack'>
-                  <Pack paneToShow={"single"} />
-                </Route>
-                <Route exact path='/Pack/BatchPacks'>
-                  <Pack paneToShow={"batch"} />
-                </Route>
-                <Route exact path='/Pack/ClaimPack'>
-                  <Pack paneToShow={"claim"} />
-                </Route>
-                <Route exact path='/MarketPlace'>
-                  <Marketplace />
-                </Route>
-                <Route exact path='/YourNFTs'>
-                  <YourNFTs />
-                </Route>
-                <Route exact path='/Transactions'>
-                  <Transactions />
-                </Route>
-                <Route exact path='/'>
-                  <Home />
-                </Route>
-                <Route>
-                  <Redirect to='/' />
-                </Route>
-              </Switch>
-            </>
-          )}
-        </div>
-      </Router>
-      <Footer style={styles.footer}>
-        <Community />
-      </Footer>
+                    <Route exact path='/Pack/SinglePack'>
+                      <Pack paneToShow={"single"} />
+                    </Route>
+                    <Route exact path='/Pack/BatchPacks'>
+                      <Pack paneToShow={"batch"} />
+                    </Route>
+                    <Route exact path='/Pack/ClaimPack'>
+                      <Pack paneToShow={"claim"} />
+                    </Route>
+                    <Route exact path='/MarketPlace'>
+                      <Marketplace />
+                    </Route>
+                    <Route exact path='/YourNFTs'>
+                      <YourNFTs />
+                    </Route>
+                    <Route exact path='/Transactions'>
+                      <Transactions />
+                    </Route>
+                    <Route exact path='/'>
+                      <Home />
+                    </Route>
+                    <Route>
+                      <Redirect to='/' />
+                    </Route>
+                  </Switch>
+                </>
+              )}
+            </div>
+          </Router>
+          <Footer style={styles.footer}>
+            <Community />
+          </Footer>
+        </>
+      )}
     </Layout>
   );
 };
