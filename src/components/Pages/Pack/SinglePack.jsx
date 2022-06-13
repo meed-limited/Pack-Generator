@@ -96,8 +96,6 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
     const addressArr = result[0];
     const assetNumbers = result[1];
     const msgValue = parseInt(assetNumbers[0]) + parseInt(nativeAmount);
-    console.log("msgValue", msgValue);
-    console.log("numbers[0]", assetNumbers[0]);
     const clonedArray = cloneDeep(addressArr);
 
     await singleApproveAll(account, clonedArray, assetNumbers, contractAddress).then(() => {

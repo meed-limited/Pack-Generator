@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
-import useChain from "hooks/useChain";
+import { useChain, useMoralis } from "react-moralis";
 import { Menu, Dropdown, Button } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 import { PolygonLogo, ETHLogo, BSCLogo } from "./Logos";
@@ -74,24 +73,24 @@ export const menuItems = [
     icon: <BSCLogo />,
     label: "Binance"
   },
-  {
-    key: "0x61",
-    value: "Smart Chain Testnet",
-    icon: <BSCLogo />,
-    label: "Smart Chain Testnet"
-  },
+  // {
+  //   key: "0x61",
+  //   value: "Smart Chain Testnet",
+  //   icon: <BSCLogo />,
+  //   label: "Smart Chain Testnet"
+  // },
   {
     key: "0x89",
     value: "Polygon",
     icon: <PolygonLogo />,
     label: "Polygon"
-  },
-  {
-    key: "0x13881",
-    value: "Mumbai",
-    icon: <PolygonLogo />,
-    label: "Mumbai"
   }
+  // {
+  //   key: "0x13881",
+  //   value: "Mumbai",
+  //   icon: <PolygonLogo />,
+  //   label: "Mumbai"
+  // }
   // {
   //   key: "0xa86a",
   //   value: "Avalanche",
