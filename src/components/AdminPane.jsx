@@ -192,6 +192,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         console.log(error);
       }
       setAdminAddress(null);
+      setNewAdminAdd(null);
       setIsAdminPaneOpen(false);
     }
   };

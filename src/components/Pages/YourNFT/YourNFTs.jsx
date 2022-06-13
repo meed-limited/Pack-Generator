@@ -40,9 +40,9 @@ const styles = {
 };
 
 function YourNFTs() {
-  const { chainId, isAuthenticated } = useMoralis();
+  const { account, chainId, isAuthenticated } = useMoralis();
   const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
-  const mounted = useRef(false);
+  //const mounted = useRef(false);
   const marketAddress = getMarketplaceAddress(chainId);
   const NFTsPerPage = 100;
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
@@ -84,13 +84,14 @@ function YourNFTs() {
 
   // Load first 50 Nfts on page opening
   useEffect(() => {
-    mounted.current = true;
+    //mounted.current = true;
     if (!isLoading && !isFetching) {
       addFetchedNFTs(0);
     }
-    return () => {
-      mounted.current = false;
-    };
+    // return () => {
+    //   mounted.current = false;
+    // };
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -101,8 +102,34 @@ function YourNFTs() {
 
   const handleLoadMore = async () => {
     setIsNFTLoading(true);
-    const temp = await getNFTBalances({ params: { chainId: chainId, cursor: NFTBalances.cursor } });
+    const temp = await getNFTBalances({ params: { chainId: chainId, address: account, cursor: NFTBalances.cursor } });
     addFetchedNFTs(temp);
+  };
+
+  const saveMarketItemInDB = async (nft) => {
+    const CreatedMarketItem = Moralis.Object.extend("CreatedMarketItems");
+    const item = new CreatedMarketItem();
+
+    item.set("chainId", chainId);
+    item.set("amount", nft.amount);
+    item.set("seller", account);
+    item.set("block_number", nft.block_number);
+    item.set("block_number_minted", nft.block_number_minted);
+    item.set("contract_type", nft.contract_type);
+    item.set("image", nft.image);
+    item.set("last_metadata_sync", nft.last_metadata_sync);
+    item.set("last_token_uri_sync", nft.last_token_uri_sync);
+    item.set("metadata", nft.metadata);
+    item.set("collectionName", nft.name);
+    item.set("owner", nft.owner_of);
+    item.set("symbol", nft.symbol);
+    item.set("synced_at", nft.synced_at);
+    item.set("token_address", nft.token_address);
+    item.set("token_hash", nft.token_hash);
+    item.set("tokenId", nft.token_id);
+    item.set("token_uri", nft.token_uri);
+    item.set("sold", false);
+    item.save();
   };
 
   const list = async (nft, listPrice) => {
@@ -111,6 +138,7 @@ function YourNFTs() {
     if (isSuccess === true) {
       setVisibility(false);
       addItemImage();
+      saveMarketItemInDB(nft);
     }
     setLoading(false);
   };

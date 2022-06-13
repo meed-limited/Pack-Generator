@@ -15,10 +15,13 @@ const styles = {
   }
 };
 
-function MenuItems() {
+function MenuItems({ isAdminPaneOpen, setIsAdminPaneOpen }) {
   const [current, setCurrent] = useState("/");
 
   const onClick = (e) => {
+    if (isAdminPaneOpen) {
+      setIsAdminPaneOpen(false);
+    }
     setCurrent(e.key);
   };
 

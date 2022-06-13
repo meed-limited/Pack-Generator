@@ -60,7 +60,7 @@ const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
       <Link to='/Home'>
         <Logo />
       </Link>
-      <MenuItems />
+      <MenuItems isAdminPaneOpen={isAdminPaneOpen} setIsAdminPaneOpen={setIsAdminPaneOpen} />
 
       <div style={styles.headerRight}>
         {!isAuthUndefined && isAdmin && isAuthenticated && (
