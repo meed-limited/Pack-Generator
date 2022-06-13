@@ -11,8 +11,8 @@ contract PackFactory is Ownable {
     address[] public customCollectionList; // Array containing all created pack collections addresses
     mapping(string => address) public getCustomCollection; // Map custom Collection address per token symbol
 
-    uint256 public feeETH = 0.01 ether; // Fees passed to each custom collection. Charged per pack if paid in native (ETH, MATIC, BNB)
-    uint256 public feeL3P = 100000000000000000000; // Fees passed to each custom collection. Charged per pack if paid in L3P (default === 100 L3P)
+    uint256 public feeETH = 0 ether; // Fees passed to each custom collection. Charged per pack if paid in native (ETH, MATIC, BNB)
+    uint256 public feeL3P = 0; // Fees passed to each custom collection. Charged per pack if paid in L3P (default === 100 L3P)
 
     event NewCustomCollectionCreated(
         address owner,

@@ -67,6 +67,7 @@ const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, 
       }
     };
     waitForFetch();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading, isFetching]);
 
@@ -84,6 +85,7 @@ const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, 
         );
       }
     }
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPackOnly, packCollections, packOnlyBalance?.length]);
 
@@ -134,6 +136,7 @@ const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, 
 
   useEffect(() => {
     handleNFT(selectedNFTs);
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [NftToShow, selectedNFTs]);
 

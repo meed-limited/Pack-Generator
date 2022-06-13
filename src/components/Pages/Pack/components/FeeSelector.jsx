@@ -133,6 +133,7 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
 
   useEffect(() => {
     getContractAddress();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [customCollectionData, chainId]);
 

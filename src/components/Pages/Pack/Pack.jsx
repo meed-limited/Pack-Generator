@@ -30,7 +30,7 @@ const styles = {
   },
   leftColumn: {
     flex: "1",
-    display: "flex",
+    display: "flex"
   }
 };
 
@@ -64,6 +64,7 @@ const Pack = ({ paneToShow }) => {
       setIsBatch(false);
       setTitleText("Select a Pack to reveal its content");
     }
+    return;
   }, [paneToShow]);
 
   return (
@@ -79,10 +80,10 @@ const Pack = ({ paneToShow }) => {
           <div style={styles.tabsContent}>
             {paneToShow !== "claim" && (
               <div style={styles.leftColumn}>
-              <StepsPane displayPaneMode={displayPaneMode} isBatch={isBatch} />
-            </div>
+                <StepsPane displayPaneMode={displayPaneMode} isBatch={isBatch} />
+              </div>
             )}
-            
+
             <div style={{ flex: "3" }}>{switchPane()}</div>
           </div>
         </>

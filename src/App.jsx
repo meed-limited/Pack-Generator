@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Navigate } from "react-router";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
 import AdminPane from "components/AdminPane";
+import NoMobile from "components/NoMobile";
 import CustomHeader from "components/Header/CustomHeader";
 import Home from "components/Pages/Home";
 //import BatchMinter from "components/BatchMinter";
@@ -16,7 +18,6 @@ import background from "./assets/background.jpg";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "./style.css";
-import NoMobile from "components/NoMobile";
 const { Footer } = Layout;
 
 const styles = {
@@ -90,11 +91,13 @@ const App = () => {
       }
     };
     launchApp();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWeb3Enabled, account]);
 
   useEffect(() => {
     if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, isWeb3Enabled]);
 
@@ -115,35 +118,19 @@ const App = () => {
               )}
               {!isAdminPaneOpen && (
                 <>
-                  <Switch>
+                  <Routes>
                     {/* <Route exact path='BatchMinter'>
                       <BatchMinter />
                     </Route> */}
-                    <Route exact path='/Pack/SinglePack'>
-                      <Pack paneToShow={"single"} />
-                    </Route>
-                    <Route exact path='/Pack/BatchPacks'>
-                      <Pack paneToShow={"batch"} />
-                    </Route>
-                    <Route exact path='/Pack/ClaimPack'>
-                      <Pack paneToShow={"claim"} />
-                    </Route>
-                    <Route exact path='/MarketPlace'>
-                      <Marketplace />
-                    </Route>
-                    <Route exact path='/YourNFTs'>
-                      <YourNFTs />
-                    </Route>
-                    <Route exact path='/Transactions'>
-                      <Transactions />
-                    </Route>
-                    <Route exact path='/'>
-                      <Home />
-                    </Route>
-                    <Route>
-                      <Redirect to='/' />
-                    </Route>
-                  </Switch>
+                    <Route exact path='/Pack/SinglePack' element={<Pack paneToShow={"single"} />} />
+                    <Route exact path='/Pack/BatchPacks' element={<Pack paneToShow={"batch"} />} />
+                    <Route exact path='/Pack/ClaimPack' element={<Pack paneToShow={"claim"} />} />
+                    <Route exact path='/MarketPlace' element={<Marketplace />} />
+                    <Route exact path='/YourNFTs' element={<YourNFTs />} />
+                    <Route exact path='/Transactions' element={<Transactions />} />
+                    <Route exact path='/' element={<Home />} />
+                    <Route path='*' element={<Navigate to='/' />} />
+                  </Routes>
                 </>
               )}
             </div>

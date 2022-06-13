@@ -35,6 +35,7 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
       }
     };
     cleanupFunction();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csv]);
 

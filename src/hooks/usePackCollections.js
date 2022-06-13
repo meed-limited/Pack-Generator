@@ -25,6 +25,7 @@ export const usePackCollections = () => {
       await getArrayOfCollection();
     }
     waitForArray();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -41,6 +41,7 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
     } else if (displayPaneMode === "done") {
       setText("Pack(s) succesfully created!");
     }
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [displayPaneMode]);
 

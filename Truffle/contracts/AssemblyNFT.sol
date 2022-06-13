@@ -44,7 +44,7 @@ contract AssemblyNFT is
     address payable private feeReceiver; //
     uint256 public feeETH = 0 ether; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
     uint256 public feeL3P = 0; // Fees charged on TXs, if paid in L3P, default === 100 L3P | (100000000000000000000)
-    
+
     uint256 public maxPackSupply;
     uint256 nonce;
     string public _baseURIextended;

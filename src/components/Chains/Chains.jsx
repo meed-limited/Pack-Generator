@@ -74,12 +74,12 @@ export const menuItems = [
     icon: <BSCLogo />,
     label: "Binance"
   },
-  // {
-  //   key: "0x61",
-  //   value: "Smart Chain Testnet",
-  //   icon: <BSCLogo />,
-  //   label: "Smart Chain Testnet"
-  // },
+  {
+    key: "0x61",
+    value: "Smart Chain Testnet",
+    icon: <BSCLogo />,
+    label: "Smart Chain Testnet"
+  },
   {
     key: "0x89",
     value: "Polygon",
@@ -112,10 +112,11 @@ function Chains() {
   const [selected, setSelected] = useState({});
 
   useEffect(() => {
-    if (!chainId) return null;
+    if (!chainId) return undefined;
     const newSelected = menuItems.find((item) => item.key === chainId);
     setSelected(newSelected);
     console.log("current chainId: ", chainId);
+    return;
   }, [chainId]);
 
   const handleMenuClick = (e) => {

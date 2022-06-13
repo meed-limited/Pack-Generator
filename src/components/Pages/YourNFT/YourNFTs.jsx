@@ -44,7 +44,7 @@ function YourNFTs() {
   const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
   const mounted = useRef(false);
   const marketAddress = getMarketplaceAddress(chainId);
-  const NFTsPerPage = 500;
+  const NFTsPerPage = 100;
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
   const { nativeToken } = useNativeBalance(chainId);
   const {

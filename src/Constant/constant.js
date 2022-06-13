@@ -11,9 +11,9 @@ const factoryAddressEthereum = "";
 const marketAddressEthereum = "";
 
 // Contracts deployed on Polygon
-const assemblyAddressPolygon = "";
-const factoryAddressPolygon = "";
-const marketAddressPolygon = "";
+const assemblyAddressPolygon = "0xDEBa7Ca66e89C260d793449a8B84AA7f3F749E31";
+const factoryAddressPolygon = "0x5f51fE79C6961C5E20296166446f372E54460515";
+const marketAddressPolygon = "0xe0DBcE12b8223A08D7Ba5e2982871b8eD8974077";
 
 // Contracts deployed on BSC
 const assemblyAddressBSC = "";

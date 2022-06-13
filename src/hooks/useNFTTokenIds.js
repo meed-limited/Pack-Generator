@@ -25,11 +25,13 @@ export const useNFTTokenIds = (addr) => {
     if (addr && addr !== "explore") {
       fetchAllTokenIds();
     }
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addr]);
 
   useEffect(() => {
     fetchData();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchResult]);
 

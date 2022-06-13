@@ -27,6 +27,7 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
 
   useEffect(() => {
     setDisplayPaneMode("tokens");
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

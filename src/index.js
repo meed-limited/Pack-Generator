@@ -1,9 +1,10 @@
-import React, { Text } from "react";
-import ReactDOM from "react-dom";
+import React from "react";
+import { createRoot } from "react-dom/client";
 import { MoralisProvider } from "react-moralis";
-import { Moralis } from 'moralis';
+import { Moralis } from "moralis";
 import App from "./App";
 import "./index.css";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 
 const APP_ID = process.env.REACT_APP_MORALIS_APPLICATION_ID;
 const SERVER_URL = process.env.REACT_APP_MORALIS_SERVER_URL;
@@ -18,16 +19,17 @@ const Application = () => {
   if (isServerInfo)
     return (
       <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
-          <App isServerInfo />
+        <App isServerInfo />
       </MoralisProvider>
     );
-  else {
-    return (
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Text>This is a problem from index.js</Text>
-      </div>
-    );
-  }
 };
 
-ReactDOM.render(<Application />, document.getElementById("root"));
+const container = document.getElementById("root");
+const root = createRoot(container);
+
+root.render(<Application />);
+
+// If you want your app to work offline and load faster, you can change
+// unregister() to register() below. Note this comes with some pitfalls.
+// Learn more about service workers: https://cra.link/PWA
+serviceWorkerRegistration.register();

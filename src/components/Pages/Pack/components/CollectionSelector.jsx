@@ -30,6 +30,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
 
   useEffect(() => {
     getCustomCollections();
+    return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

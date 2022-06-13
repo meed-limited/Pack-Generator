@@ -28,13 +28,6 @@ module.exports = {
     //   chainId: 1337,
     //   network_id: 1337,
     // },
-    polygon_mumbai: {
-      provider: () => new HDWalletProvider(mnemonic, `${API_KEY_POLYGON_TESTNET}`),
-      network_id: 80001,
-      confirmations: 2,
-      timeoutBlocks: 200,
-      skipDryRun: true
-    },
     ethereum_mainnet: {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_ETH}`),
       network_id: 1,
@@ -51,6 +44,13 @@ module.exports = {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_BSC}`),
       network_id: 56,
       confirmations: 10,
+      timeoutBlocks: 200,
+      skipDryRun: true
+    },
+    polygon_mumbai: {
+      provider: () => new HDWalletProvider(mnemonic, `${API_KEY_POLYGON_TESTNET}`),
+      network_id: 80001,
+      confirmations: 2,
       timeoutBlocks: 200,
       skipDryRun: true
     },
