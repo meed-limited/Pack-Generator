@@ -1,5 +1,5 @@
 /*eslint no-dupe-keys: "Off"*/
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Moralis } from "moralis";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import { menuItems } from "../../Chains/Chains";
@@ -39,10 +39,9 @@ const styles = {
   }
 };
 
-function YourNFTs() {
+const YourNFTs = () => {
   const { account, chainId, isAuthenticated } = useMoralis();
   const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
-  //const mounted = useRef(false);
   const marketAddress = getMarketplaceAddress(chainId);
   const NFTsPerPage = 100;
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
@@ -82,15 +81,18 @@ function YourNFTs() {
     }
   };
 
+  const memoizeNftsBalance = useMemo(
+    () => getNFTBalances({ params: { chainId: chainId, address: account, cursor: NFTBalances?.cursor } }),
+    [NFTBalances?.total]
+  );
+
+  console.log("Memo", memoizeNftsBalance);
+
   // Load first 50 Nfts on page opening
   useEffect(() => {
-    //mounted.current = true;
     if (!isLoading && !isFetching) {
       addFetchedNFTs(0);
     }
-    // return () => {
-    //   mounted.current = false;
-    // };
     return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -304,6 +306,6 @@ function YourNFTs() {
       )}
     </>
   );
-}
+};
 
 export default YourNFTs;
