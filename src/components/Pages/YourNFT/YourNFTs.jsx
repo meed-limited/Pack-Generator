@@ -86,8 +86,6 @@ const YourNFTs = () => {
     [NFTBalances?.total]
   );
 
-  console.log("Memo", memoizeNftsBalance);
-
   // Load first 50 Nfts on page opening
   useEffect(() => {
     if (!isLoading && !isFetching) {

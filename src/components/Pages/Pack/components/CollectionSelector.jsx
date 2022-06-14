@@ -14,7 +14,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   const [displayFactory, setDisplayFactory] = useState(false);
   const [isExistingCollection, setIsExistingCollection] = useState(false);
   const [customCollection, setCustomCollection] = useState([]);
-  const [currentCollection, setCurrentCollection] = useState([]);
+  const [currentCollection, setCurrentCollection] = useState({});
   const [name, setName] = useState();
   const [symbol, setSymbol] = useState();
   const [supply, setSupply] = useState(0);
@@ -34,21 +34,30 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function onCollectionChange(valueArr) {
-    if (valueArr === undefined) {
+  const handleChange = (value, option) => {
+    if (value === undefined) {
       handleDeselect();
     } else {
+      const current = {
+        name: option.option.name,
+        image: option.option.image,
+        maxSupply: option.option.maxSupply,
+        collectionAddress: option.option.collectionAddress,
+        description: option.option.description,
+        metadataURI: option.option.metadataURI,
+        symbol: option.option.symbol
+      };
       setIsExistingCollection(true);
-      setCurrentCollection([valueArr[3], valueArr[0], valueArr[6], valueArr[2]]);
-      customCollectionInfo([valueArr[3], valueArr[0], valueArr[6], valueArr[2]]);
-      setName(valueArr[0]);
-      setDescription(valueArr[4]);
+      setCurrentCollection(current);
+      customCollectionInfo(current);
+      setName(value[0]);
+      setDescription(value[4]);
     }
-  }
+  };
 
   const handleDeselect = () => {
     setIsExistingCollection(false);
-    setCurrentCollection([]);
+    setCurrentCollection({});
     setDisplayFactory(false);
     customCollectionInfo();
     setName();
@@ -64,7 +73,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   useImperativeHandle(ref, () => ({
     reset() {
       setIsExistingCollection(false);
-      setCurrentCollection([]);
+      setCurrentCollection({});
       setDisplayFactory(false);
       customCollectionInfo();
       setName();
@@ -73,34 +82,38 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
     }
   }));
 
+  var valueToDisplay;
+
   return (
     <div style={styles.transparentContainerInside}>
       <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
         {!displayFactory && (
           <>
             <Select
-              showSearch
               allowClear={true}
               style={{ width: "70%", marginTop: "20px" }}
               placeholder='Pick an existing collection'
               optionFilterProp='children'
               optionLabelProp='label'
-              onChange={onCollectionChange}
+              onChange={handleChange}
               onDeselect={handleDeselect}
             >
               {customCollection &&
                 customCollection?.map((collection, i) => (
                   <Option
-                    value={[
-                      collection.name,
-                      collection.image,
-                      collection.maxSupply,
-                      collection.collectionAddress,
-                      collection.description,
-                      collection.metadataURI,
-                      collection.symbol
-                    ]}
                     key={i}
+                    value={collection.name}
+                    option={collection}
+                    label={
+                      <div style={{ display: "inline-flex", alignItems: "center" }}>
+                        <img
+                          src={collection.image}
+                          alt=''
+                          style={{ width: "20px", height: "20px", borderRadius: "4px", marginRight: "5px" }}
+                        />
+                        <div>{collection.name}</div>
+                      </div>
+                    }
                   >
                     <Space size='middle'>
                       <>
@@ -123,7 +136,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
           </>
         )}
 
-        {!isExistingCollection && !currentCollection.length > 0 && (
+        {!isExistingCollection && !currentCollection.name?.length > 0 && (
           <>
             <div style={{ fontSize: "17px", margin: "20px", justifyContent: "center" }}>
               <span>Create a new collection: </span>
@@ -155,7 +168,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
         )}
       </Spin>
 
-      {currentCollection[0] && currentCollection[0]?.length > 0 && (
+      {currentCollection && currentCollection.name?.length > 0 && (
         <>
           <div
             style={{
@@ -168,12 +181,14 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
           >
             <Text style={{ fontSize: "20px" }}>Selected collection:</Text>
             <p style={{ fontSize: "15px", marginTop: "15px" }}>
-              Name: <span style={{ color: "yellow" }}>{currentCollection[1]}</span>
+              Name: <span style={{ color: "yellow" }}>{currentCollection?.name}</span>
               <br></br>
               Max supply:{" "}
-              <span style={{ color: "yellow" }}>{currentCollection[3] === 0 ? "Unlimited" : currentCollection[3]}</span>
+              <span style={{ color: "yellow" }}>
+                {currentCollection?.maxSupply === 0 ? "Unlimited" : currentCollection?.maxSupply}
+              </span>
               <br></br>
-              Address: <span style={{ color: "yellow" }}>{currentCollection[0]}</span>
+              Address: <span style={{ color: "yellow" }}>{currentCollection?.collectionAddress}</span>
               <br></br>
               <br></br>
             </p>
@@ -185,7 +200,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
         </>
       )}
 
-      {!displayFactory && !currentCollection[0] && (
+      {!displayFactory && !currentCollection.name?.length && (
         <p style={{ fontSize: "12px", marginTop: "30px", letterSpacing: "1px", fontWeight: "300", padding: "0 20px" }}>
           *Just leave everything blank and click on "NEXT" if you simply want to use our integrated PGNFT collection.
         </p>

@@ -163,8 +163,14 @@ const CollectionFactory = ({
       console.log(error);
       setWaiting(false);
     }
-    setCurrentCollection([newAddress, name, symbol, supply]);
-    customCollectionInfo([newAddress, name, symbol, supply]);
+    const collec = {
+      name: name,
+      collectionAddress: newAddress,
+      symbol: symbol,
+      maxSupply: supply
+    };
+    setCurrentCollection(collec);
+    customCollectionInfo(collec);
   };
 
   const uploadButton = (

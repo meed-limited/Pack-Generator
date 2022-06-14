@@ -43,7 +43,12 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
 
   const customCollectionInfo = (info) => {
     if (info !== undefined) {
-      setCustomCollectionData({ address: info[0], name: info[1], symbol: info[2], supply: info[3] });
+      setCustomCollectionData({
+        address: info.collectionAddress,
+        name: info.name,
+        symbol: info.symbol,
+        supply: info.maxSupply
+      });
     }
   };
 
