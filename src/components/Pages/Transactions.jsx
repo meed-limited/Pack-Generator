@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useMoralis, useMoralisQuery } from "react-moralis";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
-import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
+import { useMoralisDb } from "hooks/useMoralisDb";
 import { getChainName, getEllipsisTxt } from "helpers/formatters";
 import { getExplorer } from "helpers/networks";
 import { getContractName } from "helpers/contractCall";
@@ -20,7 +20,7 @@ function Transactions() {
     getClaimedPackData,
     parseData,
     parseCreatedPackData
-  } = useQueryMoralisDb();
+  } = useMoralisDb();
   const [fetchCollections, setFetchCollections] = useState();
   const [fetchCreatedPack, setFetchCreatedPack] = useState();
   const [fetchCreatedBatchPack, setFetchCreatedBatchPack] = useState();

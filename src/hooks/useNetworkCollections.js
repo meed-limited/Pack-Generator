@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
+import { useMoralisDb } from "hooks/useMoralisDb";
 
 export const useNetworkCollections = () => {
   const { chainId } = useMoralis();
-  const { getAllCollectionDataPerChain, parseChainData } = useQueryMoralisDb();
+  const { getAllCollectionDataPerChain, parseChainData } = useMoralisDb();
   const [NFTCollections, setNFTCollections] = useState([]);
 
   const getCollections = async () => {

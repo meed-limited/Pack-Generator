@@ -9,6 +9,7 @@ import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import { usePackCollections } from "hooks/usePackCollections";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
+import { useMoralisDb } from "hooks/useMoralisDb";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
 import { approveNFTcontract } from "../../../helpers/approval";
@@ -54,6 +55,7 @@ const YourNFTs = () => {
   } = useNFTBalances({ chainId: chainId, limit: NFTsPerPage });
   const { verifyMetadata } = useVerifyMetadata();
   const { packCollections } = usePackCollections();
+  const { saveMarketItemInDB } = useMoralisDb();
   const [visible, setVisibility] = useState(false);
   const [detailVisibility, setDetailVisibility] = useState(false);
   const [claimModalvisible, setClaimModalvisible] = useState(false);
@@ -104,33 +106,6 @@ const YourNFTs = () => {
     setIsNFTLoading(true);
     const temp = await getNFTBalances({ params: { chainId: chainId, address: account, cursor: NFTBalances.cursor } });
     addFetchedNFTs(temp);
-  };
-
-  const saveMarketItemInDB = async (nft, listPrice) => {
-    const CreatedMarketItem = Moralis.Object.extend("CreatedMarketItems");
-    const item = new CreatedMarketItem();
-
-    item.set("chainId", chainId);
-    item.set("amount", nft.amount);
-    item.set("seller", account);
-    item.set("block_number", nft.block_number);
-    item.set("block_number_minted", nft.block_number_minted);
-    item.set("contract_type", nft.contract_type);
-    item.set("image", nft.image);
-    item.set("last_metadata_sync", nft.last_metadata_sync);
-    item.set("last_token_uri_sync", nft.last_token_uri_sync);
-    item.set("metadata", nft.metadata);
-    item.set("collectionName", nft.name);
-    item.set("owner", nft.owner_of);
-    item.set("symbol", nft.symbol);
-    item.set("synced_at", nft.synced_at);
-    item.set("token_address", nft.token_address);
-    item.set("token_hash", nft.token_hash);
-    item.set("tokenId", nft.token_id);
-    item.set("token_uri", nft.token_uri);
-    item.set("sold", false);
-    item.set("price", listPrice);
-    item.save();
   };
 
   const list = async (nft, listPrice) => {

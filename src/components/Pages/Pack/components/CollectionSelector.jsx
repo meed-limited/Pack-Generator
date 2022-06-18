@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
+import { useMoralisDb } from "hooks/useMoralisDb";
 import { Tooltip, Select, Space, Switch, Spin } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 import "../../../../style.css";
@@ -10,7 +10,7 @@ import CollectionFactory from "./CollectionFactory";
 
 const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   const { account } = useMoralis();
-  const { getCustomCollectionData, parseData } = useQueryMoralisDb();
+  const { getCustomCollectionData, parseData } = useMoralisDb();
   const [displayFactory, setDisplayFactory] = useState(false);
   const [isExistingCollection, setIsExistingCollection] = useState(false);
   const [customCollection, setCustomCollection] = useState([]);

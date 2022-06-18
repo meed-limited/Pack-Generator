@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { getAssemblyAddress } from "../Constant/constant";
-import { useQueryMoralisDb } from "./useQueryMoralisDb";
+import { useMoralisDb } from "./useMoralisDb";
 
 export const usePackCollections = () => {
   const { chainId } = useMoralis();
-  const { getAllCollectionData, parseAllData } = useQueryMoralisDb();
+  const { getAllCollectionData, parseAllData } = useMoralisDb();
   const [packCollections, setPackCollections] = useState([]);
   const assemblyAddress = getAssemblyAddress(chainId);
 

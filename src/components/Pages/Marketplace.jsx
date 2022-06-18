@@ -11,7 +11,7 @@ import { FileSearchOutlined, RightCircleOutlined, ShoppingCartOutlined } from "@
 import { getMarketplaceAddress, marketABI } from "../../Constant/constant";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
-import { useQueryMoralisDb } from "hooks/useQueryMoralisDb";
+import { useMoralisDb } from "hooks/useMoralisDb";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import ShowNFTModal from "../ShowNFTModal";
@@ -72,7 +72,7 @@ function Marketplace() {
   const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
   const [collectionAddr, setCollectionAddr] = useState();
   const { Marketplace, totalNFTs } = useNFTTokenIds(collectionAddr);
-  const { getMarketItemData, parseAllData } = useQueryMoralisDb();
+  const { getMarketItemData, parseAllData } = useMoralisDb();
   const { NFTCollections } = useNetworkCollections();
   const { nativeToken } = useNativeBalance(chainId);
   const [detailVisibility, setDetailVisibility] = useState(false);
@@ -273,18 +273,20 @@ function Marketplace() {
                     ]}
                     style={{ width: "190px", border: "2px solid #e7eaf3" }}
                     cover={
-                      <Image
-                        preview={false}
-                        src={nft.image || "error"}
-                        fallback={fallbackImg}
-                        alt=''
-                        style={{ height: "190px" }}
-                        onClick={() => handleShowDetail(nft)}
-                      />
+                      <>
+                        <Image
+                          preview={false}
+                          src={nft.image || "error"}
+                          fallback={fallbackImg}
+                          alt=''
+                          style={{ height: "190px" }}
+                          onClick={() => handleShowDetail(nft)}
+                        />
+                        {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
+                      </>
                     }
                     key={index}
                   >
-                    {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
                     <Meta title={nft.name} description={`#${getEllipsisTxt(nft.token_id, 6)}`} />
 
                     <ShowNFTModal
