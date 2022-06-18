@@ -1,5 +1,5 @@
-const Factory = artifacts.require("./PackFactory.sol");
+const Factory = artifacts.require("PackFactory");
 
-module.exports = function(deployer) {
+module.exports = function (deployer) {
   deployer.deploy(Factory);
 };
