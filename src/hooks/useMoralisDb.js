@@ -78,6 +78,16 @@ export const useMoralisDb = () => {
     return parsedData;
   };
 
+  const addItemImage = (nftToSend) => {
+    const ItemImage = Moralis.Object.extend("ItemImages");
+    const itemImage = new ItemImage();
+    itemImage.set("image", nftToSend.image);
+    itemImage.set("nftContract", nftToSend.token_address);
+    itemImage.set("tokenId", nftToSend.token_id);
+    itemImage.set("name", nftToSend.name);
+    itemImage.save();
+  };
+
   const saveMarketItemInDB = async (nft, listPrice) => {
     const CreatedMarketItem = Moralis.Object.extend("CreatedMarketItems");
     const item = new CreatedMarketItem();
@@ -117,6 +127,7 @@ export const useMoralisDb = () => {
     parseChainData,
     parseData,
     parseCreatedPackData,
+    addItemImage,
     saveMarketItemInDB
   };
 };
