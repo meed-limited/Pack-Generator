@@ -106,7 +106,7 @@ const YourNFTs = () => {
     addFetchedNFTs(temp);
   };
 
-  const saveMarketItemInDB = async (nft) => {
+  const saveMarketItemInDB = async (nft, listPrice) => {
     const CreatedMarketItem = Moralis.Object.extend("CreatedMarketItems");
     const item = new CreatedMarketItem();
 
@@ -129,6 +129,7 @@ const YourNFTs = () => {
     item.set("tokenId", nft.token_id);
     item.set("token_uri", nft.token_uri);
     item.set("sold", false);
+    item.set("price", listPrice);
     item.save();
   };
 
@@ -138,7 +139,7 @@ const YourNFTs = () => {
     if (isSuccess === true) {
       setVisibility(false);
       addItemImage();
-      saveMarketItemInDB(nft);
+      saveMarketItemInDB(nft, listPrice);
     }
     setLoading(false);
   };

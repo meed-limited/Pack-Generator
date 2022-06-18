@@ -12,12 +12,12 @@ const marketAddressEthereum = "";
 
 // Contracts deployed on Polygon
 const assemblyAddressPolygon = "0xDEBa7Ca66e89C260d793449a8B84AA7f3F749E31";
-const factoryAddressPolygon = "0x5f51fE79C6961C5E20296166446f372E54460515";
+const factoryAddressPolygon = "0x50E2b0280a335C2c0767a112A35E8fbD5ae8F297";
 const marketAddressPolygon = "0xe0DBcE12b8223A08D7Ba5e2982871b8eD8974077";
 
 // Contracts deployed on BSC
 const assemblyAddressBSC = "0x80d9a5394ea4B1aa3F1979e47E659F552E85233a";
-const factoryAddressBSC = "0x5dE8F6E8926513CFFE63E6FeA5F4dBe0C012a561";
+const factoryAddressBSC = "0xB671320777363a4b2695e909B97EC6A340BD3eE4";
 const marketAddressBSC = "0x5D69a2985fbCfacdC74a1F0A403F75259819A7a5";
 
 // Contracts deployed on Mumbaï

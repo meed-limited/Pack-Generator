@@ -1,7 +1,7 @@
 import { useMoralis } from "react-moralis";
 
 export const useQueryMoralisDb = () => {
-  const { Moralis } = useMoralis();
+  const { Moralis, chainId } = useMoralis();
 
   const getCreatedPackData = async (owner) => {
     const CreatedSinglePacks = Moralis.Object.extend("CreatedSinglePacks");
@@ -46,6 +46,7 @@ export const useQueryMoralisDb = () => {
     const CustomCollections = Moralis.Object.extend("CustomCollections");
     const query = new Moralis.Query(CustomCollections);
     query.equalTo("owner", owner);
+    query.equalTo("chainId", chainId);
     const res = await query.find();
     return res;
   };

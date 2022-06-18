@@ -88,7 +88,11 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
   try {
     const transaction = await Moralis.executeFunction(sendOptions);
     await transaction.wait().then((result) => {
-      receipt = { isSuccess: true, txHash: result.transactionHash, link: `${getExplorer(chainId)}tx/${result.transactionHash}` };
+      receipt = {
+        isSuccess: true,
+        txHash: result.transactionHash,
+        link: `${getExplorer(chainId)}tx/${result.transactionHash}`
+      };
       const encodedTopic = result.events.filter((item) => item.event === "AssemblyAsset"); // Get AssemblyAsset event log
       const iface = new ethers.utils.Interface(assemblyABIJson); // Initiate interface(ABI)
       const data = encodedTopic[0].data; // Get log.data
@@ -113,7 +117,7 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
       createdSinglePacks.save();
     });
   } catch (error) {
-    receipt = { isSuccess: false}
+    receipt = { isSuccess: false };
     let title = "Unexpected error";
     let msg = "Oops, something went wrong while creating your pack!";
     openNotification("error", title, msg);
@@ -125,6 +129,7 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
 // Approve all assets for Batch Pack
 export const multipleApproveAll = async (account, address, numbers, packNumber, contractAddr) => {
   const currentMultipleApproval = await checkMultipleAssetsApproval(address, numbers, account, contractAddr);
+  console.log(currentMultipleApproval);
   var ERC20add = [];
   var count = 4;
   ERC20add = address.splice(0, numbers[1]);
@@ -168,14 +173,20 @@ export const multiplePackMint = async (
 ) => {
   var packReceipt;
   const addressArr = cloneDeep(assetContracts);
-  const msgValue = (parseInt(assetNumbers[0]) * parseInt(packNum) + parseInt(nativeFee) * parseInt(packNum)).toString();
+  const fee = parseInt(nativeFee) * parseInt(packNum);
+  console.log("fee", fee);
+  const eth = parseInt(assetNumbers[0]) * parseInt(packNum);
+  const msgValue = (parseInt(fee) + parseInt(eth)).toString();
+  console.log("fee", fee);
+  console.log("eth", eth);
+  console.log("msgValue", msgValue);
   var txHash;
 
   const sendOptions = {
     contractAddress: contractAddr,
     functionName: "batchMint",
     abi: customAssemblyABIJson,
-    msgValue: msgValue,
+    msgValue: msgValue === 0 ? "" : msgValue,
     params: {
       _to: account,
       _addresses: addressArr,

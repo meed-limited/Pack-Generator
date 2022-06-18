@@ -155,6 +155,14 @@ const CollectionFactory = ({
       openNotification("success", title, msg);
       console.log("Collection created");
       uploadMetadataToMoralis(newAddress, supply, metadataURI);
+      const collec = {
+        name: name,
+        collectionAddress: newAddress,
+        symbol: symbol,
+        maxSupply: supply
+      };
+      setCurrentCollection(collec);
+      customCollectionInfo(collec);
       setWaiting(false);
     } catch (error) {
       let title = "Unexpected error";
@@ -163,14 +171,6 @@ const CollectionFactory = ({
       console.log(error);
       setWaiting(false);
     }
-    const collec = {
-      name: name,
-      collectionAddress: newAddress,
-      symbol: symbol,
-      maxSupply: supply
-    };
-    setCurrentCollection(collec);
-    customCollectionInfo(collec);
   };
 
   const uploadButton = (

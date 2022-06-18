@@ -26,15 +26,12 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
     }));
 
   useEffect(() => {
-    const cleanupFunction = () => {
-      if (csv && csv?.filter((item) => item.contract_type === "ERC721").length > 0) {
-        const contract_address = csv.filter((item) => item.contract_type === "ERC721")[0].token_address;
-        getContractName(contract_address).then((res) => {
-          setName(res);
-        });
-      }
-    };
-    cleanupFunction();
+    if (csv && csv?.filter((item) => item.contract_type === "ERC721").length > 0) {
+      const contract_address = csv.filter((item) => item.contract_type === "ERC721")[0].token_address;
+      getContractName(contract_address).then((res) => {
+        setName(res);
+      });
+    }
     return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [csv]);

@@ -17,6 +17,7 @@ import { Button, Input, Spin, Tooltip } from "antd";
 import { DownloadOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import styles from "./styles";
+import { ethers } from "ethers";
 
 const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { account, chainId } = useMoralis();
@@ -149,7 +150,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const handleBatch = async () => {
     setWaiting(true);
     const feeAmount = getFeeAmountPerPack(packNumber); // Check potential discount
-    const nativeAmount = serviceFee.type === "native" ? feeAmount * "1e18" : 0; // Apply discount if fee in native
+    const nativeAmount = serviceFee.type === "native" && feeAmount !== 0 ? feeAmount * "1e18" : 0; // Apply discount if fee in native
     isJson();
     if (serviceFee.type === "L3P") {
       await ifServiceFeeInL3P(feeAmount);
@@ -169,13 +170,14 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
       for (let i = 0; i < counter; i++) {
         if (contractNumbersArray.length > PACK_LIMIT) {
           let temp = contractNumbersArray.splice(0, PACK_LIMIT);
+
           promises.push(
             multiplePackMint(
               assetsArray,
               temp,
               PACK_LIMIT,
               nativeAmount.toString(),
-              contractAddress,
+              contractAddress.toString(),
               account,
               packNumber,
               chainId,
@@ -189,7 +191,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
               contractNumbersArray,
               contractNumbersArray.length,
               nativeAmount.toString(),
-              contractAddress,
+              contractAddress.toString(),
               account,
               packNumber,
               chainId,

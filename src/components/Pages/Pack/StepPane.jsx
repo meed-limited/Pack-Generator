@@ -27,9 +27,7 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
 
   useEffect(() => {
     if (displayPaneMode === "factory") {
-      setText(
-        "Select an existing collection, create a new one, or click on 'NEXT' to skip and use our integrated one."
-      );
+      setText("Select a collection, create one, or click 'NEXT' to skip and use our integrated one.");
     } else if (displayPaneMode === "tokens") {
       setText("Select some of your ERC20 tokens, or all, or none, and click on 'NEXT' when you're done.");
     } else if (displayPaneMode === "nfts") {

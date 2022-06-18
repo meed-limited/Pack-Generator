@@ -91,12 +91,12 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
           <>
             <Select
               allowClear={true}
-              style={{ width: "70%", marginTop: "20px" }}
               placeholder='Pick an existing collection'
               optionFilterProp='children'
               optionLabelProp='label'
               onChange={handleChange}
               onDeselect={handleDeselect}
+              style={{ width: "70%", marginTop: "20px" }}
             >
               {customCollection &&
                 customCollection?.map((collection, i) => (

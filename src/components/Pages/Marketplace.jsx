@@ -176,8 +176,7 @@ function Marketplace() {
 
   const getMarketItem = (nft) => {
     const result = marketItems?.find(
-      (e) =>
-        e.nftContract === nft?.token_address && e.tokenId === nft?.token_id && e.sold === false && e.confirmed === true
+      (e) => e?.token_address === nft?.token_address && e.tokenId === nft?.token_id && e.sold === false
     );
     return result;
   };
@@ -257,43 +256,45 @@ function Marketplace() {
               ))}
 
             {collectionAddr !== undefined &&
-              Marketplace.slice(0, 50).map((nft, index) => (
-                <Card
-                  hoverable
-                  size='small'
-                  actions={[
-                    <Tooltip title='View On Blockexplorer'>
-                      <FileSearchOutlined
-                        onClick={() => window.open(`${getExplorer(chainId)}address/${nft.token_address}`, "_blank")}
+              Marketplace.slice(0, 50).map((nft, index) => {
+                return (
+                  <Card
+                    hoverable
+                    size='small'
+                    actions={[
+                      <Tooltip title='View On Blockexplorer'>
+                        <FileSearchOutlined
+                          onClick={() => window.open(`${getExplorer(chainId)}address/${nft.token_address}`, "_blank")}
+                        />
+                      </Tooltip>,
+                      <Tooltip title='Buy NFT'>
+                        <ShoppingCartOutlined onClick={() => handleBuyClick(nft)} />
+                      </Tooltip>
+                    ]}
+                    style={{ width: "190px", border: "2px solid #e7eaf3" }}
+                    cover={
+                      <Image
+                        preview={false}
+                        src={nft.image || "error"}
+                        fallback={fallbackImg}
+                        alt=''
+                        style={{ height: "190px" }}
+                        onClick={() => handleShowDetail(nft)}
                       />
-                    </Tooltip>,
-                    <Tooltip title='Buy NFT'>
-                      <ShoppingCartOutlined onClick={() => handleBuyClick(nft)} />
-                    </Tooltip>
-                  ]}
-                  style={{ width: "190px", border: "2px solid #e7eaf3" }}
-                  cover={
-                    <Image
-                      preview={false}
-                      src={nft.image || "error"}
-                      fallback={fallbackImg}
-                      alt=''
-                      style={{ height: "190px" }}
-                      onClick={() => handleShowDetail(nft)}
-                    />
-                  }
-                  key={index}
-                >
-                  {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
-                  <Meta title={nft.name} description={`#${getEllipsisTxt(nft.token_id, 6)}`} />
+                    }
+                    key={index}
+                  >
+                    {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
+                    <Meta title={nft.name} description={`#${getEllipsisTxt(nft.token_id, 6)}`} />
 
-                  <ShowNFTModal
-                    nftToShow={nftToShow}
-                    setDetailVisibility={setDetailVisibility}
-                    detailVisibility={detailVisibility}
-                  />
-                </Card>
-              ))}
+                    <ShowNFTModal
+                      nftToShow={nftToShow}
+                      setDetailVisibility={setDetailVisibility}
+                      detailVisibility={detailVisibility}
+                    />
+                  </Card>
+                );
+              })}
           </div>
           {getMarketItem(nftToBuy) ? (
             <Modal
@@ -305,10 +306,7 @@ function Marketplace() {
             >
               <Spin spinning={loading}>
                 <div style={{ width: "250px", margin: "auto" }}>
-                  <Badge.Ribbon
-                    color='green'
-                    text={`${getMarketItem(nftToBuy).price / ("1e" + 18)} ${nativeToken?.name}`}
-                  >
+                  <Badge.Ribbon color='green' text={`${getMarketItem(nftToBuy).price} ${nativeToken?.name}`}>
                     <img
                       src={nftToBuy?.image}
                       alt=''
