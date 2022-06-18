@@ -1,22 +1,21 @@
 /*eslint no-dupe-keys: "Off"*/
-import React, { useEffect, useState, useMemo } from "react";
-import { Moralis } from "moralis";
+import React, { useEffect, useState, useRef } from "react";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import { menuItems } from "../../Chains/Chains";
 import ClaimSingleNFT from "./ClaimSingleNFT";
 import { getMarketplaceAddress } from "../../../Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
+import ShowNFTModal from "../../ShowNFTModal";
 import { usePackCollections } from "hooks/usePackCollections";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { useMoralisDb } from "hooks/useMoralisDb";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
 import { approveNFTcontract } from "../../../helpers/approval";
+import { listOnMarketPlace } from "helpers/contractCall";
 import { Card, Image, Tooltip, Modal, Input, Spin, Button, Alert, Space } from "antd";
 import { FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
-import ShowNFTModal from "../../ShowNFTModal";
-import { listOnMarketPlace } from "helpers/contractCall";
 
 const { Meta } = Card;
 
@@ -55,7 +54,7 @@ const YourNFTs = () => {
   } = useNFTBalances({ chainId: chainId, limit: NFTsPerPage });
   const { verifyMetadata } = useVerifyMetadata();
   const { packCollections } = usePackCollections();
-  const { saveMarketItemInDB } = useMoralisDb();
+  const { addItemImage, saveMarketItemInDB } = useMoralisDb();
   const [visible, setVisibility] = useState(false);
   const [detailVisibility, setDetailVisibility] = useState(false);
   const [claimModalvisible, setClaimModalvisible] = useState(false);
@@ -66,46 +65,32 @@ const YourNFTs = () => {
   const [price, setPrice] = useState(1);
   const [loading, setLoading] = useState(false);
   const [isNFTloading, setIsNFTLoading] = useState(false);
-  const ItemImage = Moralis.Object.extend("ItemImages");
+  const NFTref = useRef([]);
 
-  const addFetchedNFTs = (temp) => {
+  // Start = wait for NFTBalances, then save page 0 as NFTref
+  useEffect(() => {
+    if (!isLoading && !isFetching) {
+      NFTref.current = NFTBalances?.result;
+      setFetchedNFTs(NFTref.current);
+    }
+    return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [NFTBalances?.total]);
+
+  // Load More = get next page from NFTBalances, concat with current ref
+  const addNextNftPage = (nextPage) => {
     if (NFTBalances) {
       setIsNFTLoading(true);
-      let nextFetchedNFTs = fetchedNFTs;
-      if (temp === 0) {
-        nextFetchedNFTs.push(...NFTBalances.result);
-        setFetchedNFTs(nextFetchedNFTs);
-      } else {
-        nextFetchedNFTs.push(...temp.result);
-        setFetchedNFTs(nextFetchedNFTs);
-      }
+      NFTref.current = NFTref.current.concat(nextPage?.result);
+      setFetchedNFTs(NFTref.current);
       setIsNFTLoading(false);
     }
   };
 
-  const memoizeNftsBalance = useMemo(
-    () => getNFTBalances({ params: { chainId: chainId, address: account, cursor: NFTBalances?.cursor } }),
-    [NFTBalances?.total]
-  );
-
-  // Load first 50 Nfts on page opening
-  useEffect(() => {
-    if (!isLoading && !isFetching) {
-      addFetchedNFTs(0);
-    }
-    return;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    addFetchedNFTs(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [NFTBalances?.total]);
-
   const handleLoadMore = async () => {
     setIsNFTLoading(true);
     const temp = await getNFTBalances({ params: { chainId: chainId, address: account, cursor: NFTBalances.cursor } });
-    addFetchedNFTs(temp);
+    addNextNftPage(temp);
   };
 
   const list = async (nft, listPrice) => {
@@ -113,7 +98,7 @@ const YourNFTs = () => {
     const isSuccess = await listOnMarketPlace(nft, listPrice, marketAddress);
     if (isSuccess === true) {
       setVisibility(false);
-      addItemImage();
+      addItemImage(nftToSend);
       saveMarketItemInDB(nft, listPrice);
     }
     setLoading(false);
@@ -142,15 +127,6 @@ const YourNFTs = () => {
   useEffect(() => {
     setClaimModalvisible(isClaimSuccess);
   }, [isClaimSuccess]);
-
-  function addItemImage() {
-    const itemImage = new ItemImage();
-    itemImage.set("image", nftToSend.image);
-    itemImage.set("nftContract", nftToSend.token_address);
-    itemImage.set("tokenId", nftToSend.token_id);
-    itemImage.set("name", nftToSend.name);
-    itemImage.save();
-  }
 
   const handleShowDetail = (nft) => {
     setNftToShow(nft);
