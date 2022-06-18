@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
+import { useUserData } from "userContext/UserContextProvider";
 import { NFTsSelection, Done } from "./components";
 import { useContractEvents } from "hooks/useContractEvents";
-import { getAssemblyAddress } from "helpers/getContractAddresses";
 import { claimPack } from "helpers/contractCalls/writeCall";
 import { Button, Spin } from "antd";
 import styles from "./styles";
 
 const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
-  const { chainId, account } = useMoralis();
+  const { chainId, account, assemblyAddress } = useUserData();
   const { getPackData } = useContractEvents();
   const [selectedPack, setSelectedPack] = useState([]);
   const [waiting, setWaiting] = useState(false);
   const [packReceipt, setPackReceipt] = useState([]);
 
   const getContractAddress = () => {
-    const defaultAssemblyAddress = getAssemblyAddress(chainId);
-    if (selectedPack && selectedPack[0]?.token_address !== defaultAssemblyAddress) {
+    if (selectedPack && selectedPack[0]?.token_address !== assemblyAddress) {
       return selectedPack[0].token_address;
     } else {
-      return defaultAssemblyAddress;
+      return assemblyAddress;
     }
   };
 
@@ -55,7 +53,7 @@ const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
     <div style={styles.mainPackContainer}>
       {displayPaneMode !== "done" && (
         <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
-          <NFTsSelection handleNFT={handleNFT} isMultiple={false} NFTsPerPage={500} isPackOnly={true} />
+          <NFTsSelection handleNFT={handleNFT} isMultiple={false} isPackOnly={true} />
           <Button shape='round' style={styles.resetButton} onClick={handleClaim}>
             CLAIM PACK
           </Button>

@@ -1,6 +1,7 @@
 /*eslint no-dupe-keys: "Off"*/
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
 import { useMoralis, useNFTBalances } from "react-moralis";
+import { NFTs_PER_PAGE } from "constant/constant";
 import { usePackCollections } from "hooks/usePackCollections";
 import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { Card, Image, Button, Spin, Alert } from "antd";
@@ -40,14 +41,14 @@ const styles = {
   }
 };
 
-const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, isPackOnly }, ref) => {
+const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, isPackOnly }, ref) => {
   const { chainId } = useMoralis();
   const [offset, setOffset] = useState(0);
   const [isNFTloading, setIsNFTloading] = useState(true);
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
   const { packCollections } = usePackCollections();
   const [selectedNFTs, setSelectedNFTs] = useState([]);
-  const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTsPerPage });
+  const { getNFTBalances, data: NFTBalances, isLoading, isFetching } = useNFTBalances({ limit: NFTs_PER_PAGE });
   const { verifyMetadata } = useVerifyMetadata();
   const [packToClaim, setPackToClaim] = useState([]);
 
@@ -91,8 +92,8 @@ const NFTsSelection = forwardRef(({ handleNFT, isMultiple = false, NFTsPerPage, 
 
   const handleLoadMore = async () => {
     setIsNFTloading(true);
-    await getNFTBalances({ params: { chainId: chainId, limit: NFTsPerPage, offset: offset + NFTsPerPage } });
-    setOffset(offset + NFTsPerPage);
+    await getNFTBalances({ params: { chainId: chainId, limit: NFTs_PER_PAGE, offset: offset + NFTs_PER_PAGE } });
+    setOffset(offset + NFTs_PER_PAGE);
   };
 
   const handleClickCard = (nftItem) => {

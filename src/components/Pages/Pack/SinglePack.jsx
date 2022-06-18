@@ -127,7 +127,6 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
           <NFTsSelection
             handleNFT={handleNFT}
             isMultiple={true}
-            NFTsPerPage={100}
             isPackOnly={false}
             onFinishSelection={() => setDisplayPaneMode("confirm")}
           />

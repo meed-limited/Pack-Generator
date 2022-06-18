@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
 import { factoryABIJson } from "../../../../constant/abis";
-import { getFactoryAddress } from "helpers/getContractAddresses";
+import { useUserData } from "userContext/UserContextProvider";
 import { getExplorer } from "helpers/networks";
 import { openNotification } from "helpers/notifications";
 import { FileSearchOutlined, LoadingOutlined, PlusOutlined, QuestionCircleOutlined } from "@ant-design/icons";
@@ -24,6 +24,7 @@ const CollectionFactory = ({
   customCollectionInfo
 }) => {
   const { chainId, account } = useMoralis();
+  const { factoryAddress } = useUserData();
   const [imageURL, setImageURL] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
 
@@ -82,7 +83,7 @@ const CollectionFactory = ({
     return file.ipfs();
   };
 
-  const uploadMetadataToMoralis = (collectionAddress, supply, metadataURI) => {
+  const uploadMetadataToMoralis = (collectionAddress, TxHash, supply, metadataURI) => {
     const supplyToSave = supply === 0 ? "0" : supply;
     const CustomCollections = Moralis.Object.extend("CustomCollections");
     const customCollections = new CustomCollections();
@@ -95,6 +96,7 @@ const CollectionFactory = ({
     customCollections.set("collectionAddress", collectionAddress);
     customCollections.set("image", imageURL);
     customCollections.set("metadataURI", metadataURI);
+    customCollections.set("transaction_hash", TxHash);
 
     try {
       customCollections.save();
@@ -116,11 +118,10 @@ const CollectionFactory = ({
 
     const metadataURI = await uploadMetadataToIpfs();
     console.log(metadataURI); // Kept to easily generate metadata if needed
-    const contractAddr = getFactoryAddress(chainId);
     var newAddress;
 
     const sendOptions = {
-      contractAddress: contractAddr,
+      contractAddress: factoryAddress,
       functionName: "createCustomCollection",
       abi: factoryABIJson,
       params: {
@@ -136,7 +137,8 @@ const CollectionFactory = ({
       const receipt = await transaction.wait();
 
       newAddress = receipt.events[0].address;
-      let link = `${getExplorer(chainId)}tx/${receipt.transactionHash}`;
+      const TxHash = receipt.transactionHash;
+      let link = `${getExplorer(chainId)}tx/${TxHash}`;
       let title = "Collection created!";
       let msg = (
         <>
@@ -153,7 +155,7 @@ const CollectionFactory = ({
 
       openNotification("success", title, msg);
       console.log("Collection created");
-      uploadMetadataToMoralis(newAddress, supply, metadataURI);
+      uploadMetadataToMoralis(newAddress, TxHash, supply, metadataURI);
       const collec = {
         name: name,
         collectionAddress: newAddress,

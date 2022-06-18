@@ -227,9 +227,6 @@ export const multiplePackMint = async (
   console.log("fee", fee);
   const eth = parseInt(assetNumbers[0]) * parseInt(packNum);
   const msgValue = (parseInt(fee) + parseInt(eth)).toString();
-  console.log("fee", fee);
-  console.log("eth", eth);
-  console.log("msgValue", msgValue);
   var txHash;
 
   const sendOptions = {
@@ -293,16 +290,19 @@ export const multiplePackMint = async (
 // Claim selected Pack (Burn the NFT and send its content back to user)
 export const claimPack = async (nftToClaim, contractAddress, nftData, account, chainId) => {
   var packReceipt;
+  const arrOfNum = nftData.arrayOfNumber.map((e) => parseInt(e));
+  const arrOfAdd = nftData.arrayOfAddress[0] === "" ? [] : nftData.arrayOfAddress;
+
   const sendOptions = {
-    contractAddress: contractAddress,
+    contractAddress: contractAddress.toString(),
     functionName: "burn",
     abi: assemblyABIJson,
     params: {
-      _to: account,
+      _to: account.toString(),
       _tokenId: nftToClaim.token_id,
-      _salt: nftData.salt,
-      _addresses: nftData.arrayOfAddress,
-      _numbers: nftData.arrayOfNumber
+      _salt: parseInt(nftData.salt),
+      _addresses: arrOfAdd,
+      _numbers: arrOfNum
     }
   };
 

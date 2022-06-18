@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
 import { useUserData } from "userContext/UserContextProvider";
+import { NFTs_PER_PAGE } from "constant/constant";
 import ClaimSingleNFT from "./ClaimSingleNFT";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
@@ -40,7 +41,6 @@ const styles = {
 const YourNFTs = () => {
   const { account, chainId, isAuthenticated } = useMoralis();
   const { marketAddress, onSupportedChain } = useUserData();
-  const NFTsPerPage = 100;
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
   const { nativeToken } = useNativeBalance(chainId);
   const {
@@ -48,7 +48,7 @@ const YourNFTs = () => {
     data: NFTBalances,
     isLoading,
     isFetching
-  } = useNFTBalances({ chainId: chainId, limit: NFTsPerPage });
+  } = useNFTBalances({ chainId: chainId, limit: NFTs_PER_PAGE });
   const { verifyMetadata } = useVerifyMetadata();
   const { packCollections } = usePackCollections();
   const { addItemImage, saveMarketItemInDB } = useMoralisDb();

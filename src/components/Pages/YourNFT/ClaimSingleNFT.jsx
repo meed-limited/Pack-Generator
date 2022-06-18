@@ -40,9 +40,6 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
     getClaimStatut(true);
     const contractAddress = getContractAddress();
     const nftData = await getPackData(nftToClaim, contractAddress);
-    console.log("contractAddress", contractAddress);
-    console.log("nftData", nftData);
-    console.log("nftToClaim", nftToClaim);
     await claimPack(nftToClaim, contractAddress, nftData, account, chainId).then((result) => {
       if (result.isSuccess === true) {
         getClaimStatut(false);
