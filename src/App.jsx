@@ -41,11 +41,11 @@ const styles = {
   }
 };
 const App = () => {
-  const { account, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
+  const { account, chainId, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
   const { assemblyAddress } = useUserData();
   const [isAdminPaneOpen, setIsAdminPaneOpen] = useState(false);
   const [adminAddress, setAdminAddress] = useState();
-  const isAdmin = account?.toLowerCase() === adminAddress?.toLowerCase() ? true : false;
+  const [isAdmin, setIsAdmin] = useState(false);
   const [width, setWidth] = useState(window.innerWidth);
 
   const handleWindowSizeChange = () => {
@@ -73,6 +73,15 @@ const App = () => {
     return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isWeb3Enabled, account]);
+
+  useEffect(() => {
+    if (adminAddress) {
+      const bool = account?.toLowerCase() === adminAddress?.toLowerCase() ? true : false;
+      setIsAdmin(bool);
+    }
+    return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [adminAddress, account]);
 
   useEffect(() => {
     if (isAuthenticated && !isWeb3Enabled && !isWeb3EnableLoading) enableWeb3();

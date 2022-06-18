@@ -45,7 +45,7 @@ const styles = {
 };
 
 const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
-  const { isAuthenticated, isAuthUndefined } = useMoralis();
+  const { isAuthenticated } = useMoralis();
 
   useEffect(() => {}, [isAdmin, isAuthenticated]);
 
@@ -63,7 +63,7 @@ const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
       <MenuItems isAdminPaneOpen={isAdminPaneOpen} setIsAdminPaneOpen={setIsAdminPaneOpen} />
 
       <div style={styles.headerRight}>
-        {!isAuthUndefined && isAdmin && isAuthenticated && (
+        {isAuthenticated && isAdmin && (
           <div>
             <Button style={styles.adminButton} shape='round' onClick={openAdminPane}>
               Admin

@@ -121,6 +121,7 @@ function Chains() {
   const handleMenuClick = async (e) => {
     console.log("switch to: ", e.key);
     await switchNetwork(e.key);
+    window.location.reload();
   };
 
   useEffect(() => {
