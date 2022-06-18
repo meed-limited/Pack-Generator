@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { menuItems } from "../../Chains/Chains";
+import { useUserData } from "userContext/UserContextProvider";
 import AccountVerification from "components/Account/AccountVerification";
 import ChainVerification from "components/Chains/ChainVerification";
 import SinglePack from "./SinglePack";
@@ -35,8 +35,8 @@ const styles = {
 };
 
 const Pack = ({ paneToShow }) => {
-  const { isAuthenticated, chainId } = useMoralis();
-  const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
+  const { isAuthenticated } = useMoralis();
+  const { onSupportedChain } = useUserData();
   const [displayPaneMode, setDisplayPaneMode] = useState("tokens");
   const [titleText, setTitleText] = useState("");
   const [isBatch, setIsBatch] = useState(false);

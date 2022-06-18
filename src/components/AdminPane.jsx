@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Moralis } from "moralis";
-import { useMoralis, useNativeBalance } from "react-moralis";
+import { useNativeBalance } from "react-moralis";
+import { useUserData } from "userContext/UserContextProvider";
 import AddressInput from "./AddressInput";
 import { openNotification } from "../helpers/notifications";
-import { assemblyABI, factoryABI, getAssemblyAddress, getFactoryAddress } from "../Constant/constant";
+import { assemblyABIJson, factoryABIJson } from "../constant/abis";
 import { Button, Divider, Input } from "antd";
 
 const styles = {
@@ -39,11 +40,7 @@ const styles = {
 };
 
 const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
-  const { chainId } = useMoralis();
-  const contractAddress = getAssemblyAddress(chainId);
-  const assemblyABIJson = JSON.parse(assemblyABI);
-  const factoryAddress = getFactoryAddress(chainId);
-  const factoryABIJson = JSON.parse(factoryABI);
+  const { chainId, assemblyAddress, factoryAddress } = useUserData();
   const { nativeToken } = useNativeBalance(chainId);
   const [ethAmount, setEthAmount] = useState();
   const [L3PAmount, setL3PAmount] = useState();
@@ -117,7 +114,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
   const setReceiverAddress = async () => {
     if (address) {
       const sendOptions = {
-        contractAddress: contractAddress,
+        contractAddress: assemblyAddress,
         functionName: "setFeeReceiver",
         abi: assemblyABIJson,
         params: {
@@ -144,7 +141,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
   const setMetadata = async () => {
     if (IPFSurl && IPFSurl.length > 0) {
       const sendOptions = {
-        contractAddress: contractAddress,
+        contractAddress: assemblyAddress,
         functionName: "setTokenURI",
         abi: assemblyABIJson,
         params: {
@@ -171,7 +168,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
   const setNewAdmin = async () => {
     if (adminAddress) {
       const sendOptions = {
-        contractAddress: contractAddress,
+        contractAddress: assemblyAddress,
         functionName: "transferOwnership",
         abi: assemblyABIJson,
         params: {
@@ -211,7 +208,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         />
         <Button
           type='primary'
-          onClick={() => setEthFee(contractAddress, assemblyABIJson, ethAmount)}
+          onClick={() => setEthFee(assemblyAddress, assemblyABIJson, ethAmount)}
           style={{ marginBottom: "20px" }}
         >
           Set {nativeToken.symbol} fee
@@ -226,7 +223,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
             />
             <Button
               type='primary'
-              onClick={() => setL3PFee(contractAddress, assemblyABIJson, L3PAmount)}
+              onClick={() => setL3PFee(assemblyAddress, assemblyABIJson, L3PAmount)}
               style={{ marginBottom: "20px" }}
             >
               Set L3P fee

@@ -2,7 +2,9 @@
 import { useEffect, useState } from "react";
 import Moralis from "moralis";
 import { useMoralis, useNativeBalance } from "react-moralis";
-import { CHAINS_WITH_L3P_SUPPORT, assemblyABI, getAssemblyAddress } from "../../../../Constant/constant";
+import { getAssemblyAddress } from "helpers/getContractAddresses";
+import { CHAINS_WITH_L3P_SUPPORT } from "../../../../constant/constant";
+import { assemblyABIJson } from "../../../../constant/abis";
 import { menuItems } from "../../../Chains/Chains";
 import { Alert, Switch } from "antd";
 import Text from "antd/lib/typography/Text";
@@ -34,7 +36,6 @@ const styles = {
 const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumber, isBatch = false }) => {
   const { chainId, isWeb3Enabled } = useMoralis();
   const { nativeToken } = useNativeBalance(chainId);
-  const assemblyABIJson = JSON.parse(assemblyABI);
   const [feeInETH, setFeeinETH] = useState();
   const [feeInL3P, setFeeinL3P] = useState();
   const onLP3Chain = CHAINS_WITH_L3P_SUPPORT.includes(chainId);

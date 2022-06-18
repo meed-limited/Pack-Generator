@@ -2,6 +2,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { MoralisProvider } from "react-moralis";
 import { Moralis } from "moralis";
+import { UserDataProvider } from "userContext/UserContextProvider";
 import App from "./App";
 import "./index.css";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
@@ -19,7 +20,9 @@ const Application = () => {
   if (isServerInfo)
     return (
       <MoralisProvider appId={APP_ID} serverUrl={SERVER_URL}>
-        <App isServerInfo />
+        <UserDataProvider>
+          <App isServerInfo />
+        </UserDataProvider>
       </MoralisProvider>
     );
 };

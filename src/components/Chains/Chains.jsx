@@ -118,10 +118,15 @@ function Chains() {
     return;
   }, [chainId]);
 
-  const handleMenuClick = (e) => {
+  const handleMenuClick = async (e) => {
     console.log("switch to: ", e.key);
-    switchNetwork(e.key);
+    await switchNetwork(e.key);
   };
+
+  useEffect(() => {
+    return;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected]);
 
   const menu = <Menu onClick={handleMenuClick} items={menuItems} style={styles.item} />;
 

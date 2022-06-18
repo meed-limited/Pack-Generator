@@ -1,9 +1,8 @@
 /*eslint no-dupe-keys: "Off"*/
 import React, { useEffect, useState, useRef } from "react";
 import { useMoralis, useNFTBalances, useNativeBalance } from "react-moralis";
-import { menuItems } from "../../Chains/Chains";
+import { useUserData } from "userContext/UserContextProvider";
 import ClaimSingleNFT from "./ClaimSingleNFT";
-import { getMarketplaceAddress } from "../../../Constant/constant";
 import ChainVerification from "components/Chains/ChainVerification";
 import AccountVerification from "components/Account/AccountVerification";
 import ShowNFTModal from "../../ShowNFTModal";
@@ -12,8 +11,7 @@ import { useVerifyMetadata } from "hooks/useVerifyMetadata";
 import { useMoralisDb } from "hooks/useMoralisDb";
 import { getExplorer } from "helpers/networks";
 import { getEllipsisTxt } from "helpers/formatters";
-import { approveNFTcontract } from "../../../helpers/approval";
-import { listOnMarketPlace } from "helpers/contractCall";
+import { approveNFTcontract, listOnMarketPlace } from "helpers/contractCalls/writeCall";
 import { Card, Image, Tooltip, Modal, Input, Spin, Button, Alert, Space } from "antd";
 import { FileSearchOutlined, KeyOutlined, ShoppingCartOutlined } from "@ant-design/icons";
 
@@ -41,8 +39,7 @@ const styles = {
 
 const YourNFTs = () => {
   const { account, chainId, isAuthenticated } = useMoralis();
-  const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
-  const marketAddress = getMarketplaceAddress(chainId);
+  const { marketAddress, onSupportedChain } = useUserData();
   const NFTsPerPage = 100;
   const [fetchedNFTs, setFetchedNFTs] = useState([]);
   const { nativeToken } = useNativeBalance(chainId);

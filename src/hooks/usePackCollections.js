@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { useMoralis } from "react-moralis";
-import { getAssemblyAddress } from "../Constant/constant";
+import { useUserData } from "userContext/UserContextProvider";
 import { useMoralisDb } from "./useMoralisDb";
 
 export const usePackCollections = () => {
-  const { chainId } = useMoralis();
+  const { assemblyAddress } = useUserData();
   const { getAllCollectionData, parseAllData } = useMoralisDb();
   const [packCollections, setPackCollections] = useState([]);
-  const assemblyAddress = getAssemblyAddress(chainId);
 
   const getArrayOfCollection = async () => {
     const customCollec = await getAllCollectionData();

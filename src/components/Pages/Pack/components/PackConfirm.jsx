@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis, useNativeBalance } from "react-moralis";
-import { getContractName } from "../../../../helpers/contractCall";
+import { getContractName } from "../../../../helpers/contractCalls/readCall";
 import { getEllipsisTxt } from "../../../../helpers/formatters";
 import { Alert, Table } from "antd";
 import Text from "antd/lib/typography/Text";

@@ -1,8 +1,7 @@
-import { assemblyABI } from "Constant/constant";
+import { assemblyABIJson } from "constant/abis";
 
 export const useContractEvents = () => {
   const ethers = require("ethers");
-  const assemblyABIJson = JSON.parse(assemblyABI);
 
   const getPackData = async (_pack, contractAddress) => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);

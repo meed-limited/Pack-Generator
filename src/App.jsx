@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Navigate } from "react-router";
 import { useMoralis } from "react-moralis";
-import { Moralis } from "moralis";
+import { useUserData } from "userContext/UserContextProvider";
 import AdminPane from "components/AdminPane";
 import NoMobile from "components/NoMobile";
 import CustomHeader from "components/Header/CustomHeader";
@@ -13,11 +13,11 @@ import Marketplace from "components/Pages/Marketplace";
 import YourNFTs from "components/Pages/YourNFT/YourNFTs";
 import Transactions from "components/Pages/Transactions";
 import Community from "components/CommunityItems";
-import { assemblyABI, getAssemblyAddress } from "./Constant/constant";
-import background from "./assets/background.jpg";
+import { getAdminAddress } from "helpers/contractCalls/readCall";
 import { Layout } from "antd";
 import "antd/dist/antd.css";
 import "./style.css";
+import background from "./assets/background.jpg";
 const { Footer } = Layout;
 
 const styles = {
@@ -46,9 +46,8 @@ const styles = {
   }
 };
 const App = () => {
-  const { account, chainId, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
-  const contractAddress = getAssemblyAddress(chainId);
-  const assemblyABIJson = JSON.parse(assemblyABI);
+  const { account, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
+  const { assemblyAddress } = useUserData();
   const [isAdminPaneOpen, setIsAdminPaneOpen] = useState(false);
   const [adminAddress, setAdminAddress] = useState();
   const isAdmin = account?.toLowerCase() === adminAddress?.toLowerCase() ? true : false;
@@ -67,25 +66,10 @@ const App = () => {
 
   const isMobile = width <= 768;
 
-  const getAdminAddress = async () => {
-    const readOptions = {
-      contractAddress: contractAddress,
-      functionName: "owner",
-      abi: assemblyABIJson
-    };
-
-    try {
-      const owner = await Moralis.executeFunction(readOptions);
-      return owner;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   useEffect(() => {
     const launchApp = async () => {
       if (isWeb3Enabled) {
-        const admin = await getAdminAddress();
+        const admin = await getAdminAddress(assemblyAddress);
         setAdminAddress(admin);
         setIsAdminPaneOpen(false);
       }

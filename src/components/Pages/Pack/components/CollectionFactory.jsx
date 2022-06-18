@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useMoralis } from "react-moralis";
 import { Moralis } from "moralis";
-import { getFactoryAddress, factoryABI } from "../../../../Constant/constant";
+import { factoryABIJson } from "../../../../constant/abis";
+import { getFactoryAddress } from "helpers/getContractAddresses";
 import { getExplorer } from "helpers/networks";
 import { openNotification } from "helpers/notifications";
 import { FileSearchOutlined, LoadingOutlined, PlusOutlined, QuestionCircleOutlined } from "@ant-design/icons";
@@ -23,8 +24,6 @@ const CollectionFactory = ({
   customCollectionInfo
 }) => {
   const { chainId, account } = useMoralis();
-  const factoryABIJson = JSON.parse(factoryABI);
-
   const [imageURL, setImageURL] = useState();
   const [isImageLoading, setIsImageLoading] = useState(false);
 

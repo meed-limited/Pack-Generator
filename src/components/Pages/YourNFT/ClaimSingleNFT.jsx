@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { getAssemblyAddress } from "../../../Constant/constant";
 import { useContractEvents } from "hooks/useContractEvents";
+import { getAssemblyAddress } from "helpers/getContractAddresses";
 import { Button, Spin } from "antd";
 import buttonImg from "../../../assets/buttonImg.svg";
-import { claimPack } from "helpers/contractCall";
+import { claimPack } from "helpers/contractCalls/writeCall";
 
 const styles = {
   selectButton: {
@@ -40,6 +40,9 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
     getClaimStatut(true);
     const contractAddress = getContractAddress();
     const nftData = await getPackData(nftToClaim, contractAddress);
+    console.log("contractAddress", contractAddress);
+    console.log("nftData", nftData);
+    console.log("nftToClaim", nftToClaim);
     await claimPack(nftToClaim, contractAddress, nftData, account, chainId).then((result) => {
       if (result.isSuccess === true) {
         getClaimStatut(false);

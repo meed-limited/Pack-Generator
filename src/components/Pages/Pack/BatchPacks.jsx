@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { L3P_TOKEN_ADDRESS, getAssemblyAddress, PACK_LIMIT } from "../../../Constant/constant";
+import { L3P_TOKEN_ADDRESS, PACK_LIMIT } from "../../../constant/constant";
 import {
   CollectionSelector,
   Done,
@@ -11,9 +11,10 @@ import {
   TokenSelection
 } from "./components";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
-import { multipleApproveAll, multiplePackMint } from "helpers/contractCall";
-import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
+import { checkERC20allowance } from "helpers/contractCalls/readCall";
+import { approveERC20contract, multipleApproveAll, multiplePackMint } from "helpers/contractCalls/writeCall";
 import { openNotification } from "../../../helpers/notifications";
+import { getAssemblyAddress } from "helpers/getContractAddresses";
 import cloneDeep from "lodash/cloneDeep";
 import { Button, Input, Spin, Tooltip } from "antd";
 import { DownloadOutlined, QuestionCircleOutlined } from "@ant-design/icons";

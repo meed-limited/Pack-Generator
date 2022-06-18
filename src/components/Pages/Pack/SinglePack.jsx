@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
-import { L3P_TOKEN_ADDRESS, getAssemblyAddress } from "../../../Constant/constant";
+import { L3P_TOKEN_ADDRESS } from "../../../constant/constant";
 import { TokenSelection, NFTsSelection, PackConfirm, FeeSelector, Done } from "./components";
-import { singleApproveAll, singlePackMint } from "helpers/contractCall";
+import { checkERC20allowance } from "helpers/contractCalls/readCall";
+import { approveERC20contract, singleApproveAll, singlePackMint } from "helpers/contractCalls/writeCall";
+import { getAssemblyAddress } from "helpers/getContractAddresses";
 import { sortSingleArrays } from "../../../helpers/arraySorting";
-import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
 import cloneDeep from "lodash/cloneDeep";
 import { Button, Spin } from "antd";
 import styles from "./styles";

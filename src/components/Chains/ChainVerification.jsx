@@ -1,10 +1,10 @@
 import { useMoralis } from "react-moralis";
+import { useUserData } from "userContext/UserContextProvider";
 import styles from "../Pages/Pack/styles";
-import { menuItems } from "./Chains";
 
 const ChainVerification = () => {
-  const { chainId, isAuthenticated } = useMoralis();
-  const onSupportedChain = menuItems?.filter((item) => item.key === chainId).length > 0;
+  const { isAuthenticated } = useMoralis();
+  const { onSupportedChain } = useUserData();
 
   return (
     <>
