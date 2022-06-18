@@ -82,8 +82,6 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
     }
   }));
 
-  var valueToDisplay;
-
   return (
     <div style={styles.transparentContainerInside}>
       <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>

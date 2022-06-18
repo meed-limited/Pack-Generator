@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { L3P_TOKEN_ADDRESS, getAssemblyAddress, PACK_LIMIT } from "../../../Constant/constant";
-import CollectionSelector from "./components/CollectionSelector";
-import TokenSelection from "./components/TokenSelection";
-import Uploader from "./components/Uploader";
-import NumOfNftPerPack from "./components/NumOfNftPerPack";
-import PackConfirm from "./components/PackConfirm";
-import FeeSelector from "./components/FeeSelector";
-import Done from "./components/Done";
+import {
+  CollectionSelector,
+  Done,
+  FeeSelector,
+  PackConfirm,
+  NumOfNftPerPack,
+  Uploader,
+  TokenSelection
+} from "./components";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
 import { multipleApproveAll, multiplePackMint } from "helpers/contractCall";
 import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";
@@ -17,7 +19,6 @@ import { Button, Input, Spin, Tooltip } from "antd";
 import { DownloadOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import Text from "antd/lib/typography/Text";
 import styles from "./styles";
-import { ethers } from "ethers";
 
 const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const { account, chainId } = useMoralis();

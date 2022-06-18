@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { L3P_TOKEN_ADDRESS, getAssemblyAddress } from "../../../Constant/constant";
-import TokenSelection from "./components/TokenSelection";
-import NFTsSelection from "./components/NFTsSelection";
-import PackConfirm from "./components/PackConfirm";
-import FeeSelector from "./components/FeeSelector";
-import Done from "./components/Done";
+import { TokenSelection, NFTsSelection, PackConfirm, FeeSelector, Done } from "./components";
 import { singleApproveAll, singlePackMint } from "helpers/contractCall";
 import { sortSingleArrays } from "../../../helpers/arraySorting";
 import { checkERC20allowance, approveERC20contract } from "../../../helpers/approval";

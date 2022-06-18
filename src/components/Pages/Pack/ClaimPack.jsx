@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useMoralis } from "react-moralis";
 import { getAssemblyAddress } from "../../../Constant/constant";
-import NFTsSelection from "./components/NFTsSelection";
-import Done from "./components/Done";
+import { NFTsSelection, Done } from "./components";
 import { useContractEvents } from "hooks/useContractEvents";
 import { claimPack } from "helpers/contractCall";
 import { Button, Spin } from "antd";
