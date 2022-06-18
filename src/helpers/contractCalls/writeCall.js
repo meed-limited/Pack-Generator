@@ -1,41 +1,12 @@
 import { Moralis } from "moralis";
 import cloneDeep from "lodash/cloneDeep";
-import { assemblyABI, customAssemblyABI, marketABI } from "../Constant/constant";
-import { approveERC20contract, approveNFTcontract, checkMultipleAssetsApproval } from "./approval";
-import { getExplorer } from "./networks";
-import { openNotification } from "./notifications";
+import { assemblyABIJson, customAssemblyABIJson, marketABIJson } from "../../constant/abis";
+import { checkMultipleAssetsApproval } from "./readCall";
+import { getExplorer } from "../networks";
+import { openNotification } from "../notifications";
 import { FileSearchOutlined } from "@ant-design/icons";
 
 const ethers = require("ethers");
-const assemblyABIJson = JSON.parse(assemblyABI);
-const customAssemblyABIJson = JSON.parse(customAssemblyABI);
-const marketABIJson = JSON.parse(marketABI);
-const getNameABI = [
-  {
-    inputs: [],
-    name: "name",
-    outputs: [{ internalType: "string", name: "_name", type: "string" }],
-    stateMutability: "view",
-    type: "function"
-  }
-];
-
-// Get the name of a specific NFT collection
-export const getContractName = async (address) => {
-  const readOptions = {
-    contractAddress: address,
-    functionName: "name",
-    abi: getNameABI,
-    params: {}
-  };
-
-  try {
-    const data = await Moralis.executeFunction(readOptions);
-    return data;
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 // Approve all assets for Single Pack
 export const singleApproveAll = async (account, address, numbers, contractAddr) => {
@@ -65,6 +36,85 @@ export const singleApproveAll = async (account, address, numbers, contractAddr) 
   } catch (error) {
     let title = "Approval error";
     let msg = "Oops, something went wrong while approving some of your pack's assets!";
+    openNotification("error", title, msg);
+    console.log(error);
+  }
+};
+
+// Allow a specific amount of an ERC20 address
+export const approveERC20contract = async (ERC20address, allowance, contractAddress) => {
+  const sendOptions = {
+    contractAddress: ERC20address,
+    functionName: "approve",
+    abi: [
+      {
+        constant: false,
+        inputs: [
+          { name: "spender", type: "address" },
+          { name: "amount", type: "uint256" }
+        ],
+        name: "approve",
+        outputs: [{ name: "", type: "bool" }],
+        payable: false,
+        stateMutability: "nonpayable",
+        type: "function"
+      }
+    ],
+    params: {
+      spender: contractAddress,
+      amount: allowance
+    }
+  };
+
+  try {
+    const transaction = await Moralis.executeFunction(sendOptions);
+    await transaction.wait();
+    let value = (allowance / ("1e" + 18)).toString();
+    let title = "ERC20 Approval set";
+    let msg = `The allowance of your ERC20 token has been succesfully set to ${value}.`;
+    openNotification("success", title, msg);
+    console.log(`ERC20 Approval set`);
+  } catch (error) {
+    let title = "ERC20 Approval denied";
+    let msg = "Something went wrong, the allowance hasn't been set.";
+    openNotification("error", title, msg);
+    console.log(error);
+  }
+};
+
+// Approve a whole NFT collection (work for both ERC721 && ERC1155)
+export const approveNFTcontract = async (NFTaddress, contractAddress) => {
+  const sendOptions = {
+    contractAddress: NFTaddress,
+    functionName: "setApprovalForAll",
+    abi: [
+      {
+        inputs: [
+          { internalType: "address", name: "operator", type: "address" },
+          { internalType: "bool", name: "_approved", type: "bool" }
+        ],
+        name: "setApprovalForAll",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function"
+      }
+    ],
+    params: {
+      operator: contractAddress,
+      _approved: true
+    }
+  };
+
+  try {
+    const transaction = await Moralis.executeFunction(sendOptions);
+    await transaction.wait();
+    let title = "NFT Approval set";
+    let msg = "The allowance for your NFTs collection has been set.";
+    openNotification("success", title, msg);
+    console.log("NFTs Approval set");
+  } catch (error) {
+    let title = "NFT Approval denied";
+    let msg = "Something went wrong, the allowance hasn't been set.";
     openNotification("error", title, msg);
     console.log(error);
   }
@@ -329,6 +379,39 @@ export const listOnMarketPlace = async (nft, listPrice, contractAddress) => {
     let msg = "Something went wrong while listing your NFT to the marketplace. Please try again.";
     openNotification("error", title, msg);
     console.log(error);
+    isSuccess = false;
+  }
+  return isSuccess;
+};
+
+// Buy NFT from the MarketPlace
+export const buyNFT = async (tokenAdd, marketAddress, tokenDetails) => {
+  var isSuccess;
+  const itemID = tokenDetails.itemId;
+  const tokenPrice = tokenDetails.price;
+
+  const sendOptions = {
+    contractAddress: marketAddress,
+    functionName: "createMarketSale",
+    abi: marketABIJson,
+    params: {
+      nftContract: tokenAdd,
+      itemId: itemID
+    },
+    msgValue: tokenPrice
+  };
+
+  try {
+    const transaction = await Moralis.executeFunction(sendOptions);
+    await transaction.wait();
+    let title = "NFT bought succesfully";
+    let msg = "Your NFT has been succesfully purchased from the marketplace.";
+    openNotification("success", title, msg);
+    isSuccess = true;
+  } catch (error) {
+    let title = "Error during purchase!";
+    let msg = "Something went wrong while purchasing your NFT From the marketplace. Please try again.";
+    openNotification("error", title, msg);
     isSuccess = false;
   }
   return isSuccess;
