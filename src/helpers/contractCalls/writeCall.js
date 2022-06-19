@@ -1,6 +1,6 @@
 import { Moralis } from "moralis";
 import cloneDeep from "lodash/cloneDeep";
-import { assemblyABIJson, customAssemblyABIJson, marketABIJson } from "constant/abis";
+import { assemblyABIJson, customAssemblyABIJson, marketABIJson } from "../../constant/abis";
 import { checkMultipleAssetsApproval } from "./readCall";
 import { getExplorer } from "../networks";
 import { openNotification } from "../notifications";
@@ -179,7 +179,6 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
 // Approve all assets for Batch Pack
 export const multipleApproveAll = async (account, address, numbers, packNumber, contractAddr) => {
   const currentMultipleApproval = await checkMultipleAssetsApproval(address, numbers, account, contractAddr);
-  console.log(currentMultipleApproval);
   var ERC20add = [];
   var count = 4;
   ERC20add = address.splice(0, numbers[1]);
@@ -224,7 +223,6 @@ export const multiplePackMint = async (
   var packReceipt;
   const addressArr = cloneDeep(assetContracts);
   const fee = parseInt(nativeFee) * parseInt(packNum);
-  console.log("fee", fee);
   const eth = parseInt(assetNumbers[0]) * parseInt(packNum);
   const msgValue = (parseInt(fee) + parseInt(eth)).toString();
   var txHash;
