@@ -1,6 +1,6 @@
 import { Moralis } from "moralis";
 import cloneDeep from "lodash/cloneDeep";
-import { assemblyABIJson, customAssemblyABIJson, marketABIJson } from "constant/abis";
+import { assemblyABIJson, customAssemblyABIJson, marketABIJson } from "../../constant/abis";
 import { checkMultipleAssetsApproval } from "./readCall";
 import { getExplorer } from "../networks";
 import { openNotification } from "../notifications";
