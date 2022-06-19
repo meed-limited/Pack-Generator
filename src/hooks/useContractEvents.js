@@ -1,4 +1,4 @@
-import { assemblyABIJson } from "constant/abis";
+import { assemblyABIJson } from "./../constant/abis";
 
 export const useContractEvents = () => {
   const ethers = require("ethers");

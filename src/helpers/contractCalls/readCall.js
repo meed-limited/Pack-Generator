@@ -1,5 +1,5 @@
 import Moralis from "moralis";
-import { allowanceABI, assemblyABIJson, getNameABI } from "constant/abis";
+import { allowanceABI, assemblyABIJson, getNameABI } from "../../constant/abis";
 import cloneDeep from "lodash/cloneDeep";
 import { openNotification } from "helpers/notifications";
 
