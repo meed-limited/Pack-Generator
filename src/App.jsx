@@ -41,7 +41,7 @@ const styles = {
   }
 };
 const App = () => {
-  const { account, chainId, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
+  const { account, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
   const { assemblyAddress } = useUserData();
   const [isAdminPaneOpen, setIsAdminPaneOpen] = useState(false);
   const [adminAddress, setAdminAddress] = useState();
