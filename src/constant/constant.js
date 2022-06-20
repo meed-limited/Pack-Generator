@@ -7,9 +7,9 @@ export const NFTs_PER_PAGE = 100;
  ********************/
 
 // Contracts on Ethereum
-export const assemblyAddressEthereum = "";
-export const factoryAddressEthereum = "";
-export const marketAddressEthereum = "";
+export const assemblyAddressEthereum = "0x1c9ab1642d36304B540a62e66DEfe0F4Bf21E256";
+export const factoryAddressEthereum = "0xFE84bAb0210d6ab0faC9E0fADD9DFB295f634057";
+export const marketAddressEthereum = "0x5913509d42862a9110bfd87830FAe2FC51077A68";
 
 // Contracts on Polygon
 export const assemblyAddressPolygon = "0xDEBa7Ca66e89C260d793449a8B84AA7f3F749E31";
