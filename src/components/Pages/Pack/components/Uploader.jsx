@@ -22,7 +22,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
           token_id: file.data[i][0],
           amount: parseInt(file.data[i][1]),
           contract_type: file.data[i][2],
-          token_address: file.data[i][3].toLowerCase()
+          token_address: file.data[i][3].toLowerCase(),
         };
         counter++;
       }
@@ -40,7 +40,7 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
     reset() {
       getJsonFile();
       isJsonFile(false);
-    }
+    },
   }));
 
   const text = () => {
@@ -67,9 +67,9 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
         </p>
         <p>
           <a
-            href='https://docs.google.com/spreadsheets/d/1kbv-1nI3Nt51bLE8Nt_8zWlLDwVyIhTo66uZBvWS5Cw/edit#gid=0'
-            target='_blank'
-            rel='noreferrer noopener'
+            href="https://docs.google.com/spreadsheets/d/1kbv-1nI3Nt51bLE8Nt_8zWlLDwVyIhTo66uZBvWS5Cw/edit#gid=0"
+            target="_blank"
+            rel="noreferrer noopener"
             style={{ fontSize: "13px", marginBottom: "12px" }}
           >
             Click to open the template.
@@ -130,4 +130,5 @@ const Uploader = forwardRef(({ isJsonFile, getJsonFile }, ref) => {
   );
 });
 
+Uploader.displayName = "Uploader";
 export default Uploader;

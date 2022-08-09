@@ -13,11 +13,11 @@ const styles = {
     gridTemplateColumns: "50% 50%",
     alignItems: "center",
     justifyItems: "inherit",
-    overflow: "hidden"
+    overflow: "hidden",
   },
   imageDLC: {
     margin: "auto",
-    width: "100%"
+    width: "100%",
   },
   text: {
     position: "absolute",
@@ -26,7 +26,7 @@ const styles = {
     fontSize: "15px",
     fontWeight: "350",
     letterSpacing: "1px",
-    whiteSpace: "pre-wrap"
+    whiteSpace: "pre-wrap",
   },
   homeButton: {
     width: "193px",
@@ -37,8 +37,8 @@ const styles = {
     border: "none",
     borderRadius: "2px",
     height: "50px",
-    fontSize: "20px"
-  }
+    fontSize: "20px",
+  },
 };
 
 const Home = () => {
@@ -48,18 +48,18 @@ const Home = () => {
     <div style={styles.grid}>
       <div>
         <div style={{ position: "relative", textAlign: "left", height: "fit-content" }}>
-          <img src={TEXT_LEPLOGO} alt='' position='relative' style={styles.imageDLC} />
+          <img src={TEXT_LEPLOGO} alt="" position="relative" style={styles.imageDLC} />
           <div style={styles.text}>{text}</div>
         </div>
 
-        <Link to='/Pack/SinglePack'>
+        <Link to="/Pack/SinglePack">
           <Button ghost style={styles.homeButton}>
             Get Started
           </Button>
         </Link>
       </div>
 
-      <img src={Homepage_pack} alt='' />
+      <img src={Homepage_pack} alt="" />
     </div>
   );
 };

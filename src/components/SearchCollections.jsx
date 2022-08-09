@@ -14,9 +14,9 @@ function SearchCollections({ setInputValue, inputValue }) {
       <Select
         showSearch
         value={inputValue}
-        placeholder='Find a Collection'
-        optionFilterProp='children'
-        optionLabelProp='label'
+        placeholder="Find a Collection"
+        optionFilterProp="children"
+        optionLabelProp="label"
         onChange={onChange}
         style={{ width: "300px" }}
       >
@@ -30,16 +30,16 @@ function SearchCollections({ setInputValue, inputValue }) {
                 <div style={{ display: "inline-flex", alignItems: "center" }}>
                   <img
                     src={collection.image}
-                    alt=''
+                    alt=""
                     style={{ width: "20px", height: "20px", borderRadius: "4px", marginRight: "5px" }}
                   />
                   <div>{collection.name}</div>
                 </div>
               }
             >
-              <Space size='middle'>
+              <Space size="middle">
                 <>
-                  <img src={collection.image} alt='' style={{ width: "30px", height: "30px", borderRadius: "4px" }} />
+                  <img src={collection.image} alt="" style={{ width: "30px", height: "30px", borderRadius: "4px" }} />
                   <span>{collection.name}</span>
                 </>
               </Space>

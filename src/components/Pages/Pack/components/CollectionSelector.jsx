@@ -45,7 +45,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
         collectionAddress: option.option.collectionAddress,
         description: option.option.description,
         metadataURI: option.option.metadataURI,
-        symbol: option.option.symbol
+        symbol: option.option.symbol,
       };
       setIsExistingCollection(true);
       setCurrentCollection(current);
@@ -79,19 +79,19 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
       setName();
       setSymbol();
       setDescription();
-    }
+    },
   }));
 
   return (
     <div style={styles.transparentContainerInside}>
-      <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+      <Spin style={{ borderRadius: "20px" }} spinning={waiting} size="large">
         {!displayFactory && (
           <>
             <Select
               allowClear={true}
-              placeholder='Pick an existing collection'
-              optionFilterProp='children'
-              optionLabelProp='label'
+              placeholder="Pick an existing collection"
+              optionFilterProp="children"
+              optionLabelProp="label"
               onChange={handleChange}
               onDeselect={handleDeselect}
               style={{ width: "70%", marginTop: "20px" }}
@@ -106,18 +106,18 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
                       <div style={{ display: "inline-flex", alignItems: "center" }}>
                         <img
                           src={collection.image}
-                          alt=''
+                          alt=""
                           style={{ width: "20px", height: "20px", borderRadius: "4px", marginRight: "5px" }}
                         />
                         <div>{collection.name}</div>
                       </div>
                     }
                   >
-                    <Space size='middle'>
+                    <Space size="middle">
                       <>
                         <img
                           src={collection.image}
-                          alt=''
+                          alt=""
                           style={{ width: "30px", height: "30px", borderRadius: "4px" }}
                         />
                         <span>{collection.name}</span>
@@ -139,12 +139,12 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
             <div style={{ fontSize: "17px", margin: "20px", justifyContent: "center" }}>
               <span>Create a new collection: </span>
               <Tooltip
-                title='Create your very own pack collection from scratch ! Define the name, symbol, supply and description. Leave blanck to use our default collection.'
+                title="Create your very own pack collection from scratch ! Define the name, symbol, supply and description. Leave blanck to use our default collection."
                 style={{ position: "absolute", top: "35px", right: "80px" }}
               >
                 <QuestionCircleOutlined style={{ color: "white", paddingLeft: "15px" }} />
               </Tooltip>
-              <Switch style={{ marginLeft: "30px" }} size='small' defaultChecked={false} onChange={handleSwitch} />
+              <Switch style={{ marginLeft: "30px" }} size="small" defaultChecked={false} onChange={handleSwitch} />
             </div>
 
             {displayFactory && (
@@ -174,7 +174,7 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
               display: "flex",
               flexDirection: "column",
               margin: "20px",
-              padding: "20px"
+              padding: "20px",
             }}
           >
             <Text style={{ fontSize: "20px" }}>Selected collection:</Text>
@@ -207,4 +207,5 @@ const CollectionSelector = forwardRef(({ customCollectionInfo }, ref) => {
   );
 });
 
+CollectionSelector.displayName = "CollectionSelector";
 export default CollectionSelector;

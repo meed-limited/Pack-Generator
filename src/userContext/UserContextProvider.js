@@ -21,7 +21,7 @@ function UserDataProvider({ children }) {
         assemblyAddress,
         marketAddress,
         factoryAddress,
-        onSupportedChain
+        onSupportedChain,
       }}
     >
       {children}

@@ -19,15 +19,15 @@ const styles = {
     textAlign: "left",
     padding: "15px",
     fontSize: "18px",
-    color: "white"
-  }
+    color: "white",
+  },
 };
 
 const ShowNFTModal = ({ nftToShow, setDetailVisibility, detailVisibility }) => {
   const copyToClipboard = (toCopy) => {
     copy(toCopy);
     message.config({
-      maxCount: 1
+      maxCount: 1,
     });
     message.success(`"${toCopy}" copied!`, 2);
   };
@@ -42,13 +42,13 @@ const ShowNFTModal = ({ nftToShow, setDetailVisibility, detailVisibility }) => {
       >
         <img
           src={`${nftToShow?.image}`}
-          alt=''
+          alt=""
           style={{
             width: "250px",
             height: "250px",
             margin: "auto",
             borderRadius: "10px",
-            marginBottom: "15px"
+            marginBottom: "15px",
           }}
         />
         <div style={styles.transparentContainer}>

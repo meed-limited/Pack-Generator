@@ -21,7 +21,7 @@ const CollectionFactory = ({
   setDescription,
   setWaiting,
   setCurrentCollection,
-  customCollectionInfo
+  customCollectionInfo,
 }) => {
   const { chainId, account } = useMoralis();
   const { factoryAddress } = useUserData();
@@ -48,7 +48,7 @@ const CollectionFactory = ({
     setIsImageLoading(true);
     const image = e.file.originFileObj;
     const file = new Moralis.File(e.file.name, image);
-    await file.saveIPFS().then((result) => {
+    await file.saveIPFS().then(() => {
       setImageURL(file.ipfs());
     });
     // .catch((err) => {
@@ -75,7 +75,7 @@ const CollectionFactory = ({
     const metadata = {
       name: name,
       image: imageURL,
-      description: description
+      description: description,
     };
 
     const file = new Moralis.File("metadata.json", { base64: btoa(JSON.stringify(metadata)) });
@@ -112,7 +112,7 @@ const CollectionFactory = ({
   const createNewContract = async (name, symbol, supply) => {
     setWaiting(true);
     message.config({
-      maxCount: 1
+      maxCount: 1,
     });
     message.loading("Uploading metadata to IPFS, please wait until a metamask invit shows up...", 5);
 
@@ -128,8 +128,8 @@ const CollectionFactory = ({
         _name: name,
         _symbol: symbol,
         _maxSupply: supply,
-        _baseURIextended: metadataURI
-      }
+        _baseURIextended: metadataURI,
+      },
     };
 
     try {
@@ -146,7 +146,7 @@ const CollectionFactory = ({
           <br></br>
           Your smart-contract address: {newAddress}
           <br></br>
-          <a href={link} target='_blank' rel='noreferrer noopener'>
+          <a href={link} target="_blank" rel="noreferrer noopener">
             View in explorer: &nbsp;
             <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
           </a>
@@ -160,7 +160,7 @@ const CollectionFactory = ({
         name: name,
         collectionAddress: newAddress,
         symbol: symbol,
-        maxSupply: supply
+        maxSupply: supply,
       };
       setCurrentCollection(collec);
       customCollectionInfo(collec);
@@ -189,7 +189,7 @@ const CollectionFactory = ({
             <label style={{ fontSize: "11px" }}>Collection Name:</label>
             <Input
               style={styles.transparentInput}
-              placeholder='e.g. My Super Collection'
+              placeholder="e.g. My Super Collection"
               value={name}
               onChange={handleNameChange}
             />
@@ -200,7 +200,7 @@ const CollectionFactory = ({
               <label style={{ fontSize: "11px" }}>Collection Symbol:</label>
               <Input
                 style={styles.transparentInputSmaller}
-                placeholder='e.g. MSC'
+                placeholder="e.g. MSC"
                 value={symbol}
                 onChange={handleSymbolChange}
               />
@@ -222,7 +222,7 @@ const CollectionFactory = ({
             <label style={{ fontSize: "11px" }}>Collection Description:</label>
             <TextArea
               style={styles.transparentInput}
-              placeholder='e.g. This is a great collection.'
+              placeholder="e.g. This is a great collection."
               maxLength={250}
               showCount
               value={description}
@@ -232,21 +232,21 @@ const CollectionFactory = ({
         </div>
         <div style={{ alignItems: "center", margin: "auto" }}>
           <Upload
-            type='file'
-            maxCount='1'
-            name='image'
-            listType='picture-card'
+            type="file"
+            maxCount="1"
+            name="image"
+            listType="picture-card"
             showUploadList={false}
             beforeUpload={beforeUpload}
             onChange={handleImageChange}
           >
-            {imageURL ? <img src={imageURL} alt='' style={{ width: "100%" }} /> : uploadButton}
+            {imageURL ? <img src={imageURL} alt="" style={{ width: "100%" }} /> : uploadButton}
           </Upload>
         </div>
       </div>
 
       <div style={{ marginTop: "20px" }}>
-        <Button type='primary' shape='round' size='large' style={styles.resetButton} onClick={handleCreate}>
+        <Button type="primary" shape="round" size="large" style={styles.resetButton} onClick={handleCreate}>
           CREATE NEW COLLECTION
         </Button>
       </div>

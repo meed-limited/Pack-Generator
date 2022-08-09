@@ -23,7 +23,7 @@ const styles = {
     backgroundRepeat: "no-repeat",
     width: "100vw",
     height: "100vh",
-    fontFamily: "Sora, sans-serif"
+    fontFamily: "Sora, sans-serif",
   },
   pageContent: {
     justifyContent: "top",
@@ -31,14 +31,14 @@ const styles = {
     height: "81vh",
     margin: "80px auto 70px auto",
     overflow: "auto",
-    overflowX: "hidden"
+    overflowX: "hidden",
   },
   footer: {
     position: "fixed",
     width: "100%",
     bottom: "0",
-    backgroundColor: "transparent"
-  }
+    backgroundColor: "transparent",
+  },
 };
 const App = () => {
   const { account, isWeb3Enabled, enableWeb3, isAuthenticated, isWeb3EnableLoading } = useMoralis();
@@ -110,14 +110,14 @@ const App = () => {
                     {/* <Route exact path='BatchMinter'>
                       <BatchMinter />
                     </Route> */}
-                    <Route exact path='/Pack/SinglePack' element={<Pack paneToShow={"single"} />} />
-                    <Route exact path='/Pack/BatchPacks' element={<Pack paneToShow={"batch"} />} />
-                    <Route exact path='/Pack/ClaimPack' element={<Pack paneToShow={"claim"} />} />
-                    <Route exact path='/MarketPlace' element={<Marketplace />} />
-                    <Route exact path='/YourNFTs' element={<YourNFTs />} />
-                    <Route exact path='/Transactions' element={<Transactions />} />
-                    <Route exact path='/' element={<Home />} />
-                    <Route path='*' element={<Navigate to='/' />} />
+                    <Route exact path="/Pack/SinglePack" element={<Pack paneToShow={"single"} />} />
+                    <Route exact path="/Pack/BatchPacks" element={<Pack paneToShow={"batch"} />} />
+                    <Route exact path="/Pack/ClaimPack" element={<Pack paneToShow={"claim"} />} />
+                    <Route exact path="/MarketPlace" element={<Marketplace />} />
+                    <Route exact path="/YourNFTs" element={<YourNFTs />} />
+                    <Route exact path="/Transactions" element={<Transactions />} />
+                    <Route exact path="/" element={<Home />} />
+                    <Route path="*" element={<Navigate to="/" />} />
                   </Routes>
                 </>
               )}

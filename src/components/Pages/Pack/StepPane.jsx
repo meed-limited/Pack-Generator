@@ -18,8 +18,8 @@ const styles = {
     border: "1px solid",
     padding: "20px 15px 0px 20px",
     color: "white",
-    overflow: "auto"
-  }
+    overflow: "auto",
+  },
 };
 
 const StepsPane = ({ displayPaneMode, isBatch }) => {
@@ -81,13 +81,13 @@ const StepsPane = ({ displayPaneMode, isBatch }) => {
 
   return (
     <div style={styles.pane}>
-      <Steps direction='vertical' current={switchStep()}>
-        {isBatch && <Step title='Choose Collection' description={displayPaneMode === "factory" ? `${text}` : ""} />}
-        <Step title='Choose Tokens' description={displayPaneMode === "tokens" ? `${text}` : ""} />
-        <Step title='Choose NFTs' description={displayPaneMode === "nfts" ? `${text}` : ""} />
-        <Step title='Recap' description={displayPaneMode === "confirm" ? `${text}` : ""} />
-        <Step title='Pack' description={displayPaneMode === "pack" ? `${text}` : ""} />
-        <Step title='Done' description={displayPaneMode === "done" ? `${text}` : ""} />
+      <Steps direction="vertical" current={switchStep()}>
+        {isBatch && <Step title="Choose Collection" description={displayPaneMode === "factory" ? `${text}` : ""} />}
+        <Step title="Choose Tokens" description={displayPaneMode === "tokens" ? `${text}` : ""} />
+        <Step title="Choose NFTs" description={displayPaneMode === "nfts" ? `${text}` : ""} />
+        <Step title="Recap" description={displayPaneMode === "confirm" ? `${text}` : ""} />
+        <Step title="Pack" description={displayPaneMode === "pack" ? `${text}` : ""} />
+        <Step title="Done" description={displayPaneMode === "done" ? `${text}` : ""} />
       </Steps>
     </div>
   );

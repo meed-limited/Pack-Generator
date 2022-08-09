@@ -4,6 +4,6 @@ import { notification } from "antd";
 export function openNotification(type, title, message) {
   notification[type]({
     message: title,
-    description: message
+    description: message,
   });
 }

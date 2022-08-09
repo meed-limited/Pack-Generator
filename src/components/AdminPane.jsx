@@ -14,18 +14,18 @@ const styles = {
     width: "80%",
     textAlign: "center",
     margin: "auto",
-    padding: "30px 0"
+    padding: "30px 0",
   },
   title: {
     color: "white",
     fontWeight: 600,
     fontSize: "30px",
-    marginBottom: "10px"
+    marginBottom: "10px",
   },
   text: {
     color: "black",
     fontSize: "20px",
-    marginTop: "10px"
+    marginTop: "10px",
   },
   adminButton: {
     height: "30px",
@@ -35,8 +35,8 @@ const styles = {
     border: "none",
     background: "white",
     color: "black",
-    fontFamily: "Sora, sans-serif"
-  }
+    fontFamily: "Sora, sans-serif",
+  },
 };
 
 const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
@@ -63,8 +63,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         functionName: "setFeeETH",
         abi: abi,
         params: {
-          _newEthFee: nativeAmount
-        }
+          _newEthFee: nativeAmount,
+        },
       };
 
       try {
@@ -91,8 +91,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         functionName: "setFeeL3P",
         abi: abi,
         params: {
-          _newL3PFee: tokenAmount
-        }
+          _newL3PFee: tokenAmount,
+        },
       };
 
       try {
@@ -118,8 +118,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         functionName: "setFeeReceiver",
         abi: assemblyABIJson,
         params: {
-          _newFeeReceiver: address.toString()
-        }
+          _newFeeReceiver: address.toString(),
+        },
       };
 
       try {
@@ -145,8 +145,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         functionName: "setTokenURI",
         abi: assemblyABIJson,
         params: {
-          _newTokenURI: IPFSurl.toString()
-        }
+          _newTokenURI: IPFSurl.toString(),
+        },
       };
 
       try {
@@ -172,8 +172,8 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         functionName: "transferOwnership",
         abi: assemblyABIJson,
         params: {
-          newOwner: newAdminAdd.toString()
-        }
+          newOwner: newAdminAdd.toString(),
+        },
       };
 
       try {
@@ -201,13 +201,13 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
       <p style={{ color: "white", fontSize: "15px", paddingBottom: "10px" }}>Variables for Lepricon Main Collection</p>
       <div style={{ width: "60%", margin: "auto" }}>
         <Input
-          type='number'
+          type="number"
           placeholder={`Enter the new fee in ${nativeToken.symbol}`}
           style={{ marginBottom: "5px" }}
           onChange={(e) => setEthAmount(e.target.value)}
         />
         <Button
-          type='primary'
+          type="primary"
           onClick={() => setEthFee(assemblyAddress, assemblyABIJson, ethAmount)}
           style={{ marginBottom: "20px" }}
         >
@@ -216,13 +216,13 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         {chainId === 0x1 && chainId === 0x38 && (
           <>
             <Input
-              type='number'
-              placeholder='Enter the new fee in L3P'
+              type="number"
+              placeholder="Enter the new fee in L3P"
               style={{ marginBottom: "5px" }}
               onChange={(e) => setL3PAmount(e.target.value)}
             />
             <Button
-              type='primary'
+              type="primary"
               onClick={() => setL3PFee(assemblyAddress, assemblyABIJson, L3PAmount)}
               style={{ marginBottom: "20px" }}
             >
@@ -234,53 +234,53 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
         <AddressInput
           style={{ marginBottom: "5px" }}
           autoFocus
-          placeholder='Enter the new receiver address'
+          placeholder="Enter the new receiver address"
           onChange={setAddress}
         />
-        <Button type='primary' onClick={setReceiverAddress} style={{ marginBottom: "20px" }}>
+        <Button type="primary" onClick={setReceiverAddress} style={{ marginBottom: "20px" }}>
           Set receiver address
         </Button>
         <Input
           style={{ marginBottom: "5px" }}
-          placeholder='Enter the new metadata URL'
+          placeholder="Enter the new metadata URL"
           onChange={(e) => setIPFSurl(e.target.value)}
         />
-        <Button type='primary' onClick={setMetadata} style={{ marginBottom: "20px" }}>
+        <Button type="primary" onClick={setMetadata} style={{ marginBottom: "20px" }}>
           Set Metadata
         </Button>
         <AddressInput
           style={{ marginBottom: "5px" }}
-          placeholder='Enter the new admin address'
+          placeholder="Enter the new admin address"
           autoFocus
           onChange={setNewAdminAdd}
         />
-        <Button type='primary' onClick={setNewAdmin} style={{ marginBottom: "20px" }}>
+        <Button type="primary" onClick={setNewAdmin} style={{ marginBottom: "20px" }}>
           Set admin address
         </Button>
 
         <Divider />
         <p style={{ color: "white", fontSize: "15px", paddingBottom: "10px" }}>Variables for Custom Collections</p>
         <Input
-          type='number'
+          type="number"
           placeholder={`Enter the new fee in ${nativeToken.symbol}`}
           style={{ marginBottom: "5px" }}
           onChange={(e) => setCustomEthAmount(e.target.value)}
         />
         <Button
-          type='primary'
+          type="primary"
           onClick={() => setEthFee(factoryAddress, factoryABIJson, customEthAmount)}
           style={{ marginBottom: "20px" }}
         >
           Custom Collection: Set {nativeToken.symbol} fee
         </Button>
         <Input
-          type='number'
+          type="number"
           placeholder={`Enter the new fee in ${nativeToken.symbol}`}
           style={{ marginBottom: "5px" }}
           onChange={(e) => setCustomL3PAmount(e.target.value)}
         />
         <Button
-          type='primary'
+          type="primary"
           onClick={() => setL3PFee(factoryAddress, factoryABIJson, customL3PAmount)}
           style={{ marginBottom: "20px" }}
         >
@@ -289,7 +289,7 @@ const AdminPane = ({ adminAddress, setAdminAddress, setIsAdminPaneOpen }) => {
       </div>
 
       <div>
-        <Button style={styles.adminButton} shape='round' onClick={handleBackClic}>
+        <Button style={styles.adminButton} shape="round" onClick={handleBackClic}>
           Back
         </Button>
       </div>

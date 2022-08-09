@@ -34,7 +34,7 @@
 }
 
 .ant-menu-item-group-title {
-padding: 0px !important;
+  padding: 0px !important;
 }
 
 .ant-menu-title-content {
@@ -88,7 +88,7 @@ padding: 0px !important;
 .ant-modal-content {
   overflow: auto !important;
   border-radius: 1rem !important;
-  background: rgba(240, 248, 255, 0.10) !important;
+  background: rgba(240, 248, 255, 0.1) !important;
   background: -moz-linear-gradient(
     left,
     rgba(240, 248, 255, 0.4) 0%,
@@ -218,8 +218,8 @@ input::placeholder {
   align-items: center !important;
 }
 
-
-.ant-dropdown-menu-item, .ant-dropdown-menu-submenu-title {
+.ant-dropdown-menu-item,
+.ant-dropdown-menu-submenu-title {
   height: 42px;
-  gap: 5px
-  }
+  gap: 5px;
+}

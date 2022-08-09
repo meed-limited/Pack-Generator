@@ -19,15 +19,15 @@ const styles = {
     background:
       "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
   },
   button: {
     display: "flex",
     alignItems: "center",
     height: "42px",
     border: "0",
-    borderRadius: "12px"
-  }
+    borderRadius: "12px",
+  },
 };
 
 export const menuItems = [
@@ -35,7 +35,7 @@ export const menuItems = [
     key: "0x1",
     value: "Ethereum",
     icon: <ETHLogo />,
-    label: "Ethereum"
+    label: "Ethereum",
   },
   // {
   //   key: "0x539",
@@ -71,7 +71,7 @@ export const menuItems = [
     key: "0x38",
     value: "Binance",
     icon: <BSCLogo />,
-    label: "Binance"
+    label: "Binance",
   },
   // {
   //   key: "0x61",
@@ -83,8 +83,8 @@ export const menuItems = [
     key: "0x89",
     value: "Polygon",
     icon: <PolygonLogo />,
-    label: "Polygon"
-  }
+    label: "Polygon",
+  },
   // {
   //   key: "0x13881",
   //   value: "Mumbai",

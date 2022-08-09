@@ -15,8 +15,8 @@ const styles = {
     textAlign: "center",
     backgroundImage: `url(${buttonImg})`,
     backgroundSize: "cover",
-    border: "1px solid yellow"
-  }
+    border: "1px solid yellow",
+  },
 };
 
 const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
@@ -50,20 +50,20 @@ const ClaimSingleNFT = ({ nftToClaim, getClaimStatut }) => {
 
   return (
     <>
-      <Spin spinning={waiting} style={{ margin: "auto", display: "block" }} size='large'>
+      <Spin spinning={waiting} style={{ margin: "auto", display: "block" }} size="large">
         <img
           src={`${nftToClaim?.image}`}
-          alt=''
+          alt=""
           style={{
             width: "250px",
             height: "250px",
             margin: "auto",
             borderRadius: "10px",
-            marginBottom: "15px"
+            marginBottom: "15px",
           }}
         />
 
-        <Button type='primary' shape='round' style={styles.selectButton} onClick={handleClaim}>
+        <Button type="primary" shape="round" style={styles.selectButton} onClick={handleClaim}>
           CLAIM
         </Button>
       </Spin>

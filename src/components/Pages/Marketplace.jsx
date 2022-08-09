@@ -25,12 +25,12 @@ const styles = {
     justifyContent: "center",
     margin: "0 auto",
     maxWidth: "1000px",
-    gap: "15px"
+    gap: "15px",
   },
   NftImage: {
     width: "250px",
     borderRadius: "10px",
-    marginBottom: "15px"
+    marginBottom: "15px",
   },
   banner: {
     display: "flex",
@@ -41,13 +41,13 @@ const styles = {
     height: "150px",
     marginBottom: "40px",
     paddingBottom: "20px",
-    borderBottom: "solid 1px #e3e3e3"
+    borderBottom: "solid 1px #e3e3e3",
   },
   logo: {
     height: "115px",
     width: "115px",
     borderRadius: "50%",
-    border: "solid 4px white"
+    border: "solid 4px white",
   },
   backButton: {
     width: "150px",
@@ -60,14 +60,14 @@ const styles = {
     color: "yellow",
     border: "0.5px solid white",
     fontSize: "12px",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   text: {
     color: "white",
     fontSize: "27px",
     fontWeight: "bold",
-    letterSpacing: "2px"
-  }
+    letterSpacing: "2px",
+  },
 };
 
 function Marketplace() {
@@ -157,7 +157,7 @@ function Marketplace() {
 
           {collectionAddr && (
             <div style={{ textAlign: "center", paddingBottom: "30px" }}>
-              <Button style={styles.backButton} shape='round' onClick={() => setCollectionAddr()}>
+              <Button style={styles.backButton} shape="round" onClick={() => setCollectionAddr()}>
                 Back to collections
               </Button>
             </div>
@@ -170,7 +170,7 @@ function Marketplace() {
                   preview={false}
                   src={Marketplace[0]?.image || "error"}
                   fallback={fallbackImg}
-                  alt=''
+                  alt=""
                   style={styles.logo}
                 />
                 <div style={styles.text}>
@@ -180,7 +180,7 @@ function Marketplace() {
                       style={{
                         fontSize: "15px",
                         color: "yellow",
-                        fontWeight: "normal"
+                        fontWeight: "normal",
                       }}
                     >
                       Collection Size: {`${totalNFTs}`}
@@ -196,12 +196,12 @@ function Marketplace() {
               NFTCollections?.map((nft, index) => (
                 <Card
                   hoverable
-                  size='small'
+                  size="small"
                   onClick={() => setCollectionAddr(nft?.addrs)}
                   actions={[
-                    <Tooltip title='View Collection'>
+                    <Tooltip title="View Collection">
                       <RightCircleOutlined />
-                    </Tooltip>
+                    </Tooltip>,
                   ]}
                   style={{ width: "200px", transform: "scale(0.9)", border: "2px solid #e7eaf3" }}
                   cover={
@@ -209,7 +209,7 @@ function Marketplace() {
                       preview={false}
                       src={nft?.image || "error"}
                       fallback={fallbackImg}
-                      alt=''
+                      alt=""
                       style={{ height: "200px" }}
                     />
                   }
@@ -224,16 +224,16 @@ function Marketplace() {
                 return (
                   <Card
                     hoverable
-                    size='small'
+                    size="small"
                     actions={[
-                      <Tooltip title='View On Blockexplorer'>
+                      <Tooltip title="View On Blockexplorer">
                         <FileSearchOutlined
                           onClick={() => window.open(`${getExplorer(chainId)}address/${nft.token_address}`, "_blank")}
                         />
                       </Tooltip>,
-                      <Tooltip title='Buy NFT'>
+                      <Tooltip title="Buy NFT">
                         <ShoppingCartOutlined onClick={() => handleBuyClick(nft)} />
-                      </Tooltip>
+                      </Tooltip>,
                     ]}
                     style={{ width: "190px", border: "2px solid #e7eaf3" }}
                     cover={
@@ -242,11 +242,11 @@ function Marketplace() {
                           preview={false}
                           src={nft.image || "error"}
                           fallback={fallbackImg}
-                          alt=''
+                          alt=""
                           style={{ height: "190px" }}
                           onClick={() => handleShowDetail(nft)}
                         />
-                        {getMarketItem(nft) && <Badge.Ribbon text='Buy Now' color='green'></Badge.Ribbon>}
+                        {getMarketItem(nft) && <Badge.Ribbon text="Buy Now" color="green"></Badge.Ribbon>}
                       </>
                     }
                     key={index}
@@ -268,12 +268,12 @@ function Marketplace() {
               visible={visible}
               onCancel={() => setVisibility(false)}
               onOk={() => purchase()}
-              okText='Buy'
+              okText="Buy"
             >
               <Spin spinning={loading}>
                 <div style={{ width: "250px", margin: "auto" }}>
-                  <Badge.Ribbon color='green' text={`${getMarketItem(nftToBuy).price} ${nativeToken?.name}`}>
-                    <img src={nftToBuy?.image} alt='' style={styles.NftImage} />
+                  <Badge.Ribbon color="green" text={`${getMarketItem(nftToBuy).price} ${nativeToken?.name}`}>
+                    <img src={nftToBuy?.image} alt="" style={styles.NftImage} />
                   </Badge.Ribbon>
                 </div>
               </Spin>
@@ -285,8 +285,8 @@ function Marketplace() {
               onCancel={() => setVisibility(false)}
               onOk={() => setVisibility(false)}
             >
-              <img src={nftToBuy?.image} alt='' style={{ ...styles.NftImage, marginInline: "auto" }} />
-              <Alert message='This NFT is currently not for sale' type='warning' />
+              <img src={nftToBuy?.image} alt="" style={{ ...styles.NftImage, marginInline: "auto" }} />
+              <Alert message="This NFT is currently not for sale" type="warning" />
             </Modal>
           )}
         </div>

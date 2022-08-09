@@ -18,7 +18,7 @@ export default function AssetSelector({ setAsset, style }) {
   }
 
   return (
-    <Select onChange={handleChange} size='large' placeholder='Select a token' style={style}>
+    <Select onChange={handleChange} size="large" placeholder="Select a token" style={style}>
       {fullBalance &&
         fullBalance.map((item) => {
           return (
@@ -28,14 +28,14 @@ export default function AssetSelector({ setAsset, style }) {
                   display: "flex",
                   alignItems: "center",
                   width: "100%",
-                  gap: "8px"
+                  gap: "8px",
                 }}
               >
                 <Image
                   src={item.logo || "https://etherscan.io/images/main/empty-token.png"}
-                  alt='nologo'
-                  width='24px'
-                  height='24px'
+                  alt="nologo"
+                  width="24px"
+                  height="24px"
                   preview={false}
                   style={{ borderRadius: "15px" }}
                 />
@@ -43,7 +43,7 @@ export default function AssetSelector({ setAsset, style }) {
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
-                    width: "90%"
+                    width: "90%",
                   }}
                 >
                   <p>{item.symbol}</p>

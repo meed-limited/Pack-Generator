@@ -15,7 +15,7 @@ export const useNFTTokenIds = (addr) => {
     const options = {
       chain: chainId,
       address: addr,
-      limit: 20
+      limit: 20,
     };
     const NFTs = await token.getAllTokenIds(options);
     setFetchResult(NFTs);
@@ -63,6 +63,6 @@ export const useNFTTokenIds = (addr) => {
   return {
     Marketplace,
     totalNFTs,
-    fetchSuccess
+    fetchSuccess,
   };
 };

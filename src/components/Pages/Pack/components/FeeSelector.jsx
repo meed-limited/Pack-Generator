@@ -22,15 +22,15 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-    padding: "30px 50px 15px 50px"
+    padding: "30px 50px 15px 50px",
   },
   feeSelection: {
     color: "white",
     fontSize: "20px",
     textAlign: "center",
     margin: "10px",
-    padding: "20px"
-  }
+    padding: "20px",
+  },
 };
 
 const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumber, isBatch = false }) => {
@@ -53,7 +53,7 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
     const readOptions = {
       contractAddress: contractAddress,
       functionName: "feeETH",
-      abi: assemblyABIJson
+      abi: assemblyABIJson,
     };
 
     try {
@@ -71,7 +71,7 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
     const readOptions = {
       contractAddress: contractAddress,
       functionName: "feeL3P",
-      abi: assemblyABIJson
+      abi: assemblyABIJson,
     };
 
     try {
@@ -88,7 +88,7 @@ const FeeSelector = ({ serviceFee, setServiceFee, customCollectionData, packNumb
     if (!onLP3Chain) {
       return (
         <Alert
-          type='info'
+          type="info"
           style={{ width: "80%", margin: "auto", marginBottom: "20px" }}
           showIcon
           message={`L3P payment is not available on ${chainName} yet.`}

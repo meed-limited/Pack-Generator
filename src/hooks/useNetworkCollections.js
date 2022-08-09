@@ -12,7 +12,7 @@ export const useNetworkCollections = () => {
     const parsedCollections = await parseChainData(collections, chainId);
     const rename = parsedCollections?.map((item) => ({
       addrs: item.collectionAddress,
-      ...item
+      ...item,
     }));
     setNFTCollections(rename);
   };

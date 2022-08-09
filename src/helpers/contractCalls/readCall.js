@@ -9,7 +9,7 @@ export const getContractName = async (address) => {
     contractAddress: address,
     functionName: "name",
     abi: getNameABI,
-    params: {}
+    params: {},
   };
 
   try {
@@ -25,7 +25,7 @@ export const getAdminAddress = async (contractAddress) => {
   const readOptions = {
     contractAddress: contractAddress,
     functionName: "owner",
-    abi: assemblyABIJson
+    abi: assemblyABIJson,
   };
 
   try {
@@ -44,8 +44,8 @@ export const checkERC20allowance = async (_owner, ERC20address, contractAddress)
     abi: allowanceABI,
     params: {
       owner: _owner,
-      spender: contractAddress
-    }
+      spender: contractAddress,
+    },
   };
 
   try {
@@ -70,8 +70,8 @@ export const checkMultipleAssetsApproval = async (addresses, numbers, walletAddr
         abi: allowanceABI,
         params: {
           owner: walletAddress,
-          spender: contractAddress
-        }
+          spender: contractAddress,
+        },
       };
 
       try {
@@ -96,18 +96,18 @@ export const checkMultipleAssetsApproval = async (addresses, numbers, walletAddr
           {
             inputs: [
               { internalType: "address", name: "owner", type: "address" },
-              { internalType: "address", name: "operator", type: "address" }
+              { internalType: "address", name: "operator", type: "address" },
             ],
             name: "isApprovedForAll",
             outputs: [{ internalType: "bool", name: "", type: "bool" }],
             stateMutability: "view",
-            type: "function"
-          }
+            type: "function",
+          },
         ],
         params: {
           owner: walletAddress,
-          operator: contractAddress
-        }
+          operator: contractAddress,
+        },
       };
 
       try {

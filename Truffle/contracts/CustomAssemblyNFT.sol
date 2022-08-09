@@ -41,8 +41,9 @@ contract CustomAssemblyNFT is
             ERC1155Receiver.supportsInterface(interfaceId);
     }
 
-    address private L3P = 0xdeF1da03061DDd2A5Ef6c59220C135dec623116d; // L3P contract address (only available on Ethereum && BSC);
-    address private feeReceiver = 0xB7B8E47423bF7191aedd3AE649Ef074C2406b52C; /// Lepricon Multisig address
+    address private constant L3P = 0xdeF1da03061DDd2A5Ef6c59220C135dec623116d; // L3P contract address (only available on Ethereum && BSC);
+    address private constant feeReceiver =
+        0xB7B8E47423bF7191aedd3AE649Ef074C2406b52C; /// Lepricon Multisig address
     uint256 public feeETH; // Fees charged on TXs, if paid in native (ETH, MATIC, BNB)
     uint256 public feeL3P; // Fees charged on TXs, if paid in L3P, default === 100 L3P
     uint256 public maxPackSupply;

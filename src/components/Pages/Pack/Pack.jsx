@@ -13,25 +13,25 @@ const styles = {
     height: "90%",
     margin: "auto",
     marginTop: "30px",
-    textAlign: "center"
+    textAlign: "center",
   },
   title: {
     marginBottom: "35px",
     fontSize: "22px",
     fontWeight: "600",
     color: "white",
-    letterSpacing: "2px"
+    letterSpacing: "2px",
   },
   tabsContent: {
     display: "flex",
     flexDirection: "row",
     height: "65vh",
-    gap: "30px"
+    gap: "30px",
   },
   leftColumn: {
     flex: "1",
-    display: "flex"
-  }
+    display: "flex",
+  },
 };
 
 const Pack = ({ paneToShow }) => {

@@ -10,7 +10,7 @@ import {
   marketAddressBSC,
   marketAddressEthereum,
   marketAddressMumbai,
-  marketAddressPolygon
+  marketAddressPolygon,
 } from "constant/constant";
 
 /* GET CONTRACT ADDRESS FUNCTION:

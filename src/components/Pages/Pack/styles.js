@@ -18,7 +18,7 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "none",
     color: "white",
-    textAlign: "center"
+    textAlign: "center",
   },
   transparentInputSmaller: {
     width: "80%",
@@ -32,7 +32,7 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "none",
     color: "white",
-    textAlign: "center"
+    textAlign: "center",
   },
   selectButton: {
     width: "55%",
@@ -41,7 +41,7 @@ const styles = {
     backgroundSize: "cover",
     border: "1px solid yellow",
     textAlign: "center",
-    fontSize: "12px"
+    fontSize: "12px",
   },
   resetButton: {
     margin: "10px 30px",
@@ -52,7 +52,7 @@ const styles = {
     background: "linear-gradient(to right, #d020ba 0%, #BF28C3 10%, #6563E0 100%)",
     border: "0.5px solid white",
     color: "yellow",
-    fontSize: "12px"
+    fontSize: "12px",
   },
   runFunctionButton: {
     width: "300px",
@@ -68,7 +68,7 @@ const styles = {
     color: "yellow",
     fontSize: "16px",
     fontWeight: "600",
-    letterSpacing: "2px"
+    letterSpacing: "2px",
   },
   mainPackContainer: {
     display: "flex",
@@ -89,7 +89,7 @@ const styles = {
     border: "1px solid",
     color: "white",
     fontSize: "18px",
-    textAlign: "center"
+    textAlign: "center",
   },
   transparentContainerNotconnected: {
     marginTop: "80px",
@@ -105,7 +105,7 @@ const styles = {
     borderRadius: "20px",
     color: "white",
     fontSize: "18px",
-    textAlign: "left"
+    textAlign: "left",
   },
   transparentContainerInside: {
     borderRadius: "15px",
@@ -119,7 +119,7 @@ const styles = {
     background:
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
-    textAlign: "center"
+    textAlign: "center",
   },
 
   // Minter tab
@@ -129,7 +129,7 @@ const styles = {
     margin: "auto",
     marginBottom: "30px",
     border: "1px solid #ddd",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   },
   input2: {
     display: "block",
@@ -137,13 +137,13 @@ const styles = {
     margin: "auto",
     marginBottom: "10px",
     border: "1px solid #ddd",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   },
   textarea: {
     display: "block",
     width: "60%",
     margin: "auto",
-    marginBottom: "30px"
+    marginBottom: "30px",
   },
   select: {
     display: "block",
@@ -151,7 +151,7 @@ const styles = {
     padding: "6px 10px",
     margin: "10px 0",
     border: "1px solid #ddd",
-    boxSizing: "border-box"
+    boxSizing: "border-box",
   },
 
   // Pack tab
@@ -170,7 +170,7 @@ const styles = {
     borderRadius: "8px",
     color: "white",
     fontSize: "12px",
-    opacity: "0.9"
+    opacity: "0.9",
   },
   zone: {
     display: "flex",
@@ -186,7 +186,7 @@ const styles = {
     borderWidth: 2,
     borderStyle: "dashed",
     borderRadius: 20,
-    color: "black"
+    color: "black",
   },
   file: {
     background: "linear-gradient(to bottom, rgb(243 213 232), rgb(22 0 110))",
@@ -197,53 +197,53 @@ const styles = {
     position: "relative",
     zIndex: 10,
     flexDirection: "column",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   info: {
     alignItems: "center",
     display: "flex",
     flexDirection: "column",
-    padding: "10px"
+    padding: "10px",
   },
   size: {
     backgroundColor: GREY_LIGHT,
     borderRadius: 3,
     marginBottom: "0.5em",
     justifyContent: "center",
-    display: "flex"
+    display: "flex",
   },
   name: {
     backgroundColor: GREY_LIGHT,
     borderRadius: 3,
     fontSize: 15,
-    marginBottom: "0.5em"
+    marginBottom: "0.5em",
   },
   progressBar: {
     bottom: 14,
     position: "absolute",
     width: "100%",
     paddingLeft: 10,
-    paddingRight: 10
+    paddingRight: 10,
   },
   zoneHover: {
-    borderColor: GREY_DIM
+    borderColor: GREY_DIM,
   },
   default: {
-    borderColor: GREY
+    borderColor: GREY,
   },
   remove: {
     height: 23,
     position: "absolute",
     right: 6,
     top: 6,
-    width: 23
+    width: 23,
   },
   contentGrid: {
     marginBottom: "30px",
     margin: "auto",
     display: "grid",
     gridTemplateColumns: "49% 2% 49%",
-    fontSize: "12px"
+    fontSize: "12px",
   },
 
   // MARKETPLACE:
@@ -261,8 +261,8 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-    color: "white"
-  }
+    color: "white",
+  },
 };
 
 export default styles;

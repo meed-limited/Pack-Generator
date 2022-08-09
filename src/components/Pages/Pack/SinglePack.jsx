@@ -117,7 +117,7 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
               ref={tokenSelectionRef}
             />
             <div style={{ marginTop: "15px" }}>
-              <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+              <Button shape="round" style={styles.resetButton} onClick={handleNext}>
                 NEXT
               </Button>
             </div>
@@ -140,18 +140,18 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
         )}
 
         {displayPaneMode === "pack" && (
-          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size="large">
             <div style={{ ...styles.transparentContainerInside, padding: "40px" }}>
               <FeeSelector setServiceFee={setServiceFee} isBatch={false} />
-              <Button shape='round' style={styles.runFunctionButton} onClick={handleSinglePack}>
+              <Button shape="round" style={styles.runFunctionButton} onClick={handleSinglePack}>
                 PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
               </Button>
             </div>
             <div style={{ marginTop: "15px" }}>
-              <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
+              <Button style={{ ...styles.resetButton }} shape="round" onClick={handleBack}>
                 BACK
               </Button>
-              <Button style={styles.resetButton} shape='round' onClick={handleReset}>
+              <Button style={styles.resetButton} shape="round" onClick={handleReset}>
                 RESTART
               </Button>
             </div>
@@ -163,10 +163,10 @@ function SinglePack({ displayPaneMode, setDisplayPaneMode }) {
 
       {displayPaneMode !== "tokens" && displayPaneMode !== "pack" && displayPaneMode !== "done" && (
         <div style={{ marginTop: "15px" }}>
-          <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+          <Button shape="round" style={styles.resetButton} onClick={handleBack}>
             BACK
           </Button>
-          <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+          <Button shape="round" style={styles.resetButton} onClick={handleNext}>
             NEXT
           </Button>
         </div>

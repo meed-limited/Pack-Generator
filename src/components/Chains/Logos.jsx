@@ -30,23 +30,11 @@ export const ETHLogo = () => (
       d="M0 10C0 4.47715 4.47715 0 10 0H20C25.5228 0 30 4.47715 30 10V20C30 25.5228 25.5228 30 20 30H10C4.47715 30 0 25.5228 0 20V10Z"
       fill="#627EEA"
     />
-    <path
-      d="M15.0294 3.75V12.0656L22.0578 15.2062L15.0294 3.75Z"
-      fill="white"
-      fillOpacity="0.602"
-    />
+    <path d="M15.0294 3.75V12.0656L22.0578 15.2062L15.0294 3.75Z" fill="white" fillOpacity="0.602" />
     <path d="M15.0294 3.75L8 15.2062L15.0294 12.0656V3.75Z" fill="white" />
-    <path
-      d="M15.0294 20.595V26.2453L22.0625 16.515L15.0294 20.595Z"
-      fill="white"
-      fillOpacity="0.602"
-    />
+    <path d="M15.0294 20.595V26.2453L22.0625 16.515L15.0294 20.595Z" fill="white" fillOpacity="0.602" />
     <path d="M15.0294 26.2453V20.594L8 16.515L15.0294 26.2453Z" fill="white" />
-    <path
-      d="M15.0294 19.2872L22.0578 15.2063L15.0294 12.0675V19.2872Z"
-      fill="white"
-      fillOpacity="0.2"
-    />
+    <path d="M15.0294 19.2872L22.0578 15.2063L15.0294 12.0675V19.2872Z" fill="white" fillOpacity="0.2" />
     <path d="M8 15.2063L15.0294 19.2872V12.0675L8 15.2063Z" fill="white" fillOpacity="0.602" />
   </svg>
 );
@@ -65,7 +53,7 @@ export const PolygonLogo = () => (
 );
 
 export const PolygonCurrency = () => (
-<svg width="18" height="18" viewBox="0 -16 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <svg width="18" height="18" viewBox="0 -16 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path
       d="M29,10.2c-0.7-0.4-1.6-0.4-2.4,0L21,13.5l-3.8,2.1l-5.5,3.3c-0.7,0.4-1.6,0.4-2.4,0L5,16.3
       c-0.7-0.4-1.2-1.2-1.2-2.1v-5c0-0.8,0.4-1.6,1.2-2.1l4.3-2.5c0.7-0.4,1.6-0.4,2.4,0L16,7.2c0.7,0.4,1.2,1.2,1.2,2.1v3.3l3.8-2.2V7
@@ -76,24 +64,31 @@ export const PolygonCurrency = () => (
       fill="#8247E5"
     />
   </svg>
-)
+);
 
 export const LeprichainLogo = () => (
-  <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
- width="25px" height="25px" viewBox="0 0 25 25"
- preserveAspectRatio="xMidYMid meet">
-<g transform="translate(0.000000,25.000000) scale(0.100000,-0.100000)"
-fill="#000000" stroke="none">
-<path d="M58 234 c-37 -19 -58 -63 -58 -118 0 -39 5 -51 35 -81 32 -32 41 -35
+  <svg
+    version="1.0"
+    xmlns="http://www.w3.org/2000/svg"
+    width="25px"
+    height="25px"
+    viewBox="0 0 25 25"
+    preserveAspectRatio="xMidYMid meet"
+  >
+    <g transform="translate(0.000000,25.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+      <path
+        d="M58 234 c-37 -19 -58 -63 -58 -118 0 -39 5 -51 35 -81 32 -32 41 -35
 91 -35 50 0 59 3 90 34 31 31 34 40 34 90 0 50 -3 59 -35 91 -31 30 -42 35
 -83 35 -26 -1 -59 -7 -74 -16z m148 -28 c29 -29 34 -41 34 -81 0 -40 -5 -52
 -34 -81 -49 -49 -113 -49 -162 0 -29 29 -34 41 -34 79 0 73 44 115 124 116 30
-1 45 -6 72 -33z"/>
-<path d="M111 212 c-6 -11 -6 -24 0 -35 12 -21 3 -22 -18 -2 -23 24 -38 13
+1 45 -6 72 -33z"
+      />
+      <path
+        d="M111 212 c-6 -11 -6 -24 0 -35 12 -21 3 -22 -18 -2 -23 24 -38 13
 -39 -29 -1 -42 17 -57 46 -38 14 9 19 6 29 -14 13 -30 30 -30 59 1 26 27 22
 45 -11 46 l-22 0 23 16 c23 16 30 42 12 44 -5 1 -14 2 -19 3 -6 0 -16 7 -22
-14 -17 16 -27 15 -38 -6z"/>
-</g>
-</svg>
-)
-
+14 -17 16 -27 15 -38 -6z"
+      />
+    </g>
+  </svg>
+);

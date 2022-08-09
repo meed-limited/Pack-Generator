@@ -31,19 +31,19 @@ export const getNameABI = [
     name: "name",
     outputs: [{ internalType: "string", name: "_name", type: "string" }],
     stateMutability: "view",
-    type: "function"
-  }
+    type: "function",
+  },
 ];
 
 export const allowanceABI = [
   {
     inputs: [
       { internalType: "address", name: "owner", type: "address" },
-      { internalType: "address", name: "spender", type: "address" }
+      { internalType: "address", name: "spender", type: "address" },
     ],
     name: "allowance",
     outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
     stateMutability: "view",
-    type: "function"
-  }
+    type: "function",
+  },
 ];

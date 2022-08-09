@@ -11,8 +11,8 @@ const styles = {
     paddingTop: "10px",
     borderBottom: "none",
     fontSize: "15px",
-    color: "white"
-  }
+    color: "white",
+  },
 };
 
 function MenuItems({ isAdminPaneOpen, setIsAdminPaneOpen }) {
@@ -30,7 +30,7 @@ function MenuItems({ isAdminPaneOpen, setIsAdminPaneOpen }) {
       key,
       icon,
       children,
-      label
+      label,
     };
   }
 
@@ -42,16 +42,16 @@ function MenuItems({ isAdminPaneOpen, setIsAdminPaneOpen }) {
         {
           type: "group",
           children: [
-            getItem(<NavLink to='/Pack/SinglePack'>Single Pack</NavLink>, "SinglePack"),
-            getItem(<NavLink to='/Pack/BatchPacks'>Batch Packs</NavLink>, "BatchPacks"),
-            getItem(<NavLink to='/Pack/ClaimPack'>Claim Pack</NavLink>, "ClaimPack")
-          ]
-        }
-      ]
+            getItem(<NavLink to="/Pack/SinglePack">Single Pack</NavLink>, "SinglePack"),
+            getItem(<NavLink to="/Pack/BatchPacks">Batch Packs</NavLink>, "BatchPacks"),
+            getItem(<NavLink to="/Pack/ClaimPack">Claim Pack</NavLink>, "ClaimPack"),
+          ],
+        },
+      ],
     },
-    getItem(<NavLink to='/MarketPlace'>MarketPlace</NavLink>, "nftMarket"),
-    getItem(<NavLink to='/YourNFTs'>Your NFTs</NavLink>, "nft"),
-    getItem(<NavLink to='/Transactions'>Transactions</NavLink>, "transactions"),
+    getItem(<NavLink to="/MarketPlace">MarketPlace</NavLink>, "nftMarket"),
+    getItem(<NavLink to="/YourNFTs">Your NFTs</NavLink>, "nft"),
+    getItem(<NavLink to="/Transactions">Transactions</NavLink>, "transactions"),
     {
       key: "documentation",
       label: "Support",
@@ -60,7 +60,7 @@ function MenuItems({ isAdminPaneOpen, setIsAdminPaneOpen }) {
           type: "group",
           children: [
             getItem(
-              <a href='https://lepricon.gitbook.io/pack-generator/' target='_blank' rel='noopener noreferrer'>
+              <a href="https://lepricon.gitbook.io/pack-generator/" target="_blank" rel="noopener noreferrer">
                 Documentation / FAQ
               </a>,
               "docLink"
@@ -68,25 +68,25 @@ function MenuItems({ isAdminPaneOpen, setIsAdminPaneOpen }) {
 
             getItem(
               <a
-                href='https://techdev2021.atlassian.net/servicedesk/customer/portal/6'
-                target='_blank'
-                rel='noopener noreferrer'
+                href="https://techdev2021.atlassian.net/servicedesk/customer/portal/6"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Contact / Repport an issue
               </a>,
               "contactLink"
-            )
-          ]
-        }
-      ]
-    }
+            ),
+          ],
+        },
+      ],
+    },
   ];
 
   return (
     <>
       <Menu
         onClick={onClick}
-        mode='horizontal'
+        mode="horizontal"
         items={menuItems}
         selectedKeys={[current]}
         defaultOpenKeys={["/"]}

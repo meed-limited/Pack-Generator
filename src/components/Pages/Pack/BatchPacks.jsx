@@ -8,7 +8,7 @@ import {
   PackConfirm,
   NumOfNftPerPack,
   Uploader,
-  TokenSelection
+  TokenSelection,
 } from "./components";
 import { sortMultipleArrays, updateTokenIdsInArray } from "../../../helpers/arraySorting";
 import { checkERC20allowance } from "helpers/contractCalls/readCall";
@@ -50,7 +50,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
         address: info.collectionAddress,
         name: info.name,
         symbol: info.symbol,
-        supply: info.maxSupply
+        supply: info.maxSupply,
       });
     }
   };
@@ -232,10 +232,10 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   const navButton = () => {
     return (
       <div style={{ marginTop: "15px" }}>
-        <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+        <Button shape="round" style={styles.resetButton} onClick={handleBack}>
           BACK
         </Button>
-        <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+        <Button shape="round" style={styles.resetButton} onClick={handleNext}>
           NEXT
         </Button>
       </div>
@@ -249,7 +249,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
           <>
             <CollectionSelector customCollectionInfo={customCollectionInfo} ref={customCollectionInfoRef} />
             <div style={{ marginTop: "15px" }}>
-              <Button shape='round' style={styles.resetButton} onClick={handleNext}>
+              <Button shape="round" style={styles.resetButton} onClick={handleNext}>
                 NEXT
               </Button>
             </div>
@@ -284,15 +284,15 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
               <div style={{ display: "inline-flex", marginBottom: "5px" }}>
                 <Text style={{ fontSize: "16px" }}>Number of packs to mint:</Text>
-                <Tooltip title='Enter the total amount of packs to be minted. Up to 200 packs per Txs, up to 10,000 in total (10,000 = 50 Txs).'>
+                <Tooltip title="Enter the total amount of packs to be minted. Up to 200 packs per Txs, up to 10,000 in total (10,000 = 50 Txs).">
                   <QuestionCircleOutlined style={{ marginLeft: "15px" }} />
                 </Tooltip>
               </div>
               <Input
                 style={{ ...styles.transparentInput, width: "50%" }}
-                type='number'
-                min='0'
-                max='10000'
+                type="number"
+                min="0"
+                max="10000"
                 value={packNumber}
                 onChange={handlePackNumber}
               />
@@ -312,11 +312,11 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
               </div>
             )}
             <div style={{ marginTop: "15px" }}>
-              <Button shape='round' style={styles.resetButton} onClick={handleBack}>
+              <Button shape="round" style={styles.resetButton} onClick={handleBack}>
                 BACK
               </Button>
               <Button
-                shape='round'
+                shape="round"
                 style={styles.resetButton}
                 disabled={!packNumber ? true : false}
                 onClick={handleNext}
@@ -327,7 +327,7 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
           </>
         )}
         {displayPaneMode === "pack" && (
-          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+          <Spin style={{ borderRadius: "20px" }} spinning={waiting} size="large">
             <div style={{ ...styles.transparentContainerInside, padding: "20px" }}>
               <FeeSelector
                 serviceFee={serviceFee}
@@ -336,15 +336,15 @@ const BatchPack = ({ displayPaneMode, setDisplayPaneMode }) => {
                 isBatch={true}
                 packNumber={packNumber}
               />
-              <Button shape='round' style={styles.runFunctionButton} onClick={handleBatch}>
+              <Button shape="round" style={styles.runFunctionButton} onClick={handleBatch}>
                 BATCH-PACK <DownloadOutlined style={{ marginLeft: "25px", transform: "scale(1.2)" }} />
               </Button>
             </div>
             <div style={{ marginTop: "15px" }}>
-              <Button style={{ ...styles.resetButton }} shape='round' onClick={handleBack}>
+              <Button style={{ ...styles.resetButton }} shape="round" onClick={handleBack}>
                 BACK
               </Button>
-              <Button style={styles.resetButton} shape='round' onClick={handleReset}>
+              <Button style={styles.resetButton} shape="round" onClick={handleReset}>
                 RESTART
               </Button>
             </div>

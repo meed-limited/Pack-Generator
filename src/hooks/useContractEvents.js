@@ -25,7 +25,7 @@ export const useContractEvents = () => {
     const packData = {
       arrayOfAddress: arrayOfAddress,
       arrayOfNumber: arrayOfNumber,
-      salt: salt
+      salt: salt,
     };
     return packData;
   };

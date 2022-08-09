@@ -20,7 +20,6 @@ const styles = {
       "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     border: "1px solid",
     textAlign: "center",
-
   },
   transparentInput: {
     textAlign: "center",
@@ -34,8 +33,8 @@ const styles = {
     background:
       "-webkit-linear-gradient(left, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
     background:
-      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)"
-  }
+      "linear-gradient(to right, rgba(240, 248, 255, 0.40) 0%, rgba(240, 248, 255, 0.25) 50%, rgba(240, 248, 255, 0.10) 100%)",
+  },
 };
 
 const TokenSelection = forwardRef(({ handleAssets }, ref) => {
@@ -97,7 +96,7 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
       setCurrentToken(null);
       onChangeToken(null);
       setTokenAmount();
-    }
+    },
   }));
 
   return (
@@ -107,7 +106,7 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
 
         <InputNumber
           style={styles.transparentInput}
-          type='number'
+          type="number"
           step={0.01}
           min={0}
           max={balance?.balance / ("1e" + nativeToken?.decimals)}
@@ -126,10 +125,10 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
         <div style={{ margin: "auto", marginBottom: "20px", width: "300px", alignItems: "center" }}>
           <Input
             style={styles.transparentInput}
-            type='number'
-            min='0'
+            type="number"
+            min="0"
             step={0.01}
-            placeholder='Enter selected token amount'
+            placeholder="Enter selected token amount"
             onChange={(e) => onChangeERC20Amount(parseFloat(e.target.value))}
             value={tokenAmount}
             disabled={!currentToken ? true : false}
@@ -158,4 +157,5 @@ const TokenSelection = forwardRef(({ handleAssets }, ref) => {
   );
 });
 
+TokenSelection.displayName = "TokenSelection";
 export default TokenSelection;

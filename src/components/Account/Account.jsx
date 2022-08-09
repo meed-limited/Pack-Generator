@@ -29,7 +29,7 @@ const styles = {
     width: "100%",
     borderRadius: "12px",
     border: "0",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   connector: {
     alignItems: "center",
@@ -40,17 +40,17 @@ const styles = {
     marginLeft: "auto",
     marginRight: "auto",
     padding: "20px 5px",
-    cursor: "pointer"
+    cursor: "pointer",
   },
   icon: {
     alignSelf: "center",
     fill: "rgb(40, 13, 95)",
     flexShrink: "0",
     marginBottom: "8px",
-    height: "30px"
+    height: "30px",
   },
   text: {
-    color: "white"
+    color: "white",
   },
   disconnectButton: {
     width: "100%",
@@ -62,8 +62,8 @@ const styles = {
     height: "50px",
     fontSize: "20px",
     marginTop: "15px",
-    color: "white"
-  }
+    color: "white",
+  },
 };
 
 function Account() {
@@ -84,10 +84,10 @@ function Account() {
           bodyStyle={{
             padding: "15px",
             fontSize: "17px",
-            fontWeight: "500"
+            fontWeight: "500",
           }}
           style={{ fontSize: "16px", fontWeight: "500" }}
-          width='340px'
+          width="340px"
         >
           <div
             style={{
@@ -95,7 +95,7 @@ function Account() {
               display: "flex",
               justifyContent: "center",
               fontWeight: "700",
-              fontSize: "20px"
+              fontSize: "20px",
             }}
           >
             Connect Wallet
@@ -109,7 +109,7 @@ function Account() {
                   try {
                     await authenticate({
                       provider: connectorId,
-                      signingMessage: "Welcome to Lepricon Pack-Generator!"
+                      signingMessage: "Welcome to Lepricon Pack-Generator!",
                     });
                     window.localStorage.setItem("connectorId", connectorId);
                     setIsAuthModalVisible(false);
@@ -141,25 +141,25 @@ function Account() {
         bodyStyle={{
           padding: "15px",
           fontSize: "17px",
-          fontWeight: "500"
+          fontWeight: "500",
         }}
         style={{ fontSize: "16px", fontWeight: "500" }}
-        width='400px'
+        width="400px"
       >
         Account
         <Card
           style={{
             marginTop: "10px",
-            borderRadius: "1rem"
+            borderRadius: "1rem",
           }}
           bodyStyle={{ padding: "15px" }}
         >
-          <Address avatar='left' size={6} copyable style={{ fontSize: "20px" }} />
+          <Address avatar="left" size={6} copyable style={{ fontSize: "20px" }} />
           <div style={{ marginTop: "10px", padding: "0 10px" }}>
             <a
               href={`${getExplorer(chainId)}/address/${account}`}
-              target='_blank'
-              rel='noreferrer'
+              target="_blank"
+              rel="noreferrer"
               style={{ color: "#dbff18" }}
             >
               <SelectOutlined style={{ marginRight: "5px" }} />

@@ -51,19 +51,19 @@ export const approveERC20contract = async (ERC20address, allowance, contractAddr
         constant: false,
         inputs: [
           { name: "spender", type: "address" },
-          { name: "amount", type: "uint256" }
+          { name: "amount", type: "uint256" },
         ],
         name: "approve",
         outputs: [{ name: "", type: "bool" }],
         payable: false,
         stateMutability: "nonpayable",
-        type: "function"
-      }
+        type: "function",
+      },
     ],
     params: {
       spender: contractAddress,
-      amount: allowance
-    }
+      amount: allowance,
+    },
   };
 
   try {
@@ -91,18 +91,18 @@ export const approveNFTcontract = async (NFTaddress, contractAddress) => {
       {
         inputs: [
           { internalType: "address", name: "operator", type: "address" },
-          { internalType: "bool", name: "_approved", type: "bool" }
+          { internalType: "bool", name: "_approved", type: "bool" },
         ],
         name: "setApprovalForAll",
         outputs: [],
         stateMutability: "nonpayable",
-        type: "function"
-      }
+        type: "function",
+      },
     ],
     params: {
       operator: contractAddress,
-      _approved: true
-    }
+      _approved: true,
+    },
   };
 
   try {
@@ -131,8 +131,8 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
     params: {
       _to: account,
       _addresses: assetContracts,
-      _numbers: assetNumbers
-    }
+      _numbers: assetNumbers,
+    },
   };
 
   try {
@@ -141,7 +141,7 @@ export const singlePackMint = async (chainId, account, msgValue, assetContracts,
       receipt = {
         isSuccess: true,
         txHash: result.transactionHash,
-        link: `${getExplorer(chainId)}tx/${result.transactionHash}`
+        link: `${getExplorer(chainId)}tx/${result.transactionHash}`,
       };
       const encodedTopic = result.events.filter((item) => item.event === "AssemblyAsset"); // Get AssemblyAsset event log
       const iface = new ethers.utils.Interface(assemblyABIJson); // Initiate interface(ABI)
@@ -237,8 +237,8 @@ export const multiplePackMint = async (
       _addresses: addressArr,
       _arrayOfNumbers: assetNumbers,
       _amountOfPacks: packNum,
-      _totalOfPacks: packNumber
-    }
+      _totalOfPacks: packNumber,
+    },
   };
 
   try {
@@ -252,7 +252,7 @@ export const multiplePackMint = async (
       <>
         Congrats!!! {packNum} packs have just been minted and sent to your wallet!
         <br></br>
-        <a href={link} target='_blank' rel='noreferrer noopener'>
+        <a href={link} target="_blank" rel="noreferrer noopener">
           View in explorer: &nbsp;
           <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
         </a>
@@ -300,8 +300,8 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
       _tokenId: nftToClaim.token_id,
       _salt: parseInt(nftData.salt),
       _addresses: arrOfAdd,
-      _numbers: arrOfNum
-    }
+      _numbers: arrOfNum,
+    },
   };
 
   try {
@@ -313,7 +313,7 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
       <>
         Your pack has been succesfully unpacked!
         <br></br>
-        <a href={link} target='_blank' rel='noreferrer noopener'>
+        <a href={link} target="_blank" rel="noreferrer noopener">
           View in explorer: &nbsp;
           <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
         </a>
@@ -336,7 +336,7 @@ export const claimPack = async (nftToClaim, contractAddress, nftData, account, c
     packReceipt = {
       isSuccess: true,
       txHash: receipt.transactionHash,
-      link: `${getExplorer(chainId)}tx/${receipt.transactionHash}`
+      link: `${getExplorer(chainId)}tx/${receipt.transactionHash}`,
     };
   } catch (error) {
     let title = "Unexpected error";
@@ -359,8 +359,8 @@ export const listOnMarketPlace = async (nft, listPrice, contractAddress) => {
     params: {
       nftContract: nft.token_address,
       tokenId: nft.token_id,
-      price: String(p)
-    }
+      price: String(p),
+    },
   };
 
   try {
@@ -394,9 +394,9 @@ export const buyNFT = async (tokenAdd, marketAddress, tokenDetails) => {
     abi: marketABIJson,
     params: {
       nftContract: tokenAdd,
-      itemId: itemID
+      itemId: itemID,
     },
-    msgValue: tokenPrice
+    msgValue: tokenPrice,
   };
 
   try {

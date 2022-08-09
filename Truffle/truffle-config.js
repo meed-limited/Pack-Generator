@@ -19,7 +19,7 @@ module.exports = {
   api_keys: {
     etherscan: ETHERSCAN_API_KEY,
     polygonscan: POLYGONSCAN_API_KEY,
-    bscscan: BSCSCAN_API_KEY
+    bscscan: BSCSCAN_API_KEY,
   },
   networks: {
     // development: {
@@ -33,11 +33,11 @@ module.exports = {
       network_id: 1,
       confirmations: 2,
       timeoutBlocks: 200,
-      skipDryRun: true
+      skipDryRun: true,
     },
     bsc_testnet: {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_BSC_TESTNET}`),
-      network_id: 97
+      network_id: 97,
       // confirmations: 2
     },
     bsc_mainnet: {
@@ -45,22 +45,22 @@ module.exports = {
       network_id: 56,
       confirmations: 5,
       timeoutBlocks: 200,
-      skipDryRun: true
+      skipDryRun: true,
     },
     polygon_mumbai: {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_POLYGON_TESTNET}`),
       network_id: 80001,
       confirmations: 2,
       timeoutBlocks: 200,
-      skipDryRun: true
+      skipDryRun: true,
     },
     polygon_mainnet: {
       provider: () => new HDWalletProvider(mnemonic, `${API_KEY_POLYGON}`),
       network_id: 137,
       confirmations: 5,
       timeoutBlocks: 200,
-      skipDryRun: true
-    }
+      skipDryRun: true,
+    },
   },
 
   // Configure your compilers
@@ -72,10 +72,10 @@ module.exports = {
         // See the solidity docs for advice about optimization and evmVersion
         optimizer: {
           enabled: true,
-          runs: 150
-        }
+          runs: 150,
+        },
         // evmVersion: "byzantium"
-      }
-    }
-  }
+      },
+    },
+  },
 };

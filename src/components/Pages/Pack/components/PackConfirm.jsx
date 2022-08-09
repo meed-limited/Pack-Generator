@@ -22,7 +22,7 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
           ? item.name.slice(0, 15)
           : item.name,
       id: item.token_id.length > 8 ? getEllipsisTxt(item.token_id, 4) : item.token_id,
-      amount: item.contract_type === "ERC1155" ? item.amount : "-"
+      amount: item.contract_type === "ERC1155" ? item.amount : "-",
     }));
 
   useEffect(() => {
@@ -41,7 +41,7 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
       contract_type: "ERC721",
       name: name,
       id: "_id_",
-      amount: "-"
+      amount: "-",
     };
 
     const ERC1155amount =
@@ -53,7 +53,7 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
       contract_type: "ERC1155",
       name: "-",
       id: "_id_",
-      amount: isNaN(ERC1155amount) ? 1 : ERC1155amount
+      amount: isNaN(ERC1155amount) ? 1 : ERC1155amount,
     };
     let arr = [];
     for (let i = 0; i < ERC721Number; i++) {
@@ -65,7 +65,7 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
 
     return arr?.map((item, key) => ({
       key: key,
-      ...item
+      ...item,
     }));
   };
 
@@ -75,29 +75,29 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
     {
       title: "Contract type",
       dataIndex: "contract_type",
-      key: "key"
+      key: "key",
     },
     {
       title: "Name",
       dataIndex: "name",
-      key: "key"
+      key: "key",
     },
     {
       title: "ID",
       dataIndex: "id",
-      key: "key"
+      key: "key",
     },
     {
       title: "Amount",
       dataIndex: "amount",
-      key: "key"
-    }
+      key: "key",
+    },
   ];
 
   const selectedTokensData = selectedTokens?.map((item, key) => ({
     key: key, //start after native asset amount
     asset: item.data.symbol,
-    amount: item.value
+    amount: item.value,
   }));
 
   var assetsData;
@@ -106,9 +106,9 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
       {
         key: -1,
         asset: nativeToken?.name,
-        amount: ethAmount
+        amount: ethAmount,
       },
-      ...selectedTokensData
+      ...selectedTokensData,
     ];
   else assetsData = selectedTokensData;
 
@@ -116,13 +116,13 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
     {
       title: "Asset",
       dataIndex: "asset",
-      key: "key"
+      key: "key",
     },
     {
       title: "Amount",
       dataIndex: "amount",
-      key: "key"
-    }
+      key: "key",
+    },
   ];
 
   const headerText = isBatch
@@ -140,13 +140,13 @@ const PackConfirm = ({ NFTsArr, ethAmount, selectedTokens, packNumber, isBatch, 
           flexDirection: "row",
           justifyContent: "center",
           overflow: "auto",
-          maxHeight: "30vh"
+          maxHeight: "30vh",
         }}
       >
         <div style={{ margin: "10px" }}>
           {NFTdata.length === 0 && (ethAmount === null || ethAmount === 0) && selectedTokens.length === 0 && (
             <Alert
-              type='warning'
+              type="warning"
               showIcon
               message={`Nothing! The pack${isBatch ? "s" : ""} will be empty. Are you sure?`}
             />

@@ -52,9 +52,9 @@ const ClaimPack = ({ displayPaneMode, setDisplayPaneMode }) => {
   return (
     <div style={styles.mainPackContainer}>
       {displayPaneMode !== "done" && (
-        <Spin style={{ borderRadius: "20px" }} spinning={waiting} size='large'>
+        <Spin style={{ borderRadius: "20px" }} spinning={waiting} size="large">
           <NFTsSelection handleNFT={handleNFT} isMultiple={false} isPackOnly={true} />
-          <Button shape='round' style={styles.resetButton} onClick={handleClaim}>
+          <Button shape="round" style={styles.resetButton} onClick={handleClaim}>
             CLAIM PACK
           </Button>
         </Spin>

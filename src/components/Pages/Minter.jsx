@@ -13,16 +13,15 @@ const BatchMinter = () => {
     return (e) =>
       setProperties((properties) => ({
         ...properties,
-        [field]: e.target.value
+        [field]: e.target.value,
       }));
   };
 
   return (
     <div style={styles.content}>
-    
       <div style={styles.transparentContainer}>
         <label style={styles.label}>Name</label>
-        <Input style={styles.input} type='text' required value={nftName} onChange={(e) => setNftName(e.target.value)} />
+        <Input style={styles.input} type="text" required value={nftName} onChange={(e) => setNftName(e.target.value)} />
         <label style={styles.label}>Description</label>
         <textarea
           style={styles.textarea}
@@ -33,23 +32,22 @@ const BatchMinter = () => {
         <label style={styles.label}>Rarity</label>
         <Input
           style={styles.input}
-          type='number'
+          type="number"
           required
           value={nftRarity}
           onChange={(e) => setNftRarity(e.target.value)}
         />
         <label style={styles.label}>Properties</label>
-        <Input style={styles.input2} type='text' value={properties.attribut} onChange={handleChange("attribut")} />
-        <Input style={styles.input} type='text' value={properties.value} onChange={handleChange("value")} />
+        <Input style={styles.input2} type="text" value={properties.attribut} onChange={handleChange("attribut")} />
+        <Input style={styles.input} type="text" value={properties.value} onChange={handleChange("value")} />
 
         <>
           {nftName} {nftDescription} {properties.attribut} {properties.value}
         </>
 
         <label style={styles.label}>Select your files</label>
-        <Input type='file' name='myfile'></Input>
+        <Input type="file" name="myfile"></Input>
       </div>
-    
     </div>
   );
 };

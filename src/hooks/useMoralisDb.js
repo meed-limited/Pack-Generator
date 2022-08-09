@@ -128,6 +128,6 @@ export const useMoralisDb = () => {
     parseData,
     parseCreatedPackData,
     addItemImage,
-    saveMarketItemInDB
+    saveMarketItemInDB,
   };
 };

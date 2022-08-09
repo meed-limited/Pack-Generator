@@ -21,14 +21,14 @@ const styles = {
     justifyContent: "space-between",
     alignItems: "center",
     fontFamily: "Sora, sans-serif",
-    padding: "0 10px"
+    padding: "0 10px",
   },
   headerRight: {
     display: "flex",
     gap: "20px",
     alignItems: "center",
     fontSize: "14px",
-    fontWeight: "500"
+    fontWeight: "500",
   },
   adminButton: {
     height: "40px",
@@ -40,8 +40,8 @@ const styles = {
     border: "none",
     background: "black",
     color: "white",
-    fontFamily: "Sora, sans-serif"
-  }
+    fontFamily: "Sora, sans-serif",
+  },
 };
 
 const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
@@ -57,7 +57,7 @@ const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
 
   return (
     <Header style={styles.header}>
-      <Link to='/Home'>
+      <Link to="/Home">
         <Logo />
       </Link>
       <MenuItems isAdminPaneOpen={isAdminPaneOpen} setIsAdminPaneOpen={setIsAdminPaneOpen} />
@@ -65,7 +65,7 @@ const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
       <div style={styles.headerRight}>
         {isAuthenticated && isAdmin && (
           <div>
-            <Button style={styles.adminButton} shape='round' onClick={openAdminPane}>
+            <Button style={styles.adminButton} shape="round" onClick={openAdminPane}>
               Admin
             </Button>
           </div>
@@ -81,10 +81,10 @@ const CustomHeader = ({ isAdmin, isAdminPaneOpen, setIsAdminPaneOpen }) => {
 export const Logo = () => (
   <div style={{ display: "flex", alignSelf: "center" }}>
     <div style={{ paddingTop: "0px", marginLeft: "-10px", width: "70px", height: "70px" }}>
-      <img src={beta} alt='beta' />
+      <img src={beta} alt="beta" />
     </div>
     <div style={{ paddingTop: "25px", width: "220px" }}>
-      <img src={PG_Logo} alt='PG_Logo' />
+      <img src={PG_Logo} alt="PG_Logo" />
     </div>
   </div>
 );

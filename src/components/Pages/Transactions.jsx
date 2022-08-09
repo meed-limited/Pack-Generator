@@ -19,7 +19,7 @@ function Transactions() {
     getCreatedBatchPackData,
     getClaimedPackData,
     parseData,
-    parseCreatedPackData
+    parseCreatedPackData,
   } = useMoralisDb();
   const [fetchCollections, setFetchCollections] = useState();
   const [fetchCreatedPack, setFetchCreatedPack] = useState();
@@ -119,39 +119,39 @@ function Transactions() {
     {
       title: "DATE",
       key: "date",
-      dataIndex: "date"
+      dataIndex: "date",
     },
     {
       title: "ID / SYMBOL",
       key: "key",
-      dataIndex: "item"
+      dataIndex: "item",
     },
     {
       title: "COLLECTION",
       key: "key",
-      dataIndex: "collection"
+      dataIndex: "collection",
     },
     {
       title: "TYPE",
       key: "key",
-      dataIndex: "tags"
+      dataIndex: "tags",
     },
     {
       title: "CHAIN",
       key: "key",
-      dataIndex: "chain"
+      dataIndex: "chain",
     },
     {
       title: "TXs HASH",
       key: "link",
       dataIndex: "link",
       render: (e) => (
-        <a href={`${getExplorer(chainId)}tx/${e}`} target='_blank' rel='noreferrer noopener'>
+        <a href={`${getExplorer(chainId)}tx/${e}`} target="_blank" rel="noreferrer noopener">
           View in explorer: &nbsp;
           <FileSearchOutlined style={{ transform: "scale(1.3)", color: "purple" }} />
         </a>
-      )
-    }
+      ),
+    },
   ];
 
   const collectionData = fetchCollections
@@ -161,7 +161,7 @@ function Transactions() {
       item: item.symbol,
       tags: "Collection Created",
       chain: getChainName(item.chainId),
-      link: item.transaction_hash
+      link: item.transaction_hash,
     }))
     .sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
 
@@ -172,7 +172,7 @@ function Transactions() {
       item: getEllipsisTxt(item.tokenId, 4),
       tags: "Pack Created",
       chain: getChainName(item.chainId),
-      link: item.transaction_hash
+      link: item.transaction_hash,
     }))
     .sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
 
@@ -182,7 +182,7 @@ function Transactions() {
     item: item.collectionSymbol,
     tags: `Batch-Pack x${item.amountOfPack} (${item.totalOfPack}) Created`,
     chain: getChainName(item.chainId),
-    link: item.transaction_hash
+    link: item.transaction_hash,
   }));
 
   const claimedPackData = fetchClaimedPack?.map((item) => ({
@@ -191,7 +191,7 @@ function Transactions() {
     item: getEllipsisTxt(item.tokenId, 4),
     tags: "Pack Claimed",
     chain: getChainName(item.chainId),
-    link: item.transaction_hash
+    link: item.transaction_hash,
   }));
 
   const marketData = fetchMarketItems?.map((item) => ({
@@ -199,7 +199,7 @@ function Transactions() {
     collection: item.collectionName,
     item: getEllipsisTxt(item.tokenId, 4),
     tags: item.seller === account ? "Market sell" : "Market buy",
-    link: item.transaction_hash
+    link: item.transaction_hash,
   }));
 
   var data = [];
@@ -207,7 +207,7 @@ function Transactions() {
   data = data.sort((a, b) => (a.date < b.date ? 1 : b.date < a.date ? -1 : 0));
   data = data?.map((item, index) => ({
     ...item,
-    key: index
+    key: index,
   }));
 
   return (
@@ -217,7 +217,7 @@ function Transactions() {
       <div style={{ marginTop: "60px" }}>
         <div style={styles.table}>
           <Spin
-            size='large'
+            size="large"
             spinning={
               fetchCollections === undefined ||
               fetchCreatedPack === undefined ||
@@ -226,7 +226,7 @@ function Transactions() {
               marketData === undefined
             }
           >
-            <Table size='middle' columns={columns} dataSource={data} />
+            <Table size="middle" columns={columns} dataSource={data} />
           </Spin>
         </div>
       </div>
